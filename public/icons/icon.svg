@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+  <defs>
+    <rect id="cell" width="22" height="22" rx="3" ry="3" />
+  </defs>
+  <g>
+    <use href="#cell" x="11" y="11" fill="#ebedf0" />
+    <use href="#cell" x="39" y="11" fill="#ebedf0" />
+    <use href="#cell" x="67" y="11" fill="#ebedf0" />
+    <use href="#cell" x="95" y="11" fill="#ebedf0" />
+    <use href="#cell" x="11" y="39" fill="#ebedf0" />
+    <use href="#cell" x="39" y="39" fill="#ebedf0" />
+    <use href="#cell" x="67" y="39" fill="#ebedf0" />
+    <use href="#cell" x="95" y="39" fill="#ebedf0" />
+    <use href="#cell" x="11" y="67" fill="#ebedf0" />
+    <use href="#cell" x="39" y="67" fill="#ebedf0" />
+    <use href="#cell" x="67" y="67" fill="#ebedf0" />
+    <use href="#cell" x="95" y="67" fill="#ebedf0" />
+    <use href="#cell" x="11" y="95" fill="#ebedf0" />
+    <use href="#cell" x="39" y="95" fill="#ebedf0" />
+    <use href="#cell" x="67" y="95" fill="#ebedf0" />
+    <use href="#cell" x="95" y="95" fill="#ebedf0" />
+  </g>
+  <g>
+    <use href="#cell" x="39" y="95" fill="#9be9a8" />
+    <use href="#cell" x="67" y="95" fill="#9be9a8" />
+    <use href="#cell" x="67" y="67" fill="#9be9a8" />
+    <use href="#cell" x="95" y="67" fill="#40c463" />
+    <use href="#cell" x="95" y="39" fill="#40c463" />
+    <use href="#cell" x="67" y="39" fill="#30a14e" />
+  </g>
+</svg>

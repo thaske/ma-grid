@@ -1,0 +1,294 @@
+/* MA Grid - GitHub-style contribution calendar */
+
+body {
+  margin: 0;
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-family: "Futura Light", "Trebuchet MS", Arial, sans-serif;
+}
+
+.ma-grid {
+  --cell-size: 10px;
+  --cell-gap: 2px;
+  --label-width: 12px;
+  --weeks: 53;
+
+  background: #fff;
+  border: 1px solid rgb(234, 234, 234);
+  border-radius: 2px;
+  padding: 16px;
+  margin: 0 0 16px;
+  width: 682px;
+  box-sizing: border-box;
+}
+
+.ma-grid--sidebar {
+  --cell-size: 12px;
+  --cell-gap: 2px;
+  --label-width: 12px;
+
+  border: 1px solid rgb(224, 224, 224);
+  border-radius: 3px;
+  width: 352px;
+  padding: 12px;
+}
+
+.ma-grid__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.ma-grid__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(30, 25, 78);
+  margin: 0;
+}
+
+.ma-grid--sidebar .ma-grid__title {
+  font-size: 14px;
+}
+
+.ma-grid__refresh {
+  font-size: 11px;
+  padding: 4px 8px;
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 4px;
+  color: #656d76;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.ma-grid__refresh:hover {
+  background: #f3f4f6;
+  border-color: #c9d1d9;
+  color: #24292f;
+}
+
+.ma-grid__refresh:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Stats bar */
+.ma-grid__stats {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #d0d7de;
+}
+
+.ma-grid--sidebar .ma-grid__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px 12px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+}
+
+.ma-grid__stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.ma-grid__stat-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: #24292f;
+}
+
+.ma-grid--sidebar .ma-grid__stat-value {
+  font-size: 16px;
+}
+
+.ma-grid__stat-label {
+  font-size: 12px;
+  color: #656d76;
+}
+
+.ma-grid--sidebar .ma-grid__stat-label {
+  font-size: 11px;
+}
+
+/* Calendar wrapper */
+.ma-grid__wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Month labels */
+.ma-grid__month-labels {
+  display: flex;
+  margin-bottom: 2px;
+  margin-left: calc(var(--label-width) + var(--cell-gap));
+  font-size: 9px;
+  color: #656d76;
+  height: 12px;
+}
+
+.ma-grid--sidebar .ma-grid__month-labels {
+  font-size: 8px;
+  height: 12px;
+  margin-bottom: 2px;
+}
+
+.ma-grid__month-label {
+  text-align: left;
+  white-space: nowrap;
+  position: relative;
+}
+
+/* Grid container */
+.ma-grid__grid {
+  display: flex;
+  gap: var(--cell-gap);
+}
+
+/* Weekday labels */
+.ma-grid__weekday-labels {
+  display: grid;
+  grid-template-rows: repeat(7, var(--cell-size));
+  gap: var(--cell-gap);
+  width: var(--label-width);
+  flex-shrink: 0;
+}
+
+.ma-grid__weekday-label {
+  font-size: 9px;
+  color: #656d76;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 2px;
+  height: var(--cell-size);
+}
+
+.ma-grid--sidebar .ma-grid__weekday-label {
+  font-size: 8px;
+  padding-right: 1px;
+}
+
+/* Days grid */
+.ma-grid__days {
+  display: grid;
+  grid-template-rows: repeat(7, var(--cell-size));
+  grid-auto-flow: column;
+  grid-auto-columns: var(--cell-size);
+  gap: var(--cell-gap);
+}
+
+.ma-grid__cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  border-radius: 2px;
+  outline: 1px solid rgba(27, 31, 35, 0.06);
+  outline-offset: -1px;
+  cursor: pointer;
+}
+
+.ma-grid__cell:hover {
+  outline: 1px solid rgba(27, 31, 35, 0.3);
+}
+
+/* Legend */
+.ma-grid__legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 12px;
+  font-size: 10px;
+  color: #656d76;
+}
+
+.ma-grid--sidebar .ma-grid__legend {
+  margin-top: 10px;
+  font-size: 9px;
+}
+
+.ma-grid__legend-label {
+  margin: 0 2px;
+}
+
+.ma-grid__legend-box {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  border-radius: 2px;
+  outline: 1px solid rgba(27, 31, 35, 0.06);
+  outline-offset: -1px;
+}
+
+/* Tooltip */
+.ma-grid__tooltip {
+  position: fixed;
+  background: rgba(36, 41, 47, 0.95);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  pointer-events: none;
+  z-index: 10000;
+  max-width: 200px;
+}
+
+.ma-grid__tooltip-date {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.ma-grid__tooltip-xp {
+  color: #8b949e;
+}
+
+/* Loading state */
+.ma-grid__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: #656d76;
+  font-size: 14px;
+  background: #fff;
+  border: 1px solid rgb(234, 234, 234);
+  border-radius: 2px;
+  margin: 16px 0;
+  width: fit-content;
+  width: 682px;
+  box-sizing: border-box;
+}
+
+.ma-grid__loading--sidebar {
+  width: 352px;
+  padding: 16px;
+  border: 1px solid rgb(224, 224, 224);
+  border-radius: 3px;
+}
+
+/* Error state */
+.ma-grid__error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: #cf222e;
+  font-size: 14px;
+  background: #fff;
+  border: 1px solid rgb(234, 234, 234);
+  border-radius: 2px;
+  margin: 16px 0;
+  width: fit-content;
+  width: 682px;
+  box-sizing: border-box;
+}
+
+.ma-grid__error--sidebar {
+  width: 352px;
+  padding: 16px;
+  border: 1px solid rgb(224, 224, 224);
+  border-radius: 3px;
+}

@@ -1,0 +1,122 @@
+#!/usr/bin/env python3
+
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+
+def ensure_magick() -> None:
+    if shutil.which("magick") is None:
+        print("ImageMagick 'magick' is required to generate PNGs.", file=sys.stderr)
+        sys.exit(1)
+
+
+def build_svg(path: Path, size: int = 128) -> None:
+    # Scale cell and gap proportionally to size
+    scale = size / 128
+    cell = int(22 * scale)
+    gap = int(6 * scale)
+    cols = rows = 4
+
+    grid_size = cols * cell + (cols - 1) * gap
+    padding = (size - grid_size) // 2
+
+    base_color = "#ebedf0"
+    low = "#9be9a8"
+    med = "#40c463"
+    high = "#30a14e"
+
+    levels = [
+        (low, [
+            (1, 3), (2, 3),
+            (2, 2),
+        ]),
+        (med, [
+            (3, 2), (3, 1),
+        ]),
+        (high, [
+            (2, 1),
+        ]),
+    ]
+
+    # Scale border radius proportionally
+    border_radius = int(3 * scale)
+
+    lines = []
+    lines.append('<?xml version="1.0" encoding="UTF-8"?>')
+    lines.append(
+        f'<svg width="{size}" height="{size}" viewBox="0 0 {size} {size}" '
+        'fill="none" xmlns="http://www.w3.org/2000/svg" '
+        'shape-rendering="crispEdges">'
+    )
+    lines.append("  <defs>")
+    lines.append(f"    <rect id=\"cell\" width=\"{cell}\" height=\"{cell}\" rx=\"{border_radius}\" ry=\"{border_radius}\" />")
+    lines.append("  </defs>")
+    lines.append("  <g>")
+    for r in range(rows):
+        for c in range(cols):
+            x = padding + c * (cell + gap)
+            y = padding + r * (cell + gap)
+            lines.append(f"    <use href=\"#cell\" x=\"{x}\" y=\"{y}\" fill=\"{base_color}\" />")
+    lines.append("  </g>")
+    lines.append("  <g>")
+    for color, coords in levels:
+        for c, r in coords:
+            x = padding + c * (cell + gap)
+            y = padding + r * (cell + gap)
+            lines.append(f"    <use href=\"#cell\" x=\"{x}\" y=\"{y}\" fill=\"{color}\" />")
+    lines.append("  </g>")
+    lines.append("</svg>")
+
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def build_pngs(svg_path: Path, icon_dir: Path) -> None:
+    sizes = [16, 32, 48, 128]
+    # Generate standard sizes from the 128x128 SVG
+    for size in sizes:
+        output = icon_dir / f"icon{size}.png"
+        subprocess.run(
+            [
+                "magick",
+                "-background", "none",
+                str(svg_path),
+                "-define", "png:color-type=6",
+                "-resize", f"{size}x{size}",
+                str(output),
+            ],
+            check=True,
+        )
+
+    # Generate 512x512 from a native high-res SVG to avoid blurriness
+    svg_512 = icon_dir / "icon512.svg"
+    build_svg(svg_512, 512)
+    output_512 = icon_dir / "icon512.png"
+    subprocess.run(
+        [
+            "magick",
+            "-background", "none",
+            str(svg_512),
+            "-define", "png:color-type=6",
+            str(output_512),
+        ],
+        check=True,
+    )
+    svg_512.unlink()  # Clean up temporary high-res SVG
+
+
+def main() -> None:
+    root_dir = Path(__file__).resolve().parents[1]
+    icon_dir = root_dir / "public" / "icons"
+    svg_path = icon_dir / "icon.svg"
+
+    ensure_magick()
+    icon_dir.mkdir(parents=True, exist_ok=True)
+    build_svg(svg_path)
+    build_pngs(svg_path, icon_dir)
+    print(f"Icons generated in {icon_dir}")
+
+
+if __name__ == "__main__":
+    main()
