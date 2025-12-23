@@ -1,0 +1,15 @@
+/dist
+/.output
+/.wxt
+.env
+/playwright-report
+/test-results
+/.playwright-state
+
+# Xcode
+/DerivedData
+**/*.xcuserdata
+**/*.xcworkspace/xcuserdata
+**/*.xcshareddata/WorkspaceSettings.xcsettings
+**/*.xcuserstate
+**/build

@@ -1,0 +1,27 @@
+{
+  "name": "ma-grid",
+  "version": "1.0.0",
+  "description": "GitHub-style activity heatmap for Math Academy",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "build": "wxt zip",
+    "build:unminified": "MINIFY=false wxt zip",
+    "dev:firefox": "wxt --browser firefox --mv2",
+    "build:firefox": "wxt zip --browser firefox --mv2",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "postinstall": "wxt prepare",
+    "safari": "wxt build --browser safari --mv2 && xcrun safari-web-extension-converter --bundle-identifier com.route4.ma-grid --force --project-location '../MA Grid' .output/safari-mv2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.47.2",
+    "@types/chrome": "^0.0.329",
+    "dotenv": "^17.2.3",
+    "typescript": "^5.0.0",
+    "vitest": "^1.6.0",
+    "wxt": "^0.20.13"
+  }
+}
