@@ -1,4 +1,3 @@
-import { browser, storage } from "#imports";
 import { CACHE_KEY } from "@/utils/constants";
 import {
   HIDE_XP_FRAME_STORAGE_KEY,
