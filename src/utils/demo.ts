@@ -32,10 +32,10 @@ export function enhanceCalendarForDemo(data: CalendarData): CalendarData {
       };
     }
 
-    daysInCurrentPhase++;
-
     if (inActiveStreak) {
-      if (daysInCurrentPhase === 0) {
+      daysInCurrentPhase++;
+
+      if (daysInCurrentPhase === 1) {
         streakLength = Math.floor(Math.random() * 6) + 2;
       }
 
@@ -62,6 +62,8 @@ export function enhanceCalendarForDemo(data: CalendarData): CalendarData {
 
       return { date: day.date, weekday: day.weekday, xp: 0 };
     }
+
+    daysInCurrentPhase++;
 
     if (daysInCurrentPhase >= breakLength) {
       if (Math.random() < 0.5) {
