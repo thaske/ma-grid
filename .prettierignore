@@ -1,0 +1,44 @@
+# Dependencies
+node_modules
+
+# Build outputs
+.output
+.wxt
+dist
+build
+
+# Cache directories
+.cache
+.temp
+
+# IDE
+.vscode
+.idea
+.claude
+
+# Logs
+*.log
+logs
+
+# Lock files
+bun.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
+coverage
+*.lcov
+
+# Misc
+*.min.js
+*.min.css

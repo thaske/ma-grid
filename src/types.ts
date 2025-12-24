@@ -35,13 +35,9 @@ export interface CalendarData {
   stats: CalendarStats;
 }
 
-export type MessageType = "GET_CALENDAR_DATA";
-
-export interface Message {
-  type: MessageType;
-}
-
 export interface CalendarResponse {
   data?: CalendarData;
   error?: string;
+  isStale?: boolean; // Indicates data is from stale cache
+  isFresh?: boolean; // Indicates data is freshly fetched
 }

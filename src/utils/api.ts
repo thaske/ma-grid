@@ -1,4 +1,3 @@
-import { storage } from "#imports";
 import type { Activity } from "@/types";
 import { readCache } from "./cache";
 import { CACHE_KEY, MAX_PAGES, OVERLAP_DAYS, SLEEP_MS } from "./constants";
@@ -6,7 +5,6 @@ import { logger } from "./logger";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const THREE_YEARS_MS = 3 * 365 * DAY_MS;
-const EMPTY_PAGE_THRESHOLD = 5;
 
 const LOCAL_TIMEZONE =
   Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
@@ -32,7 +30,7 @@ type StopReason =
   | "cached_id"
   | "window_exceeded"
   | "cursor_stuck"
-  | "empty_page_threshold";
+  | "empty_page";
 
 type PaginationState = {
   cursor: Date;
@@ -77,8 +75,6 @@ export async function fetchAllActivities(
     fresh: [],
   };
 
-  let emptyPages = 0;
-
   for (let pageIndex = 0; pageIndex < MAX_PAGES; pageIndex++) {
     const parts = PATH_FORMATTER.formatToParts(state.cursor);
     const tzParts = TIMEZONE_NAME_FORMATTER.formatToParts(state.cursor);
@@ -105,46 +101,50 @@ export async function fetchAllActivities(
     const url = `https://${hostname}/api/previous-tasks/${cursorParam}`;
 
     const response = await fetch(url, { credentials: "include" });
+    if (!response.ok) {
+      const statusText = response.statusText
+        ? ` ${response.statusText}`
+        : "";
+      throw new Error(`Request failed: ${response.status}${statusText}`);
+    }
     const page = await response.json();
+    if (!Array.isArray(page)) {
+      throw new Error("Unexpected response: expected an array");
+    }
 
     logger.log(`[MA Grid] Page ${pageIndex + 1} size:`, page.length);
 
     if (page.length === 0) {
-      emptyPages++;
       state = {
         ...state,
-        cursor: new Date(state.cursor.getTime() - OVERLAP_DAYS * DAY_MS),
-        stopReason:
-          emptyPages >= EMPTY_PAGE_THRESHOLD
-            ? "empty_page_threshold"
-            : undefined,
+        stopReason: "empty_page",
       };
     } else {
+      const fresh = [...state.fresh];
       let cachedHit = false;
+      let oldest = Infinity;
+
       for (const item of page) {
         const id = item?.id;
         if (typeof id === "number" && cacheIds.has(id)) {
           cachedHit = true;
-          break;
+        } else {
+          fresh.push(item);
+        }
+
+        const t = Date.parse(item.completed);
+        if (Number.isFinite(t)) {
+          oldest = Math.min(oldest, t);
         }
       }
 
       if (cachedHit) {
         state = {
           ...state,
+          fresh,
           stopReason: "cached_id",
         };
       } else {
-        const fresh = [...state.fresh, ...page];
-        let oldest = Infinity;
-
-        for (const item of page) {
-          const t = Date.parse(item.completed);
-          if (t !== null) {
-            oldest = Math.min(oldest, t);
-          }
-        }
-
         const next = Number.isFinite(oldest)
           ? new Date(oldest - 1)
           : new Date(state.cursor.getTime() - OVERLAP_DAYS * DAY_MS);
@@ -180,10 +180,8 @@ export async function fetchAllActivities(
         logger.warn("[MA Grid] Cursor did not move; ending pagination.");
       } else if (state.stopReason === "window_exceeded") {
         logger.log("[MA Grid] Cursor moved past window start; finishing.");
-      } else if (state.stopReason === "empty_page_threshold") {
-        logger.log(
-          "[MA Grid] Reached empty page threshold; stopping pagination."
-        );
+      } else if (state.stopReason === "empty_page") {
+        logger.log("[MA Grid] Received empty page from API; stopping pagination.");
       }
       break;
     }
@@ -208,14 +206,17 @@ export async function fetchAllActivities(
 
   const activities = [...byId.values(), ...withoutId].filter((item) => {
     const t = Date.parse(item.completed);
-    return t != null && t >= windowStartMs && t <= windowEndMs;
+    return Number.isFinite(t) && t >= windowStartMs && t <= windowEndMs;
   });
 
-  activities.sort(
-    (a, b) =>
-      (Date.parse(b.completed) ?? -Infinity) -
-      (Date.parse(a.completed) ?? -Infinity)
-  );
+  activities.sort((a, b) => {
+    const ta = Date.parse(a.completed);
+    const tb = Date.parse(b.completed);
+    return (
+      (Number.isFinite(tb) ? tb : -Infinity) -
+      (Number.isFinite(ta) ? ta : -Infinity)
+    );
+  });
 
   await storage.setItem(CACHE_KEY, {
     items: activities,

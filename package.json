@@ -1,6 +1,6 @@
 {
   "name": "ma-grid",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "GitHub-style activity heatmap for Math Academy",
   "type": "module",
   "scripts": {
@@ -13,14 +13,19 @@
     "e2e:ui": "playwright test --ui",
     "test": "vitest run",
     "test:watch": "vitest",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
     "postinstall": "wxt prepare"
   },
   "devDependencies": {
     "@playwright/test": "^1.47.2",
     "@types/chrome": "^0.0.329",
     "dotenv": "^17.2.3",
+    "prettier": "^3.4.2",
     "typescript": "^5.0.0",
     "vitest": "^1.6.0",
-    "wxt": "^0.20.13"
-  }
+    "wxt": "^0.20.13",
+    "@types/bun": "latest"
+  },
+  "private": true
 }
