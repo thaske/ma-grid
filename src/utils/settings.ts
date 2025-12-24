@@ -1,5 +1,3 @@
-import { browser } from "#imports";
-
 export type UiAnchor = "incompleteTasks" | "sidebar";
 
 export const UI_ANCHOR_STORAGE_KEY = "maGridAnchor";

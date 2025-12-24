@@ -17,7 +17,9 @@ export function buildCalendarData(activities: Activity[]): CalendarData {
 
   const dailyMap = new Map<string, DailyXP>();
   activities.forEach((activity) => {
-    const date = new Date(activity.completed);
+    const completedMs = Date.parse(activity.completed);
+    if (!Number.isFinite(completedMs)) return;
+    const date = new Date(completedMs);
     const dateKey = formatDateKey(date);
 
     if (!dailyMap.has(dateKey)) {
@@ -31,6 +33,19 @@ export function buildCalendarData(activities: Activity[]): CalendarData {
     const dayData = dailyMap.get(dateKey)!;
     dayData.xp += activity.pointsAwarded;
   });
+
+  if (dailyMap.size === 0) {
+    return {
+      grid: [],
+      stats: {
+        activeDays: 0,
+        totalDays: 0,
+        streak: 0,
+        maxXP: 0,
+        avgXP: 0,
+      },
+    };
+  }
 
   // Get the last date and create 365-day range
   const maxDate = new Date(
