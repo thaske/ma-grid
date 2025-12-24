@@ -23,5 +23,16 @@ export default defineWxtModule((wxt) => {
     if (geckoId) {
       manifest.browser_specific_settings.gecko.id = geckoId;
     }
+
+    // Remove Chrome-specific use_dynamic_url property from web_accessible_resources
+    if (manifest.web_accessible_resources && Array.isArray(manifest.web_accessible_resources)) {
+      manifest.web_accessible_resources = manifest.web_accessible_resources.map((resource: any) => {
+        if (typeof resource === 'object' && resource !== null && 'use_dynamic_url' in resource) {
+          const { use_dynamic_url, ...rest } = resource;
+          return rest;
+        }
+        return resource;
+      });
+    }
   });
 });
