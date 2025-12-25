@@ -196,6 +196,22 @@ body {
   outline: 1px solid rgba(27, 31, 35, 0.3);
 }
 
+.ma-grid__cell--none {
+  background-color: #ebedf0;
+}
+
+.ma-grid__cell--low {
+  background-color: #9be9a8;
+}
+
+.ma-grid__cell--medium {
+  background-color: #40c463;
+}
+
+.ma-grid__cell--high {
+  background-color: #30a14e;
+}
+
 /* Legend */
 .ma-grid__legend {
   display: flex;
@@ -222,6 +238,22 @@ body {
   border-radius: 2px;
   outline: 1px solid rgba(27, 31, 35, 0.06);
   outline-offset: -1px;
+}
+
+.ma-grid__legend-box--none {
+  background-color: #ebedf0;
+}
+
+.ma-grid__legend-box--low {
+  background-color: #9be9a8;
+}
+
+.ma-grid__legend-box--medium {
+  background-color: #40c463;
+}
+
+.ma-grid__legend-box--high {
+  background-color: #30a14e;
 }
 
 /* Tooltip */
