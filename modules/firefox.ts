@@ -25,14 +25,23 @@ export default defineWxtModule((wxt) => {
     }
 
     // Remove Chrome-specific use_dynamic_url property from web_accessible_resources
-    if (manifest.web_accessible_resources && Array.isArray(manifest.web_accessible_resources)) {
-      manifest.web_accessible_resources = manifest.web_accessible_resources.map((resource: any) => {
-        if (typeof resource === 'object' && resource !== null && 'use_dynamic_url' in resource) {
-          const { use_dynamic_url, ...rest } = resource;
-          return rest;
+    if (
+      manifest.web_accessible_resources &&
+      Array.isArray(manifest.web_accessible_resources)
+    ) {
+      manifest.web_accessible_resources = manifest.web_accessible_resources.map(
+        (resource: any) => {
+          if (
+            typeof resource === "object" &&
+            resource !== null &&
+            "use_dynamic_url" in resource
+          ) {
+            const { use_dynamic_url, ...rest } = resource;
+            return rest;
+          }
+          return resource;
         }
-        return resource;
-      });
+      );
     }
   });
 });

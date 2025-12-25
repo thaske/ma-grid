@@ -1,10 +1,32 @@
-export { createCalendar, type CalendarLayout, type CalendarOptions } from "./calendar/Calendar";
-export { createCalendarDayCell, type CalendarDayCellOptions } from "./calendar/CalendarDayCell";
-export { createCalendarError, type CalendarErrorOptions } from "./calendar/CalendarError";
-export { createCalendarGrid, type CalendarGridOptions, type LayoutMetrics } from "./calendar/CalendarGrid";
-export { createCalendarHeader } from "./calendar/CalendarHeader";
-export { createCalendarLegend } from "./calendar/CalendarLegend";
-export { createCalendarLoading, type CalendarLoadingOptions } from "./calendar/CalendarLoading";
-export { createCalendarStats, type CalendarStatsOptions } from "./calendar/CalendarStats";
-export { createCalendarTooltip, type TooltipController } from "./calendar/CalendarTooltip";
-export { createElement, getXpColor, getXpLevel } from "./shared/createElement";
+export {
+  Calendar,
+  type CalendarLayout,
+  type CalendarProps,
+} from "./calendar/Calendar";
+export {
+  CalendarDayCell,
+  type CalendarDayCellProps,
+} from "./calendar/CalendarDayCell";
+export {
+  CalendarError,
+  type CalendarErrorProps,
+} from "./calendar/CalendarError";
+export {
+  CalendarGrid,
+  type CalendarGridProps,
+  type LayoutMetrics,
+} from "./calendar/CalendarGrid";
+export { CalendarHeader } from "./calendar/CalendarHeader";
+export { CalendarLegend } from "./calendar/CalendarLegend";
+export {
+  CalendarLoading,
+  type CalendarLoadingProps,
+} from "./calendar/CalendarLoading";
+export {
+  CalendarStats,
+  type CalendarStatsProps,
+} from "./calendar/CalendarStats";
+export {
+  CalendarTooltip,
+  type TooltipController,
+} from "./calendar/CalendarTooltip";

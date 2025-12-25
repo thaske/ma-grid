@@ -1,8 +1,7 @@
 import "@/assets/styles.css";
 import {
-  createCalendar,
-  createCalendarError,
-  createCalendarLoading,
+  CalendarError,
+  CalendarLoading,
   type CalendarLayout,
 } from "@/components";
 import type { CalendarResponse } from "@/types";
@@ -18,13 +17,6 @@ import {
   isUiAnchor,
   type UiAnchor,
 } from "@/utils/settings";
-
-const LAYOUT_METRICS = {
-  default: { cellSize: 10, cellGap: 2, labelWidth: 12 },
-  sidebar: { cellSize: 12, cellGap: 2, labelWidth: 12 },
-} as const;
-
-const SIDEBAR_WEEKS = 22;
 
 export default defineContentScript({
   matches: [
@@ -109,32 +101,8 @@ export default defineContentScript({
           logger.log("[MA-Grid] Dashboard detected, injecting calendar");
           container.textContent = "";
 
-          const loading = createCalendarLoading({ layout });
+          const loading = <CalendarLoading layout={layout} />;
           container.append(loading);
-
-          // Extract calendar rendering into reusable function
-          const renderCalendar = (
-            displayData: CalendarResponse["data"]
-          ): HTMLElement => {
-            if (!displayData) {
-              throw new Error("No calendar data provided");
-            }
-
-            const metrics = LAYOUT_METRICS[layout];
-            let grid = displayData.grid;
-            if (layout === "sidebar" && displayData.grid.length > 0) {
-              const columns = displayData.grid[0].length;
-              if (columns > SIDEBAR_WEEKS) {
-                grid = displayData.grid.map((row) => row.slice(-SIDEBAR_WEEKS));
-              }
-            }
-
-            return createCalendar({
-              data: { grid, stats: displayData.stats },
-              layout,
-              metrics,
-            });
-          };
 
           void (async () => {
             try {
@@ -149,7 +117,9 @@ export default defineContentScript({
                   "[MA-Grid] Rendering stale calendar, waiting for fresh data..."
                 );
 
-                const calendar = renderCalendar(response.data);
+                const calendar = (
+                  <Calendar data={response.data} layout={layout} />
+                );
                 calendar.classList.add("ma-grid--refreshing");
                 container.append(calendar);
 
@@ -163,7 +133,9 @@ export default defineContentScript({
                     logger.log(
                       "[MA-Grid] Received fresh data, updating calendar"
                     );
-                    const freshCalendar = renderCalendar(message.data);
+                    const freshCalendar = (
+                      <Calendar data={message.data} layout={layout} />
+                    );
                     calendar.replaceWith(freshCalendar);
                     browser.runtime.onMessage.removeListener(messageListener);
                   }
@@ -180,26 +152,29 @@ export default defineContentScript({
                   "[MA-Grid] Error from service worker:",
                   response.error
                 );
-                const error = createCalendarError({
-                  message: response.error,
-                  layout,
-                });
+                const error = (
+                  <CalendarError message={response.error} layout={layout} />
+                );
                 container.append(error);
                 return;
               }
 
               if (!response.data) {
                 logger.error("[MA-Grid] No data received");
-                const error = createCalendarError({
-                  message: "No activity data available",
-                  layout,
-                });
+                const error = (
+                  <CalendarError
+                    message="No activity data available"
+                    layout={layout}
+                  />
+                );
                 container.append(error);
                 return;
               }
 
               // Render fresh calendar data
-              const calendar = renderCalendar(response.data);
+              const calendar = (
+                <Calendar data={response.data} layout={layout} />
+              );
               container.append(calendar);
 
               logger.log("[MA-Grid] Calendar injected successfully");
@@ -207,13 +182,16 @@ export default defineContentScript({
               logger.error("[MA-Grid] Failed to load calendar:", error);
               loading.remove();
 
-              const errorMsg = createCalendarError({
-                message:
-                  error instanceof Error
-                    ? error.message
-                    : "Failed to load activity data",
-                layout,
-              });
+              const errorMsg = (
+                <CalendarError
+                  message={
+                    error instanceof Error
+                      ? error.message
+                      : "Failed to load activity data"
+                  }
+                  layout={layout}
+                />
+              );
               container.append(errorMsg);
             }
           })();

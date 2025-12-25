@@ -102,9 +102,7 @@ export async function fetchAllActivities(
 
     const response = await fetch(url, { credentials: "include" });
     if (!response.ok) {
-      const statusText = response.statusText
-        ? ` ${response.statusText}`
-        : "";
+      const statusText = response.statusText ? ` ${response.statusText}` : "";
       throw new Error(`Request failed: ${response.status}${statusText}`);
     }
     const page = await response.json();
@@ -181,7 +179,9 @@ export async function fetchAllActivities(
       } else if (state.stopReason === "window_exceeded") {
         logger.log("[MA Grid] Cursor moved past window start; finishing.");
       } else if (state.stopReason === "empty_page") {
-        logger.log("[MA Grid] Received empty page from API; stopping pagination.");
+        logger.log(
+          "[MA Grid] Received empty page from API; stopping pagination."
+        );
       }
       break;
     }

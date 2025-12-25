@@ -6,5 +6,6 @@ export default defineConfig({
   test: {
     include: ["tests/**/*.test.ts"],
     exclude: ["scratch/**"],
+    environment: "happy-dom",
   },
 });

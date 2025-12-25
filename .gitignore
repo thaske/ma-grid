@@ -13,3 +13,4 @@
 **/*.xcshareddata/WorkspaceSettings.xcsettings
 **/*.xcuserstate
 **/build
+/.playwright-mcp
