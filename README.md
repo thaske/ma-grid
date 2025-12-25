@@ -4,17 +4,17 @@ MA Grid is a web extension that displays a GitHub-style activity heatmap on Math
 
 This project is still in very early development. If you have any feature ideas or bugs, you're welcome to open an issue.
 
-<a href="https://chromewebstore.google.com/detail/ma-grid/dbjdnjifbemgnefeidoeicnjhdlanflh">
-  <img src="https://developer.chrome.com/static/docs/webstore/branding/image/iNEddTyWiMfLSwFD6qGq.png" height="50px">
-</a>
-<a href="https://addons.mozilla.org/en-US/firefox/addon/ma-grid/">
-  <img src="https://extensionworkshop.com/assets/img/documentation/publish/get-the-addon-178x60px.dad84b42.png" height="50px">
-</a>
+<a href="https://chromewebstore.google.com/detail/ma-grid/dbjdnjifbemgnefeidoeicnjhdlanflh"><img src="https://developer.chrome.com/static/docs/webstore/branding/image/iNEddTyWiMfLSwFD6qGq.png" height="50px"></a>
+<a href="https://addons.mozilla.org/en-US/firefox/addon/ma-grid/"><img src="https://extensionworkshop.com/assets/img/documentation/publish/get-the-addon-178x60px.dad84b42.png" height="50px"></a>
 
 # Screenshots
 
-<img src="./assets/screenshot_1.png" width="400px">
-<img src="./assets/screenshot_2.png" width="400px">
+<table>
+  <tr>
+    <td><img src="./assets/screenshot_1.png" width="400" alt="Screenshot 1"></td>
+    <td><img src="./assets/screenshot_2.png" width="400" alt="Screenshot 2"></td>
+  </tr>
+</table>
 
 # Development
 
