@@ -1,47 +1,14 @@
 import { expect, test } from "./fixtures";
 import { PopupPage } from "./pages/popup";
 
-const USERNAME = process.env.MATHACADEMY_USERNAME;
-const PASSWORD = process.env.MATHACADEMY_PASSWORD;
+const MOCK_URL = "http://localhost:3456/learn";
 
 test.describe("MA Grid Extension", () => {
-  test.skip(
-    !USERNAME || !PASSWORD,
-    "Set MATHACADEMY_USERNAME and MATHACADEMY_PASSWORD to run these tests."
-  );
-
-  test.beforeAll(async ({ page }) => {
-    // Try navigating to /learn first to check if already logged in
-    await page.goto("https://mathacademy.com/learn", {
-      waitUntil: "domcontentloaded",
-    });
-
-    // If we're redirected to /login or /session-expired, we need to log in
-    const needsLogin =
-      page.url().includes("/login") || page.url().includes("/session-expired");
-
-    if (needsLogin) {
-      await page.goto("https://mathacademy.com/login");
-      await page.locator("#usernameOrEmail").fill(USERNAME ?? "");
-      await page.locator("#password").fill(PASSWORD ?? "");
-      await page.locator("form").press("Enter");
-
-      await page.waitForURL(
-        (url) =>
-          url.hostname === "mathacademy.com" &&
-          !url.pathname.startsWith("/login"),
-        { timeout: 30_000 }
-      );
-      await page.waitForLoadState("networkidle");
-    }
-    // Otherwise we're already logged in, no action needed
-  });
-
   test("should load extension and display calendar on dashboard", async ({
     page,
   }) => {
-    // Navigate to dashboard (already logged in from beforeAll)
-    await page.goto("https://mathacademy.com/learn", {
+    // Navigate to mock dashboard
+    await page.goto(MOCK_URL, {
       waitUntil: "domcontentloaded",
     });
     await page.waitForLoadState("networkidle");
@@ -90,8 +57,8 @@ test.describe("MA Grid Extension", () => {
     context,
     extensionId,
   }) => {
-    // Navigate to dashboard (already logged in from beforeAll)
-    await page.goto("https://mathacademy.com/learn", {
+    // Navigate to mock dashboard
+    await page.goto(MOCK_URL, {
       waitUntil: "domcontentloaded",
     });
 
@@ -146,8 +113,8 @@ test.describe("MA Grid Extension", () => {
     context,
     extensionId,
   }) => {
-    // Navigate to dashboard (already logged in from beforeAll)
-    await page.goto("https://mathacademy.com/learn", {
+    // Navigate to mock dashboard
+    await page.goto(MOCK_URL, {
       waitUntil: "domcontentloaded",
     });
     await page.waitForLoadState("networkidle");
@@ -181,8 +148,8 @@ test.describe("MA Grid Extension", () => {
     context,
     extensionId,
   }) => {
-    // Navigate to dashboard (already logged in from beforeAll)
-    await page.goto("https://mathacademy.com/learn", {
+    // Navigate to mock dashboard
+    await page.goto(MOCK_URL, {
       waitUntil: "domcontentloaded",
     });
     await page.waitForLoadState("networkidle");
@@ -212,15 +179,10 @@ test.describe("MA Grid Extension", () => {
 
     // Go back to main page and verify calendar shows loading UI
     await page.bringToFront();
-    await page.reload({ waitUntil: "domcontentloaded" });
-    const showsLoadingUI = await page.evaluate(() => {
-      const shadowHost = document.querySelector("ma-grid-ui");
-      if (!shadowHost?.shadowRoot) return false;
-      const loading = shadowHost.shadowRoot.querySelector(".ma-grid__loading");
-      return loading !== null;
-    });
-
-    await page.waitForTimeout(500);
-    expect(showsLoadingUI).toBe(true);
+    await page.reload();
+    const loading = page
+      .locator("ma-grid-ui")
+      .locator(".ma-grid__loading");
+    await expect(loading).toBeVisible();
   });
 });

@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "wxt",
     "build": "wxt zip",
-    "build:unminified": "MINIFY=false wxt zip",
     "dev:firefox": "wxt --browser firefox --mv2",
     "build:firefox": "wxt zip --browser firefox --mv2",
     "e2e": "playwright test",

@@ -1,0 +1,365 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Math Academy - Mock</title>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="/img/favicon.ico" />
+    <link rel="stylesheet" href="/css/app.css" />
+    <link rel="stylesheet" href="/css/student-tasks.css" />
+  </head>
+  <body>
+    <div id="topRibbon"></div>
+    <div id="wrap">
+      <div id="topBarContainer">
+        <table style="width: 1080px">
+          <tr>
+            <td style="width: 100px">
+              <a href="/"
+                ><img class="logo" src="/img/math-academy-350-logo.png"
+              /></a>
+            </td>
+            <td>
+              <div id="headerLinks">
+                <a id="learnHeaderLink" class="headerLink" href="/learn"
+                  >LEARN</a
+                >
+                <a id="coursesHeaderLink" class="headerLink">COURSES</a>
+              </div>
+
+              <div id="coursesMenu">
+                <table
+                  id="coursesMenu-coursesTable"
+                  cellspacing="0"
+                  cellpadding="0"
+                >
+                  <tr>
+                    <td
+                      class="coursesMenu-categoryList"
+                      style="padding-right: 15px"
+                    >
+                      <div class="coursesMenu-categoryHeader">High School</div>
+                      <div class="coursesMenu-course">
+                        <a
+                          class="coursesMenu-courseLink"
+                          href="/courses/algebra-i"
+                          >Algebra I</a
+                        >
+                      </div>
+                      <div class="coursesMenu-course">
+                        <a
+                          class="coursesMenu-courseLink"
+                          href="/courses/geometry"
+                          >Geometry</a
+                        >
+                      </div>
+                      <div class="coursesMenu-course">
+                        <a
+                          class="coursesMenu-courseLink"
+                          href="/courses/algebra-ii"
+                          >Algebra II</a
+                        >
+                      </div>
+                      <div class="coursesMenu-course">
+                        <a
+                          class="coursesMenu-courseLink"
+                          href="/courses/precalculus"
+                          >Precalculus</a
+                        >
+                      </div>
+                    </td>
+                    <td class="coursesMenu-categoryList">
+                      <div class="coursesMenu-categoryHeader">University</div>
+                      <div class="coursesMenu-course">
+                        <a
+                          class="coursesMenu-courseLink"
+                          href="/courses/calculus-i"
+                          >Calculus I</a
+                        >
+                      </div>
+                      <div class="coursesMenu-course">
+                        <a
+                          class="coursesMenu-courseLink"
+                          href="/courses/linear-algebra"
+                          >Linear Algebra</a
+                        >
+                      </div>
+                      <div class="coursesMenu-course">
+                        <a
+                          class="coursesMenu-courseLink"
+                          href="/courses/discrete-mathematics"
+                          >Discrete Mathematics</a
+                        >
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+                <div style="margin-top: 20px">
+                  <span id="coursesMenu-underDevelopment"
+                    >Currently under development</span
+                  >
+                </div>
+              </div>
+            </td>
+            <td style="width: 250px">
+              <div id="topMenu">
+                <div id="userHeader">JD</div>
+                <div id="userMenu">
+                  <div id="userMenu-info">
+                    <div id="userMenu-name">John Doe</div>
+                    <div id="userMenu-username">jdoe</div>
+                  </div>
+                  <div class="headerMenuItem">Settings</div>
+                  <div class="headerMenuItem">Support</div>
+                  <div class="headerMenuItem">Logout</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div id="content">
+        <div id="container">
+          <div id="sidebar">
+            <div id="courseFrame" class="sidebarFrame">
+              <div id="courseHeader">
+                <table>
+                  <tr>
+                    <td id="courseName">
+                      <a id="courseNameLink" href="/courses/111/progress"
+                        >Mathematical<br />Foundations II</a
+                      >
+                    </td>
+                    <td id="courseProgress">
+                      <div id="coursePercentComplete">98%</div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div id="estimatedCompletion">
+                Estimated completion is
+                <span style="font-weight: bold; color: rgb(30, 25, 78)"
+                  >Tue, December 30</span
+                >
+              </div>
+            </div>
+
+            <div id="xpFrame" class="sidebarFrame">
+              <div id="overallXPFrame">
+                <div id="xpEarned">TOTAL EARNED</div>
+                <div id="totalXP">6164 XP</div>
+              </div>
+
+              <div id="dailyGoalFrame">
+                <div id="todaysGoalHeader">Today</div>
+                <table id="dailyGoalTable">
+                  <tr>
+                    <td id="dailyGoalProgressBarFrame">
+                      <div id="dailyGoalProgressBar" style="width: 22.5%"></div>
+                    </td>
+                    <td id="dailyGoalPoints">9/40 XP</td>
+                  </tr>
+                </table>
+              </div>
+
+              <div id="weeklyActivityFrame">
+                <div id="thisWeekHeader">This Week</div>
+                <div id="thisWeekTotalXP">213 XP</div>
+                <div id="activityWidget">
+                  <div id="activityWidget-yAxis">
+                    <div class="yAxisTick" style="top: 10px">100</div>
+                    <div class="yAxisTick" style="top: 80px">50</div>
+                    <div class="yAxisTick" style="top: 150px">0</div>
+                  </div>
+                  <div id="activityWidget-main">
+                    <div class="yAxisGridLine" style="top: 17px"></div>
+                    <div class="yAxisGridLine" style="top: 87px"></div>
+                    <div
+                      class="dayActivity"
+                      style="left: 13px; top: 98px; height: 61px"
+                    ></div>
+                    <div
+                      class="dayActivity"
+                      style="left: 56px; top: 123px; height: 37px"
+                    ></div>
+                    <div
+                      class="dayActivity"
+                      style="left: 98px; top: 134px; height: 26px"
+                    ></div>
+                    <div
+                      class="dayActivity"
+                      style="left: 140px; top: 73px; height: 87px"
+                    ></div>
+                    <div
+                      class="dayActivity"
+                      style="left: 182px; top: 111px; height: 49px"
+                    ></div>
+                    <div
+                      class="dayActivity"
+                      style="left: 224px; top: 129px; height: 31px"
+                    ></div>
+                    <div
+                      class="dayActivity"
+                      style="left: 266px; top: 147px; height: 13px"
+                    ></div>
+                  </div>
+                  <div id="activityWidget-daysOfWeek">
+                    <div class="dayOfWeek">T</div>
+                    <div class="dayOfWeek">F</div>
+                    <div class="dayOfWeek">S</div>
+                    <div class="dayOfWeek">S</div>
+                    <div class="dayOfWeek">M</div>
+                    <div class="dayOfWeek">T</div>
+                    <div class="dayOfWeek">W</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="leaderboardFrame" class="sidebarFrame">
+              <div id="leaderboardHeader">
+                <div id="leaderboardHeaderContentFrame">
+                  <table id="leaderboardHeaderContent">
+                    <tr>
+                      <td>
+                        <div id="leaderboardLeagueColor" class="sapphire"></div>
+                      </td>
+                      <td id="leaderboardLeagueName">Sapphire League</td>
+                    </tr>
+                  </table>
+                </div>
+                <div id="leaderboardTimeRemaining">4 days left</div>
+              </div>
+              <div id="leaderboardTableFrame">
+                <table id="leaderboardTable">
+                  <tr>
+                    <td
+                      class="leaderboardUserRank leaderboardTextPromotionZone"
+                    >
+                      1
+                    </td>
+                    <td class="leaderboardUserName">jdoe</td>
+                    <td class="leaderboardUserPoints">213 XP</td>
+                  </tr>
+                  <tr>
+                    <td class="leaderboardUserRank">2</td>
+                    <td class="leaderboardUserName">student-2</td>
+                    <td class="leaderboardUserPoints">198 XP</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="taskAnswersFrame">
+            <div id="taskAnswersFrameHeader">
+              <div id="taskBackButton"></div>
+            </div>
+          </div>
+
+          <div id="incompleteTasks">
+            <div
+              id="task-7610352"
+              class="taskUnlocked"
+              progress="0"
+              style="margin-top: 5px"
+            >
+              <div class="taskHeader">
+                <img class="unlockedIcon" src="/img/unlocked.png" />
+                <span class="taskTypeUnlocked">Lesson</span>
+                <div class="taskPointsUnlocked">10 XP</div>
+              </div>
+              <div class="taskNameUnlocked">
+                Determining Polynomial Coefficients Using the Factor Theorem
+              </div>
+              <div class="taskDetails">
+                <div class="taskPrerequisites">
+                  <div class="taskPrerequisitesHeader">Prerequisites</div>
+                  <div class="taskPrerequisite">
+                    <img
+                      class="prerequisiteCheckmark"
+                      src="/img/green-checkmark.png"
+                    />
+                    <a class="taskPrerequisiteLink" href="/topics/846"
+                      >The Factor Theorem</a
+                    >
+                  </div>
+                </div>
+                <div class="taskButtons">
+                  <a
+                    class="taskStartButton button"
+                    href="/tasks/7610352/topics/3738/lesson"
+                    >Start</a
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div
+              id="task-7610445"
+              class="taskUnlocked"
+              progress="0"
+              style="margin-top: 5px"
+            >
+              <div class="taskHeader">
+                <img class="unlockedIcon" src="/img/unlocked.png" />
+                <span class="taskTypeUnlocked">Lesson</span>
+                <div class="taskPointsUnlocked">12 XP</div>
+              </div>
+              <div class="taskNameUnlocked">
+                Inverses of Quadratic Functions
+              </div>
+              <div class="taskDetails">
+                <div class="taskPrerequisites">
+                  <div class="taskPrerequisitesHeader">Prerequisites</div>
+                  <div class="taskPrerequisite">
+                    <img
+                      class="prerequisiteCheckmark"
+                      src="/img/green-checkmark.png"
+                    />
+                    <a class="taskPrerequisiteLink" href="/topics/627"
+                      >Calculating the Inverse of a Function</a
+                    >
+                  </div>
+                </div>
+                <div class="taskButtons">
+                  <a
+                    class="taskStartButton button"
+                    href="/tasks/7610445/topics/3830/lesson"
+                    >Start</a
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div
+              id="task-7618744"
+              class="taskUnlocked"
+              progress="0"
+              style="margin-top: 5px"
+            >
+              <div class="taskHeader">
+                <img class="unlockedIcon" src="/img/unlocked.png" />
+                <span class="taskTypeUnlocked">Review</span>
+                <div class="taskPointsUnlocked">8 XP</div>
+              </div>
+              <div class="taskNameUnlocked">
+                Solving Logarithmic Equations by Combining the Laws of
+                Logarithms
+              </div>
+              <div class="taskDetails">
+                <div class="taskButtons">
+                  <a
+                    class="taskStartButton button"
+                    href="/tasks/7618744/topics/3832/review"
+                    >Start</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

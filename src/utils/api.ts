@@ -40,12 +40,9 @@ type PaginationState = {
 };
 
 export async function fetchAllActivities(
-  hostname: string
+  origin: string
 ): Promise<Activity[]> {
-  logger.log(
-    "[MA Grid] Activity base URL:",
-    `https://${hostname}/api/previous-tasks/`
-  );
+  logger.log("[MA Grid] Activity base URL:", `${origin}/api/previous-tasks/`);
 
   const cached = await readCache();
   if (cached.length > 0) {
@@ -98,7 +95,7 @@ export async function fetchAllActivities(
     const cursorParam = encodeURIComponent(
       `${weekday} ${month} ${day} ${year} ${hour}:${minute}:${second} ${offset} (${tzName})`
     );
-    const url = `https://${hostname}/api/previous-tasks/${cursorParam}`;
+    const url = `${origin}/api/previous-tasks/${cursorParam}`;
 
     const response = await fetch(url, { credentials: "include" });
     if (!response.ok) {

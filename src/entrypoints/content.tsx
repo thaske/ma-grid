@@ -22,6 +22,7 @@ export default defineContentScript({
   matches: [
     "https://mathacademy.com/learn",
     "https://www.mathacademy.com/learn",
+    "http://localhost:*/learn",
   ],
   cssInjectionMode: "ui",
   async main(ctx) {
