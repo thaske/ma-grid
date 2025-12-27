@@ -26,7 +26,6 @@ export const test = base.extend<{
     await context.close();
   },
   page: async ({ context }, use) => {
-    // Get the first page from the persistent context
     const pages = context.pages();
     const page = pages.length > 0 ? pages[0] : await context.newPage();
     await use(page);

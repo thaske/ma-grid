@@ -180,7 +180,6 @@ export const generateMockTasksData = async (): Promise<MockTask[]> => {
     return cachedTasks;
   } catch (error) {
     console.error("Failed to generate mock tasks:", error);
-    // Fallback mock data if generation fails
     const completed = new Date();
     return [
       {

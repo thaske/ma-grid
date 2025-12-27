@@ -13,7 +13,6 @@ export function Grid(
   onCellHover: (day: DailyXP, x: number, y: number) => void,
   onCellLeave: () => void
 ): HTMLElement {
-  // Calculate month positions
   let currentMonth: string | null = null;
   const monthPositions: { label: string; colStart: number }[] = [];
 
@@ -36,11 +35,9 @@ export function Grid(
 
   const cellWithGap = metrics.cellSize + metrics.cellGap;
 
-  // Create wrapper
   const wrapper = document.createElement("div");
   wrapper.className = "ma-grid__wrapper";
 
-  // Create month labels container
   const monthLabels = document.createElement("div");
   monthLabels.className = "ma-grid__month-labels";
   monthLabels.style.position = "relative";
@@ -54,11 +51,9 @@ export function Grid(
     monthLabels.appendChild(label);
   });
 
-  // Create grid container
   const gridContainer = document.createElement("div");
   gridContainer.className = "ma-grid__grid";
 
-  // Create weekday labels
   const weekdayLabels = document.createElement("div");
   weekdayLabels.className = "ma-grid__weekday-labels";
 
@@ -69,7 +64,6 @@ export function Grid(
     weekdayLabels.appendChild(label);
   });
 
-  // Create days container
   const daysContainer = document.createElement("div");
   daysContainer.className = "ma-grid__days";
 

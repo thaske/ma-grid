@@ -27,13 +27,11 @@ const server = Bun.serve({
         return Response.json(page);
       },
     },
-    // Serve static assets
     "/*": {
       GET: async (req) => {
         const url = new URL(req.url);
-        let filePath = url.pathname.slice(1); // Remove leading slash
+        let filePath = url.pathname.slice(1);
 
-        // Try to serve the file from the public directory.
         const publicPath = join(PUBLIC_DIR, filePath);
         const publicFile = Bun.file(publicPath);
 

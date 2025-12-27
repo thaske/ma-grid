@@ -23,10 +23,8 @@ export function Calendar(
   const metrics = LAYOUT_METRICS[layout];
   const { cellSize, cellGap, labelWidth } = metrics;
 
-  // Create tooltip controller
   const tooltip = Tooltip();
 
-  // Create container
   const container = document.createElement("div");
   container.id = CALENDAR_CONTAINER_ID;
   container.className =
@@ -35,7 +33,6 @@ export function Calendar(
   container.style.setProperty("--cell-gap", `${cellGap}px`);
   container.style.setProperty("--label-width", `${labelWidth}px`);
 
-  // Append children
   container.appendChild(Header());
   container.appendChild(Stats(data.stats));
   container.appendChild(Grid(grid, metrics, tooltip.show, tooltip.hide));

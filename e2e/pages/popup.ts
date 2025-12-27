@@ -58,8 +58,6 @@ export class PopupPage {
   }
 
   async waitForCacheCleared(): Promise<void> {
-    // Skip checking "Clearing..." - it's too fast to reliably test
-    // Just wait for the final "Cleared" state
     await expect(this.clearCacheButton).toHaveText("Cleared", {
       timeout: 5000,
     });

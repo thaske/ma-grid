@@ -47,7 +47,6 @@ export function buildCalendarData(activities: Activity[]): CalendarData {
     };
   }
 
-  // Get the last date and create 365-day range
   const maxDate = new Date(
     Math.max(
       ...Array.from(dailyMap.keys()).map((d) => parseDateKey(d).getTime())
@@ -60,7 +59,6 @@ export function buildCalendarData(activities: Activity[]): CalendarData {
   const startDate = new Date(endDate);
   startDate.setDate(startDate.getDate() - 364); // 365 days inclusive
 
-  // Align to week boundaries (Sunday to Saturday)
   const daysSinceSunday = (startDate.getDay() + 7) % 7;
   const alignedStartDate = new Date(startDate);
   alignedStartDate.setDate(alignedStartDate.getDate() - daysSinceSunday);
@@ -69,14 +67,12 @@ export function buildCalendarData(activities: Activity[]): CalendarData {
   const alignedEndDate = new Date(endDate);
   alignedEndDate.setDate(alignedEndDate.getDate() + daysUntilSaturday);
 
-  // Create grid data (7 rows x ~53 columns)
   const grid: DailyXP[][] = Array.from({ length: 7 }, () => []);
 
   const currentDate = new Date(alignedStartDate);
   let weekIndex = 0;
 
   while (currentDate <= alignedEndDate && weekIndex < 53) {
-    // Process one week at a time
     for (let day = 0; day < 7; day++) {
       const dateKey = formatDateKey(currentDate);
       const dayData = dailyMap.get(dateKey);
@@ -94,7 +90,6 @@ export function buildCalendarData(activities: Activity[]): CalendarData {
     weekIndex++;
   }
 
-  // Calculate statistics
   const allDays = grid.flat();
   const activeDays = allDays.filter((d) => d.xp > 0);
   const totalActiveDays = activeDays.length;
@@ -107,11 +102,7 @@ export function buildCalendarData(activities: Activity[]): CalendarData {
         )
       : 0;
 
-  // Calculate current streak from today going backwards
   let streak = 0;
-  // Reuse today's date key for streak checks
-
-  // Start from today; if today has no activity, start from yesterday
   let checkDate = parseDateKey(todayKey);
   const todayData = dailyMap.get(todayKey);
   if (!todayData || todayData.xp === 0) {

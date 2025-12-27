@@ -23,11 +23,9 @@ export function App(layout: "sidebar" | "default"): HTMLElement {
         return;
       }
 
-      // Replace loading with calendar
       const calendar = Calendar(response.data, layout);
       container.parentNode?.replaceChild(calendar, container);
 
-      // Listen for background refresh
       if (response.isStale) {
         const messageListener = (message: any) => {
           if (

@@ -23,7 +23,6 @@ export default defineBackground({
             const isFresh = await isCacheFresh();
             const cached = await readCache();
 
-            // Case 1: Fresh cache - return immediately
             if (isFresh && cached.length > 0) {
               logger.log(
                 "[MA-Grid] Returning fresh cached data:",
@@ -35,7 +34,6 @@ export default defineBackground({
               return;
             }
 
-            // Case 2: Stale cache exists - return immediately and refresh in background
             if (!isFresh && cached.length > 0) {
               logger.log(
                 "[MA-Grid] Returning stale cached data, refreshing in background..."
@@ -43,14 +41,12 @@ export default defineBackground({
               const staleData = buildCalendarData(cached);
               sendResponse({ data: staleData, isStale: true });
 
-              // Trigger background refresh (fire-and-forget)
               void (async () => {
                 try {
                   logger.log("[MA-Grid] Starting background refresh...");
                   const activities = await fetchAllActivities(url.origin);
                   const freshData = buildCalendarData(activities);
 
-                  // Push fresh data to all /learn tabs
                   const tabs = await browser.tabs.query({
                     url: MATHACADEMY_MATCHES,
                   });
@@ -77,7 +73,6 @@ export default defineBackground({
               return;
             }
 
-            // Case 3: No cache - fetch fresh data
             logger.log("[MA-Grid] Cache empty, fetching fresh data...");
             const activities = await fetchAllActivities(url.origin);
             const calendarData = buildCalendarData(activities);
@@ -92,7 +87,6 @@ export default defineBackground({
           }
         })();
 
-        // Return true to indicate async response
         return true;
       }
     );

@@ -1,6 +1,5 @@
 import { join } from "path";
 
-// Public directory is one level up from src/
 export const PUBLIC_DIR = join(import.meta.dir, "../public");
 export const PORT = 3456;
 export const TASKS_PAGE_SIZE = 30;

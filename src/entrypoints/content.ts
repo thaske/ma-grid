@@ -22,7 +22,6 @@ export default defineContentScript({
     let hideXpFrame = DEFAULT_HIDE_XP_FRAME;
     let anchor = DEFAULT_UI_ANCHOR;
 
-    // Load initial values
     const result = await browser.storage.local.get([
       HIDE_XP_FRAME_STORAGE_KEY,
       UI_ANCHOR_STORAGE_KEY,
@@ -81,7 +80,6 @@ export default defineContentScript({
       currentUI = host;
     }
 
-    // Add storage listener
     browser.storage.onChanged.addListener((changes, area) => {
       if (area !== "local") return;
 
