@@ -14,25 +14,12 @@ test.describe("MA Grid Extension", () => {
     await page.waitForLoadState("networkidle");
 
     // Wait for calendar to render (not just the shadow host)
-    await page.waitForFunction(
-      () => {
-        const shadowHost = document.querySelector("ma-grid-ui");
-        if (!shadowHost?.shadowRoot) return false;
-        const cells = shadowHost.shadowRoot.querySelectorAll(".ma-grid__cell");
-        return cells.length > 0;
-      },
-      { timeout: 15000 }
-    );
+    page.locator("#ma-grid-ui").locator(".ma-grid__cell").first();
 
     // Verify calendar exists and has content
-    const calendarExists = await page.evaluate(() => {
-      const shadowHost = document.querySelector("ma-grid-ui");
-      if (!shadowHost?.shadowRoot) return false;
-      const cells = shadowHost.shadowRoot.querySelectorAll(".ma-grid__cell");
-      return cells.length > 0;
-    });
-
-    expect(calendarExists).toBe(true);
+    await expect(
+      page.locator("#ma-grid-ui").locator(".ma-grid__cell").first()
+    ).toBeVisible();
   });
 
   test("should open popup and display settings", async ({
@@ -63,15 +50,11 @@ test.describe("MA Grid Extension", () => {
     });
 
     // Wait for initial calendar in default position (not just loading state)
-    await page.waitForFunction(
-      () => {
-        const shadowHost = document.querySelector("ma-grid-ui");
-        if (!shadowHost?.shadowRoot) return false;
-        const cells = shadowHost.shadowRoot.querySelectorAll(".ma-grid__cell");
-        return cells.length > 0;
-      },
-      { timeout: 15000 }
-    );
+    await page
+      .locator("#ma-grid-ui")
+      .locator(".ma-grid__cell")
+      .first()
+      .waitFor();
 
     // Open popup and switch to sidebar
     const popupPage = await context.newPage();
@@ -81,31 +64,17 @@ test.describe("MA Grid Extension", () => {
 
     // Go back to main page and verify calendar moved
     await page.bringToFront();
-    await page.waitForTimeout(1000); // Wait for remount
-
-    const calendarInSidebar = await page.evaluate(() => {
-      const shadowHost = document.querySelector("ma-grid-ui");
-      if (!shadowHost?.shadowRoot) return false;
-      const container = shadowHost.shadowRoot.querySelector(".ma-grid");
-      return container?.classList.contains("ma-grid--sidebar") ?? false;
-    });
-
-    expect(calendarInSidebar).toBe(true);
+    await expect(
+      page.locator("#ma-grid-ui").locator(".ma-grid.ma-grid--sidebar")
+    ).toBeVisible();
 
     // Switch back to dashboard
     await popupPage.bringToFront();
     await popup.selectAnchor("incompleteTasks");
     await page.bringToFront();
-    await page.waitForTimeout(1000);
-
-    const calendarInDashboard = await page.evaluate(() => {
-      const shadowHost = document.querySelector("ma-grid-ui");
-      if (!shadowHost?.shadowRoot) return false;
-      const container = shadowHost.shadowRoot.querySelector(".ma-grid");
-      return !container?.classList.contains("ma-grid--sidebar");
-    });
-
-    expect(calendarInDashboard).toBe(true);
+    await expect(
+      page.locator("#ma-grid-ui").locator(".ma-grid:not(.ma-grid--sidebar)")
+    ).toBeVisible();
   });
 
   test("should toggle XP frame visibility", async ({
@@ -120,10 +89,7 @@ test.describe("MA Grid Extension", () => {
     await page.waitForLoadState("networkidle");
 
     // Check initial XP frame visibility
-    const initiallyVisible = await page.evaluate(() => {
-      const xpFrame = document.querySelector<HTMLElement>("#xpFrame");
-      return xpFrame ? getComputedStyle(xpFrame).display !== "none" : false;
-    });
+    const initiallyVisible = await page.locator("#xpFrame").isVisible();
 
     // Open popup and toggle hide XP frame
     const popupPage = await context.newPage();
@@ -133,13 +99,7 @@ test.describe("MA Grid Extension", () => {
 
     // Verify XP frame visibility changed
     await page.bringToFront();
-    await page.waitForTimeout(500);
-
-    const afterToggleVisible = await page.evaluate(() => {
-      const xpFrame = document.querySelector<HTMLElement>("#xpFrame");
-      return xpFrame ? getComputedStyle(xpFrame).display !== "none" : false;
-    });
-
+    const afterToggleVisible = await page.locator("#xpFrame").isVisible();
     expect(afterToggleVisible).toBe(initiallyVisible);
   });
 
@@ -155,15 +115,7 @@ test.describe("MA Grid Extension", () => {
     await page.waitForLoadState("networkidle");
 
     // Wait for calendar to load (ensures cache is populated and loading is complete)
-    await page.waitForFunction(
-      () => {
-        const shadowHost = document.querySelector("ma-grid-ui");
-        if (!shadowHost?.shadowRoot) return false;
-        const cells = shadowHost.shadowRoot.querySelectorAll(".ma-grid__cell");
-        return cells.length > 0;
-      },
-      { timeout: 15000 }
-    );
+    page.locator("#ma-grid-ui").locator(".ma-grid__cell").first();
 
     // Open popup and clear cache
     const popupPage = await context.newPage();
@@ -180,9 +132,7 @@ test.describe("MA Grid Extension", () => {
     // Go back to main page and verify calendar shows loading UI
     await page.bringToFront();
     await page.reload();
-    const loading = page
-      .locator("ma-grid-ui")
-      .locator(".ma-grid__loading");
+    const loading = page.locator("#ma-grid-ui").locator(".ma-grid__loading");
     await expect(loading).toBeVisible();
   });
 });

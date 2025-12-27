@@ -1,16 +1,15 @@
 import type { DailyXP } from "@/types";
-import { ReactElement } from "jsx-dom";
 
 export interface TooltipController {
-  element: ReactElement;
+  element: HTMLElement;
   show: (day: DailyXP, x: number, y: number) => void;
   hide: () => void;
 }
 
-export function CalendarTooltip(_props?: {}): TooltipController {
-  const tooltip = (
-    <div className="ma-grid__tooltip" style={{ display: "none" }} />
-  );
+export function Tooltip(): TooltipController {
+  const tooltip = document.createElement("div");
+  tooltip.className = "ma-grid__tooltip";
+  tooltip.style.display = "none";
 
   const show = (day: DailyXP, x: number, y: number) => {
     const xpText = day.xp === 0 ? "No activity" : `${day.xp} XP`;
@@ -24,14 +23,11 @@ export function CalendarTooltip(_props?: {}): TooltipController {
       day: "numeric",
     });
 
-    const content = (
-      <>
-        <div className="ma-grid__tooltip-date">{dateText}</div>
-        <div className="ma-grid__tooltip-xp">{xpText}</div>
-      </>
-    );
+    tooltip.innerHTML = `
+      <div class="ma-grid__tooltip-date">${dateText}</div>
+      <div class="ma-grid__tooltip-xp">${xpText}</div>
+    `;
 
-    tooltip.replaceChildren(content);
     tooltip.style.display = "block";
 
     const offset = 10;

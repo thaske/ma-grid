@@ -1,6 +1,6 @@
 import { defineConfig } from "wxt";
 
-const host_permissions = {
+const HOST_PERMISSIONS = {
   production: [
     "https://www.mathacademy.com/learn",
     "https://mathacademy.com/learn",
@@ -17,23 +17,28 @@ const host_permissions = {
     "http://localhost:*/api/previous-tasks/*",
   ],
 };
-type HostPermissionMode = keyof typeof host_permissions;
-const mode = (import.meta.env.MODE as HostPermissionMode) ?? "production";
+type HostPermissionMode = keyof typeof HOST_PERMISSIONS;
 
 export default defineConfig({
   srcDir: "src",
   manifestVersion: 3,
-  // modules: ["./modules/safari.ts", "./modules/firefox.ts"],
   manifest: {
     name: "MA Grid",
     permissions: ["storage"],
-    host_permissions: host_permissions[mode],
+    host_permissions:
+      HOST_PERMISSIONS[import.meta.env.MODE! as HostPermissionMode],
     icons: {
       16: "icons/icon16.png",
       32: "icons/icon32.png",
       48: "icons/icon48.png",
       128: "icons/icon128.png",
     },
+    web_accessible_resources: [
+      {
+        resources: ["assets/styles.css"],
+        matches: ["<all_urls>"],
+      },
+    ],
   },
   vite: () => ({
     build: {

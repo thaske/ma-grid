@@ -2,6 +2,7 @@ import type { CalendarResponse } from "@/types";
 import { buildCalendarData } from "@/utils/aggregation";
 import { fetchAllActivities } from "@/utils/api";
 import { isCacheFresh, readCache } from "@/utils/cache";
+import { MATHACADEMY_MATCHES } from "@/utils/constants";
 import { logger } from "@/utils/logger";
 
 export default defineBackground({
@@ -51,11 +52,7 @@ export default defineBackground({
 
                   // Push fresh data to all /learn tabs
                   const tabs = await browser.tabs.query({
-                    url: [
-                      "https://mathacademy.com/learn",
-                      "https://www.mathacademy.com/learn",
-                      "http://localhost:*/learn",
-                    ],
+                    url: MATHACADEMY_MATCHES,
                   });
 
                   logger.log(

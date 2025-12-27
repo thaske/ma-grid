@@ -27,7 +27,9 @@ export class PopupPage {
   }
 
   async selectAnchor(position: "incompleteTasks" | "sidebar"): Promise<void> {
-    const radio = this.page.locator(`input[name="anchor"][value="${position}"]`);
+    const radio = this.page.locator(
+      `input[name="anchor"][value="${position}"]`
+    );
     await radio.waitFor({ state: "visible", timeout: 5000 });
     await radio.check();
   }
