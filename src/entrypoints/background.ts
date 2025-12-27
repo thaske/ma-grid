@@ -46,7 +46,7 @@ export default defineBackground({
               void (async () => {
                 try {
                   logger.log("[MA-Grid] Starting background refresh...");
-                  const activities = await fetchAllActivities(url.hostname);
+                  const activities = await fetchAllActivities(url.origin);
                   const freshData = buildCalendarData(activities);
 
                   // Push fresh data to all /learn tabs
@@ -54,6 +54,7 @@ export default defineBackground({
                     url: [
                       "https://mathacademy.com/learn",
                       "https://www.mathacademy.com/learn",
+                      "http://localhost:*/learn",
                     ],
                   });
 
@@ -81,7 +82,7 @@ export default defineBackground({
 
             // Case 3: No cache - fetch fresh data
             logger.log("[MA-Grid] Cache empty, fetching fresh data...");
-            const activities = await fetchAllActivities(url.hostname);
+            const activities = await fetchAllActivities(url.origin);
             const calendarData = buildCalendarData(activities);
 
             logger.log("[MA-Grid] Calendar data built:", calendarData.stats);

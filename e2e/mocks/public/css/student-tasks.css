@@ -1,0 +1,1416 @@
+body {
+  overflow-x: hidden;
+  background-color: white;
+}
+
+a#learnHeaderLink {
+  color: #0577c7;
+  border-bottom: 3px solid #0577c7;
+}
+
+a#courseHeaderLink {
+  border-bottom: 1px solid rgb(224, 224, 224);
+}
+
+div#container {
+  width: 1000px;
+}
+
+div#accountPausedContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+div#accountPausedFrame {
+  margin-left: 50px;
+  margin-top: 50px;
+  width: 700px;
+  border: 1px solid rgb(224, 224, 224);
+  border-radius: 5px;
+  padding: 20px;
+}
+
+div#accountPausedTitle {
+  font-size: 24px;
+  color: rgb(30, 25, 78);
+  text-align: center;
+}
+
+div#accountPausedMessage {
+  margin-top: 40px;
+}
+
+div#sidebar {
+  float: left;
+  top: 80px;
+  width: 350px;
+}
+
+/*********************************************************************************************************/
+
+#overallXPFrame {
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgb(224, 224, 224);
+  width: 350px;
+}
+
+#xpEarned {
+  font-size: 14px;
+  text-align: center;
+  color: rgb(148, 148, 148);
+  text-transform: uppercase;
+  margin-top: 20px;
+}
+
+#totalXP {
+  margin-top: 5px;
+  margin-bottom: 20px;
+  color: rgb(30, 25, 78);
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+}
+
+#todaysGoalHeader {
+  font-size: 14px;
+  text-align: center;
+  color: rgb(148, 148, 148);
+  text-transform: uppercase;
+  margin-top: 20px;
+}
+
+#weeklyXPFrame {
+  margin-bottom: 20px;
+  border-top: 1px solid rgb(224, 224, 224);
+}
+
+#thisWeekHeader {
+  font-size: 14px;
+  text-align: center;
+  color: rgb(148, 148, 148);
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+#thisWeekTotalXP {
+  margin-top: 5px;
+  margin-bottom: 20px;
+  color: rgb(30, 25, 78);
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/*********************************************************************************************************/
+
+div#taskAnswersFrame {
+  margin-left: 390px;
+  margin-top: 9px;
+  width: 750px;
+}
+
+div#incompleteTasks {
+  margin-left: 390px;
+  margin-top: 9px;
+  width: 750px;
+}
+
+div.courseName {
+  padding-top: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  width: 670px;
+  color: rgb(148, 148, 148);
+  padding-bottom: 30px;
+}
+
+div#unitsFrame {
+  margin-left: 390px;
+  margin-top: 9px;
+  width: 670px;
+}
+
+div.unitFrame {
+  border: 1px solid rgb(224, 224, 224);
+  border-radius: 5px;
+  width: 670px;
+  margin-left: 390px;
+  margin-top: 9px;
+  width: 670px;
+}
+
+div.unitName {
+  padding-top: 20px;
+  padding-bottom: 30px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  width: 670px;
+}
+
+div.unitCourseName {
+  padding-top: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  width: 670px;
+  color: rgb(148, 148, 148);
+}
+
+div.unitName {
+  padding-top: 5px;
+  padding-bottom: 30px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  width: 670px;
+}
+
+div.unitDepth {
+  display: flex;
+  justify-content: center;
+  width: 670px;
+  height: 50px;
+  margin-top: 20px;
+  padding-top: 10px;
+  padding-bottom: 90px;
+}
+
+div.unitIconFrame {
+  display: inline-block;
+  text-align: center;
+  width: 200px;
+  margin-bottom: 30px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+div.unitIcon {
+  margin: 0 auto;
+
+  cursor: pointer;
+  user-select: none;
+
+  text-align: center;
+  width: 76px;
+  height: 76px;
+
+  background-color: (248, 248, 248);
+  border: 1px solid rgb(224, 224, 224);
+  border-radius: 38px;
+}
+
+img.unitIconImg {
+  width: 65px;
+  height: 65px;
+}
+
+div.unitIconName {
+  margin-top: 14px;
+}
+
+div.topicDepth {
+  display: flex;
+  justify-content: center;
+  width: 670px;
+  height: 50px;
+  margin-top: 20px;
+  padding-top: 10px;
+  padding-bottom: 90px;
+}
+
+div.topicIconFrame {
+  display: inline-block;
+  text-align: center;
+  width: 200px;
+  margin-bottom: 50px;
+  margin-left: 10px;
+  margin-right: 10px;
+  height: 50px;
+}
+
+div.topicIcon {
+  margin: 0 auto;
+
+  cursor: pointer;
+  user-select: none;
+
+  text-align: center;
+  width: 76px;
+  height: 76px;
+
+  background-color: (248, 248, 248);
+  border: 1px solid rgb(224, 224, 224);
+  border-radius: 38px;
+}
+
+div.topicIconName {
+  margin-top: 14px;
+}
+
+div#selectingTasks {
+  padding: 15px;
+  font-size: 14px;
+  font-weight: bold;
+  color: rgb(30, 25, 78);
+  border: 1px solid rgb(234, 234, 234);
+  border-radius: 2px;
+  margin-bottom: 15px;
+  width: 650px;
+}
+
+div#completedTasks {
+  margin-left: 390px;
+  margin-top: 9px;
+  width: 750px;
+  padding-bottom: 30px;
+}
+
+div.completedTasksDate {
+  margin-top: 45px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: rgb(148, 148, 148);
+  text-align: center;
+}
+
+div#courseFrame {
+  width: 350px;
+  padding: 0px;
+}
+
+div#courseHeader {
+  text-transform: uppercase;
+  padding: 0px;
+}
+
+td#courseName {
+  width: 260px;
+  padding-top: 3px;
+  padding-top: 30px;
+  padding-left: 15px;
+  padding-bottom: 30px;
+}
+
+a#courseNameLink {
+  font-weight: bold;
+  font-size: 15px;
+  text-align: center;
+  color: rgb(30, 25, 78);
+  text-decoration: none;
+}
+
+td#courseProgress {
+  width: 50px;
+  text-align: right;
+  padding-right: 15px;
+}
+
+div.courseProgress {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgb(236, 236, 236);
+}
+
+div#estimatedCompletion {
+  border-top: 1px solid rgb(224, 224, 224);
+  padding-left: 15px;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  color: rgb(128, 128, 128);
+  cursor: default;
+}
+
+div#coursePoints {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: normal;
+  cursor: default;
+}
+
+div.coursePointsAhead {
+  font-weight: bold;
+  color: green;
+}
+
+div.coursePointsBehind {
+  font-weight: bold;
+  color: red;
+}
+
+div.coursePointsOnPace {
+  font-weight: bold;
+  color: rgb(128, 128, 128);
+}
+
+span.coursePointsPace {
+  color: rgb(128, 128, 128);
+}
+
+div.sidebarFrame {
+  margin-bottom: 20px;
+  border: 1px solid rgb(224, 224, 224);
+  border-radius: 3px;
+  width: 350px;
+  background-color: white;
+}
+
+div.sidebarHeader {
+  margin-top: 15px;
+  margin-left: 15px;
+  font-weight: bold;
+  font-size: 18px;
+  color: rgb(30, 25, 78);
+}
+
+div#progressFrame {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+div#coursePercentComplete {
+  font-size: 15px;
+  font-weight: normal;
+  color: rgb(64, 64, 64);
+  text-transform: none;
+  cursor: pointer;
+  user-select: none;
+
+  text-align: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  line-height: 56px;
+  background: rgb(240, 241, 242);
+}
+
+img#userBelt {
+  cursor: default;
+  max-height: 22px;
+}
+
+div#belt {
+  text-align: center;
+  font-weight: bold;
+  font-size: 36px;
+  color: rgb(30, 25, 78);
+}
+
+div#pointsText {
+  text-align: center;
+  margin-top: 5px;
+  font-size: 14px;
+  color: rgb(128, 128, 128);
+}
+
+div#progressMessage {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 15px;
+  color: rgb(128, 128, 128);
+}
+
+div#dailyGoalFrame {
+  position: relative;
+  height: 77px;
+}
+
+table#dailyGoalTable {
+  margin-left: 15px;
+  margin-top: 15px;
+  width: 320px;
+  height: 20px;
+}
+
+td#dailyGoalProgressBarFrame {
+  background: rgb(240, 241, 242);
+  height: 20px;
+  border-radius: 2px;
+  width: 100%;
+}
+
+div#dailyGoalProgressBar {
+  background-color: rgb(254, 212, 10);
+  height: 20px;
+  border-radius: 2px;
+}
+
+div#dailyGoalProgressBarExceeded {
+  background-color: green;
+  height: 20px;
+  border-radius: 2px;
+}
+
+td#dailyGoalPoints {
+  font-size: 14px;
+  color: rgb(128, 128, 128);
+  height: 20px;
+  padding-left: 7px;
+  white-space: nowrap;
+}
+
+div#dailyGoalMessage {
+  margin-left: 15px;
+  margin-top: 20px;
+  font-size: 14px;
+  color: rgb(128, 128, 128);
+}
+
+div#weeklyActivityFrame {
+  padding-top: 10px;
+  height: 275px;
+  border-top: 1px solid rgb(224, 224, 224);
+}
+
+div#subjectAreasFrame {
+  margin-bottom: 30px;
+}
+
+div.subjectArea {
+  padding: 15px;
+  border-bottom: 1px solid rgb(242, 242, 242);
+}
+
+div.subjectArea:last-of-type {
+  border-bottom: none;
+}
+
+div.subjectAreaName {
+  display: inline-block;
+  font-size: 14px;
+  color: rgb(128, 128, 128);
+}
+
+div.subjectAreaNumTopics {
+  float: right;
+  font-size: 14px;
+  color: rgb(128, 128, 128);
+}
+
+div#leaderboardFrame {
+  position: relative;
+  padding-bottom: 15px;
+  padding-left: 0px;
+}
+
+div#leaderboardHeader {
+  margin-top: 15px;
+  text-align: center;
+}
+
+div#leaderboardHeaderContentFrame {
+  margin: auto 0;
+  display: inline-block;
+  width: fit-content;
+}
+
+div#leaderboardLeagueColor {
+  height: 20px;
+  width: 20px;
+  border-radius: 10px;
+}
+
+td#leaderboardLeagueName {
+  padding-left: 5px;
+  font-weight: bold;
+  font-size: 18px;
+  color: rgb(30, 25, 78);
+  cursor: default;
+}
+
+div#leaderboardUnlockMessage {
+  margin-top: 30px;
+  margin-left: 15px;
+  margin-bottom: 15px;
+  font-size: 15px;
+  color: rgb(128, 128, 128);
+}
+
+div#leaderboardInstructions {
+  margin-top: 5px;
+  text-align: center;
+  font-size: 14px;
+  color: rgb(168, 168, 168);
+}
+
+div#leaderboardTimeRemaining {
+  margin-top: 0px;
+  text-align: center;
+  font-size: 14px;
+  color: rgb(168, 168, 168);
+}
+
+div#leaderboardTableFrame {
+  margin-left: 0px;
+  margin-top: 15px;
+  padding-top: 10px;
+  width: 352px;
+  height: fit-content;
+  border-top: 1px solid rgb(232, 232, 232);
+}
+
+table#leaderboardTable {
+  width: 350px;
+  border-spacing: 0px;
+  border-collapse: collapse;
+  border: none;
+}
+
+td.leaderboardTextPromotionZone {
+  color: green !important;
+}
+
+td.leaderboardTextDemotionZone {
+  color: red !important;
+}
+
+td.leaderboardUserRank {
+  padding-left: 15px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  width: 25px;
+  height: 22px;
+  font-size: 15px;
+  font-weight: bold;
+  color: rgb(64, 64, 64);
+  border: none;
+}
+
+td.leaderboardUserBelt {
+  width: 55px;
+}
+
+td.leaderboardUserName {
+  font-size: 15px;
+  color: rgb(64, 64, 64);
+}
+
+td.leaderboardUserPoints {
+  font-size: 15px;
+  /*color: rgb(164, 164, 164);*/
+  width: 60px;
+  text-align: right;
+  white-space: nowrap;
+  padding-right: 15px;
+}
+
+td.leaderboardUserCurrent {
+  background: rgb(244, 244, 246);
+  font-weight: bold;
+}
+
+/* Groups Widget *******************************************************************************************************/
+
+div#groupsHeader {
+  padding: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+
+div#groupsHeader a {
+  color: rgb(30, 25, 78);
+}
+
+div.taskUnlocked {
+  background: white;
+  margin-right: 10px;
+  margin-bottom: 12px;
+  border: 1px solid rgb(234, 234, 234);
+  border-radius: 2px;
+  width: 680px;
+  cursor: pointer;
+
+  /*box-shadow: 0px 1px 1px 0px rgb(60 64 67 / 30%), 0px 1px 1px 0px rgb(60 64 67 / 15%);*/
+}
+
+/*
+div.taskUnlocked:hover {
+    background: rgb(249, 250, 251);
+}
+*/
+
+div.taskCompleted {
+  background: white;
+  margin-right: 10px;
+  margin-bottom: 12px;
+  border: 1px solid rgb(234, 234, 234);
+  border-radius: 0px;
+  width: 680px;
+  cursor: pointer;
+}
+
+/*
+div.taskCompleted:hover {
+    background: rgb(249, 250, 251);
+}
+*/
+
+div.taskHeader {
+  margin-left: 15px;
+  margin-right: 15px;
+  margin-top: 20px;
+  margin-bottom: 25px;
+}
+
+img.unlockedIcon {
+  max-height: 22px;
+}
+
+span.taskTypeLocked {
+  font-size: 16px;
+  font-weight: bold;
+  color: rgb(30, 25, 78);
+  vertical-align: bottom;
+  line-height: 22px;
+}
+
+span.taskTypeLocked2 {
+  font-size: 16px;
+  font-weight: bold;
+  color: rgb(30, 25, 78);
+  vertical-align: bottom;
+  line-height: 22px;
+  margin-left: 5px;
+}
+
+span.taskTypeUnlocked {
+  font-size: 16px;
+  font-weight: bold;
+  margin-left: 7px;
+  color: rgb(30, 25, 78);
+  vertical-align: bottom;
+  line-height: 22px;
+}
+
+div.taskUnlockedGravityIndicator {
+  display: inline-block;
+  margin-left: 3px;
+  margin-bottom: 2px;
+  background-color: black;
+  width: 8px;
+  height: 8px;
+  border-radius: 8px;
+}
+
+div.taskLockedGravityIndicator {
+  display: inline-block;
+  margin-left: 5px;
+  background-color: black;
+  width: 8px;
+  height: 8px;
+  border-radius: 8px;
+}
+
+div.taskPointsLocked {
+  width: 70px;
+  float: right;
+  text-align: right;
+  font-size: 13px;
+  font-weight: bold;
+  color: rgb(135, 135, 135);
+  vertical-align: bottom;
+  line-height: 22px;
+}
+
+div.taskPointsUnlocked {
+  width: 70px;
+  float: right;
+  text-align: right;
+  font-size: 13px;
+  color: rgb(135, 135, 135);
+  vertical-align: bottom;
+  line-height: 22px;
+}
+
+span.pointsGained {
+  font-size: 15px;
+  font-weight: bold;
+  color: green;
+}
+
+span.pointsLost {
+  font-size: 15px;
+  font-weight: bold;
+  color: red;
+}
+
+span.completedTaskPointsSlash {
+  color: rgb(192, 192, 192);
+}
+
+span.completedTaskPoints {
+  font-size: 13px;
+  font-weight: normal !important;
+  color: rgb(128, 128, 128);
+}
+
+div.taskCourseNameUnlocked {
+  font-size: 11px;
+  font-weight: normal;
+  color: rgb(164, 164, 164);
+  text-transform: uppercase;
+  margin-left: 15px;
+  margin-bottom: 5px;
+}
+
+div.taskCourseNameLocked {
+  margin-left: 15px;
+  font-size: 11px;
+  font-weight: normal;
+  color: rgb(135, 135, 135);
+  text-transform: uppercase;
+}
+
+div.taskNameUnlocked {
+  margin-left: 15px;
+  margin-right: 15px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  font-weight: normal;
+  color: rgb(64, 64, 64);
+}
+
+div.taskNameLocked {
+  font-size: 16px;
+  font-weight: normal;
+  color: rgb(135, 135, 135);
+}
+
+a.taskTopicLink {
+  color: rgb(64, 64, 64);
+  text-decoration: none;
+}
+
+a.taskTopicLinkExpanded {
+  color: rgb(64, 64, 64);
+  text-decoration: none;
+}
+
+a.taskTopicLinkExpanded:hover {
+  text-decoration: underline;
+}
+
+div.taskUnderMaintenanceMessage {
+  margin-top: 30px;
+  font-size: 14px;
+  color: rgb(135, 135, 135);
+}
+
+div.taskProgressFrame {
+  margin-left: 15px;
+  margin-right: 15px;
+  margin-bottom: 15px;
+  margin-top: 20px;
+}
+
+div.taskProgressBarFrame {
+  display: inline-block;
+  position: relative;
+  margin-top: 5px;
+  background: rgb(240, 241, 242);
+  width: 590px;
+  height: 4px;
+  border-radius: 2px;
+}
+
+div.taskProgressBar {
+  position: absolute;
+  background-color: #0577c7;
+  height: 4px;
+  border-radius: 2px;
+}
+
+div.taskProgress {
+  display: inline-block;
+  font-size: 13px;
+  color: rgb(128, 128, 128);
+}
+
+div.taskTimeCompleted {
+  margin-left: 15px;
+  margin-top: 30px;
+  margin-bottom: 15px;
+  font-size: 13px;
+  color: rgb(128, 128, 128);
+}
+
+div.taskDetails {
+  margin-top: 20px;
+  display: none;
+  margin-bottom: 5px;
+  border-top: 1px solid rgb(236, 236, 236);
+}
+
+div.testDetails {
+  padding-left: 15px;
+  padding-top: 30px;
+  padding-bottom: 15px;
+  padding-right: 5px;
+}
+
+td.testFieldName {
+  color: rgb(30, 25, 78);
+  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: bold;
+  padding-right: 5px;
+}
+
+.testFieldValue {
+  font-size: 14px;
+}
+
+div.taskPrerequisites {
+  padding-left: 15px;
+  padding-top: 25px;
+  padding-bottom: 10px;
+  font-size: 13px;
+}
+
+div.taskPrerequisitesHeader {
+  font-weight: bold;
+  text-transform: uppercase;
+  color: rgb(30, 25, 78);
+  margin-bottom: 13px;
+}
+
+div.taskPrerequisite {
+  margin-top: 5px;
+  vertical-align: middle;
+}
+
+img.prerequisiteCheckmark {
+  max-width: 14px;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+img.completedCheckmark {
+  max-width: 17px;
+  margin-right: 5px;
+  margin-bottom: 3px;
+  vertical-align: middle;
+}
+
+div.knowledgeGraph {
+  margin-top: 20px;
+  margin-left: 15px;
+  width: 650px;
+  height: 250px;
+  cursor: pointer;
+}
+
+div.knowledgeGraph svg {
+  visibility: hidden;
+}
+
+div.taskButtons {
+  margin-top: 15px;
+  padding-left: 15px;
+  border-top: 1px solid rgb(236, 236, 236);
+  padding-top: 25px;
+  padding-bottom: 20px;
+}
+
+a.taskStartButton {
+  font-size: 14px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 9px;
+  padding-bottom: 9px;
+  border-radius: 17px;
+}
+
+/*******************************************************************************/
+div#sequenceUnits {
+  position: absolute;
+  visibility: hidden;
+  border: 1px solid rgb(224, 224, 224);
+  border-radius: 3px;
+  top: 82px;
+  left: 0px;
+  background: white;
+
+  -moz-box-shadow: 5px 5px 5px #ccc;
+  -webkit-box-shadow: 5px 5x 5px #ccc;
+  box-shadow: 5px 5px 5px #ccc;
+}
+
+div#sequenceTabs {
+  border-bottom: 1px solid rgb(224, 224, 224);
+
+  display: table;
+}
+
+div.sequenceCourseTab {
+  display: table-cell;
+  vertical-align: middle;
+
+  display: inline-block;
+  padding: 15px;
+  padding-right: 5px;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  font-size: 13px;
+  font-weight: bold;
+  color: rgb(148, 148, 148);
+  cursor: pointer;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+div.sequenceCourseTab:hover {
+  color: rgb(30, 25, 78);
+}
+
+div.sequenceCourseTabSelected {
+  display: table-cell;
+  vertical-align: middle;
+
+  display: inline-block;
+  padding: 15px;
+  padding-right: 5px;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  text-transform: uppercase;
+  user-select: none;
+  color: rgb(30, 25, 78);
+}
+
+div.sequenceCoursePercentComplete {
+  display: table-cell;
+  vertical-align: middle;
+
+  display: inline-block;
+  font-size: 13px;
+  font-weight: normal;
+  color: rgb(64, 64, 64);
+  text-transform: none;
+  cursor: pointer;
+  user-select: none;
+  margin-right: 20px;
+
+  text-align: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 19px;
+  line-height: 38px;
+  background: rgb(240, 241, 242);
+}
+
+div.sequenceCourseDetails {
+  padding-left: 0px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  color: rgb(128, 128, 128);
+  max-width: 600px;
+}
+
+a.sequenceCourseMoreButton {
+  color: rgb(30, 25, 78);
+}
+
+div.sequenceCourseMore {
+  margin-top: 10px;
+  display: none;
+}
+
+div.sequenceCourseUnits {
+  padding: 15px;
+  padding-top: 5px;
+  padding-bottom: 25px;
+}
+
+div.courseUnit {
+  margin-top: 20px;
+  font-size: 14px;
+  color: rgb(128, 128, 128);
+}
+
+a.courseUnitLink {
+  color: rgb(128, 128, 128);
+  text-decoration: none;
+}
+
+a.courseUnitLink:hover {
+  color: rgb(30, 25, 78);
+}
+
+table.courseUnitProgressBar {
+  margin-top: 5px;
+  border: 1px solid rgb(224, 224, 224);
+}
+
+span.tab {
+  color: rgb(164, 164, 164);
+  font-size: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+span.tabSelected {
+  color: rgb(30, 25, 78);
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+span.tabSpacer {
+  margin-left: 3px;
+  margin-right: 3px;
+  font-size: 16px;
+  color: rgb(232, 232, 232);
+}
+
+/*******************************************************************************/
+
+div#leagueLevels {
+  position: absolute;
+  visibility: hidden;
+  padding: 15px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border: 1px solid rgb(224, 224, 224);
+  border-radius: 3px;
+  top: 80px;
+  left: -1px;
+  background: white;
+  width: 321px;
+
+  font-size: 15px;
+  color: rgb(128, 128, 128);
+
+  -moz-box-shadow: 5px 5px 5px #ccc;
+  -webkit-box-shadow: 5px 5x 5px #ccc;
+  box-shadow: 5px 5px 5px #ccc;
+}
+
+td.leagueLevelNumber {
+  width: 22px;
+  font-size: 16x;
+  font-weight: bold;
+}
+
+td.leagueLevelColorFrame {
+  height: 36px;
+  font-size: 15px;
+}
+
+div.leagueLevelColor {
+  height: 16px;
+  width: 16px;
+  border-radius: 10px;
+}
+
+div.diamond {
+  background: rgb(185, 242, 255);
+  border: 1px solid rgb(185, 242, 255);
+}
+div.emerald {
+  background: green;
+  border: 1px solid green;
+}
+div.ruby {
+  background: red;
+  border: 1px solid red;
+}
+div.sapphire {
+  background: rgb(60, 144, 254);
+  border: 1px solid rgb(60, 144, 254);
+}
+div.platinum {
+  background: rgb(194, 204, 230);
+  border: 1px solid rgb(194, 204, 230);
+}
+div.gold {
+  background: rgb(253, 205, 14);
+  border: 1px solid rgb(253, 205, 14);
+}
+div.silver {
+  background: rgb(228, 230, 236);
+  border: 1px solid rgb(217, 221, 225);
+}
+div.bronze {
+  background: rgb(204, 175, 133);
+  border: 1px solid rgb(204, 175, 135);
+}
+div.iron {
+  background: rgb(156, 165, 171);
+  border: 1px solid rgb(156, 165, 171);
+}
+
+td.leagueLevelName {
+  padding-left: 5px;
+  width: 215px;
+  font-size: 16px;
+}
+
+td.leagueLevelPercentile {
+  font-size: 15px;
+  color: rgb(168, 168, 168);
+  white-space: nowrap;
+  width: fit-content;
+}
+
+/*******************************************************************************/
+
+div#progressDetailsHeader {
+  padding-left: 3px;
+  font-size: 16px;
+  font-weight: bold;
+  color: rgb(30, 25, 78);
+  margin-bottom: 20px;
+}
+
+div#progressDetails {
+  position: absolute;
+  visibility: hidden;
+  padding: 15px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border: 1px solid rgb(224, 224, 224);
+  border-radius: 3px;
+  top: 82px;
+  left: 0px;
+  background: white;
+  width: 321px;
+
+  font-size: 15px;
+  color: rgb(128, 128, 128);
+
+  -moz-box-shadow: 5px 5px 5px #ccc;
+  -webkit-box-shadow: 5px 5x 5px #ccc;
+  box-shadow: 5px 5px 5px #ccc;
+}
+
+td.progressFieldName {
+  white-space: nowrap;
+  padding-right: 30px;
+  color: rgb(128, 128, 128);
+  font-size: 13px;
+  font-weight: bold;
+}
+
+td.progressFieldData {
+  font-weight: normal;
+  color: rgb(128, 128, 128);
+  font-size: 13px;
+}
+
+td.ahead {
+  color: green !important;
+}
+
+td.behind {
+  color: red !important;
+}
+
+/*******************************************************************************/
+
+div#estimatedCompletionDetails {
+  position: absolute;
+  visibility: hidden;
+  padding: 15px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border: 1px solid rgb(224, 224, 224);
+  border-radius: 3px;
+  top: 150px;
+  left: 0px;
+  background: white;
+  width: 321px;
+
+  font-size: 15px;
+  color: rgb(128, 128, 128);
+
+  -moz-box-shadow: 5px 5px 5px #ccc;
+  -webkit-box-shadow: 5px 5x 5px #ccc;
+  box-shadow: 5px 5px 5px #ccc;
+}
+
+div#estimatedCompletionDetails p {
+  margin-top: 10px;
+  color: rgb(128, 128, 128);
+}
+
+td.paceHeader {
+  width: 130px;
+  height: 35px;
+  color: rgb(128, 128, 128);
+}
+
+td.estimatedCompletionHeader {
+  height: 35px;
+  color: rgb(128, 128, 128);
+}
+
+td.xpPerDay {
+  height: 22px;
+  color: rgb(30, 25, 78);
+}
+
+td.estimatedCompletion {
+  height: 22px;
+  color: rgb(30, 25, 78);
+}
+
+/*******************************************************************************/
+
+div#knowledgeGraph-closeButton {
+  position: absolute;
+  left: 7px;
+  top: 7px;
+  width: 42px;
+  height: 42px;
+  background-image: url("/img/close-button.png");
+  cursor: pointer;
+}
+
+div#knowledgeGraph-closeButton:hover {
+  background-image: url("/img/close-button-hover.png");
+}
+
+div#knowledgeGraph-loadingMessage {
+  position: absolute;
+  top: 50px;
+  text-align: center;
+  width: 100%;
+  font-size: 13px;
+  color: rgb(64, 64, 64);
+}
+
+/**********************************************************************************/
+
+div.taskExpanded {
+  background: white;
+  margin-right: 10px;
+  margin-bottom: 12px;
+  border: 1px solid rgb(234, 234, 234);
+  border-radius: 2px;
+  width: 680px;
+}
+
+div#taskAnswersFrame {
+  display: none;
+}
+
+div#taskAnswersFrameHeader {
+  height: 40px;
+}
+
+div.taskResultsTabs {
+  width: 680px;
+  margin-top: 30px;
+  text-align: right;
+}
+
+div#taskBackButton {
+  margin-left: 5px;
+  margin-top: 5px;
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background-image: url("/img/back-arrow.png");
+  cursor: pointer;
+}
+
+div.topicHeader {
+  width: 675px;
+  margin-left: 5px;
+  margin-top: 20px;
+  font-size: 16px;
+}
+
+a.topicLink {
+  color: rgb(30, 25, 78);
+}
+
+/********************************************************************************/
+
+div#activityWidget {
+  position: relative;
+  margin-left: 15px;
+  margin-top: 15px;
+  width: 320px;
+  height: 200px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(148, 148, 148);
+}
+
+div#activityWidget-yAxis {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  height: 160px;
+  width: 35px;
+}
+
+div#activityWidget-main {
+  position: absolute;
+  left: 30px;
+  top: 0px;
+  width: 285px;
+  height: 160px;
+  border-bottom: 1px solid rgb(242, 242, 242);
+}
+
+div.yAxisGridLine {
+  position: absolute;
+  border-bottom: 1px solid rgb(232, 232, 232);
+  font-size: 0px;
+  height: 1px;
+  left: 10px;
+  width: 266px;
+}
+
+div.dayActivity {
+  position: absolute;
+  width: 11px;
+  background-color: gold;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+div#activityWidget-daysOfWeek {
+  position: absolute;
+  left: 30px;
+  bottom: 0px;
+  width: 293px;
+  height: 35px;
+}
+
+div.dayOfWeek {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  color: rgb(148, 148, 148);
+  display: inline-block;
+  width: 38px;
+  text-align: center;
+}
+
+div.yAxisTick {
+  position: absolute;
+  text-align: right;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  color: rgb(148, 148, 148);
+  width: 25px;
+}
+
+div#completedTasksSpinnerContainer {
+  width: 682px;
+  text-align: center;
+}
+
+img#completedTasksSpinner {
+  height: 100px;
+  width: 150px;
+  border: none;
+}

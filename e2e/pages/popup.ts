@@ -27,9 +27,8 @@ export class PopupPage {
   }
 
   async selectAnchor(position: "incompleteTasks" | "sidebar"): Promise<void> {
-    const radio = this.anchorOptions.filter({
-      hasText: position === "incompleteTasks" ? "Dashboard" : "Sidebar",
-    });
+    const radio = this.page.locator(`input[name="anchor"][value="${position}"]`);
+    await radio.waitFor({ state: "visible", timeout: 5000 });
     await radio.check();
   }
 
@@ -57,7 +56,8 @@ export class PopupPage {
   }
 
   async waitForCacheCleared(): Promise<void> {
-    await expect(this.clearCacheButton).toHaveText("Clearing...");
+    // Skip checking "Clearing..." - it's too fast to reliably test
+    // Just wait for the final "Cleared" state
     await expect(this.clearCacheButton).toHaveText("Cleared", {
       timeout: 5000,
     });

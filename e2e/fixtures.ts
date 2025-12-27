@@ -1,16 +1,22 @@
-import { test as base, chromium, type BrowserContext } from "@playwright/test";
+import {
+  test as base,
+  chromium,
+  type BrowserContext,
+  type Page,
+} from "@playwright/test";
 import path from "path";
 
-const pathToExtension = path.resolve(".output/chrome-mv3");
-const userDataDir = path.resolve(".playwright-state/user-data");
+const pathToExtension = path.resolve(".output/chrome-mv3-test");
+const userDataDir = path.resolve(".playwright/user-data");
 
 export const test = base.extend<{
   context: BrowserContext;
+  page: Page;
   extensionId: string;
 }>({
   context: async ({}, use) => {
     const context = await chromium.launchPersistentContext(userDataDir, {
-      headless: false,
+      channel: "chromium",
       args: [
         `--disable-extensions-except=${pathToExtension}`,
         `--load-extension=${pathToExtension}`,
@@ -18,6 +24,12 @@ export const test = base.extend<{
     });
     await use(context);
     await context.close();
+  },
+  page: async ({ context }, use) => {
+    // Get the first page from the persistent context
+    const pages = context.pages();
+    const page = pages.length > 0 ? pages[0] : await context.newPage();
+    await use(page);
   },
   extensionId: async ({ context }, use) => {
     let background: { url(): string };
