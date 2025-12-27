@@ -2,7 +2,7 @@ import { CalendarResponse } from "@/types";
 import { logger } from "@/utils/logger";
 import { Calendar } from "./calendar/Calendar";
 
-export function App(layout: "sidebar" | "default"): HTMLElement {
+export function App(layout: "sidebar" | "default") {
   const container = document.createElement("div");
   container.className = "ma-grid__loading";
   container.textContent = "Loading activity...";

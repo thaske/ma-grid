@@ -4,7 +4,7 @@ import { logger } from "./logger";
 
 const SECOND_MS = 1000;
 
-export async function readCache(): Promise<Activity[]> {
+export async function readCache() {
   try {
     const stored = await storage.getItem<CachePayload>(CACHE_KEY);
     if (!stored) return [];
@@ -17,7 +17,7 @@ export async function readCache(): Promise<Activity[]> {
 
 export async function isCacheFresh(
   maxAgeMs: number = 30 * SECOND_MS
-): Promise<boolean> {
+) {
   try {
     const stored = await storage.getItem<CachePayload>(CACHE_KEY);
     if (!stored || !stored.updatedAt) return false;

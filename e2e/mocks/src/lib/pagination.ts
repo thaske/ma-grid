@@ -6,7 +6,7 @@ type MockTask = {
   [key: string]: unknown;
 };
 
-export const parseCursorMs = (raw: string | undefined): number => {
+export const parseCursorMs = (raw: string | undefined) => {
   if (!raw) return Date.now();
   let decoded = raw;
   try {
@@ -21,7 +21,7 @@ export const parseCursorMs = (raw: string | undefined): number => {
 export const paginateTasks = (
   tasks: MockTask[],
   cursorMs: number
-): MockTask[] => {
+) => {
   if (tasks.length === 0) return [];
 
   const sorted = [...tasks].sort((a, b) => {

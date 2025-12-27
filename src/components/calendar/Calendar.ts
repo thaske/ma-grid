@@ -18,7 +18,7 @@ const SIDEBAR_WEEKS = 22;
 export function Calendar(
   data: CalendarData,
   layout: CalendarLayout
-): HTMLElement {
+) {
   const grid = getGridForLayout(data.grid, layout);
   const metrics = LAYOUT_METRICS[layout];
   const { cellSize, cellGap, labelWidth } = metrics;
@@ -45,7 +45,7 @@ export function Calendar(
 function getGridForLayout(
   grid: CalendarData["grid"],
   layout: CalendarLayout
-): CalendarData["grid"] {
+) {
   if (layout !== "sidebar" || grid.length === 0) {
     return grid;
   }

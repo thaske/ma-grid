@@ -39,7 +39,7 @@ type PaginationState = {
   stopReason?: StopReason;
 };
 
-export async function fetchAllActivities(origin: string): Promise<Activity[]> {
+export async function fetchAllActivities(origin: string) {
   logger.log("[MA Grid] Activity base URL:", `${origin}/api/previous-tasks/`);
 
   const cached = await readCache();

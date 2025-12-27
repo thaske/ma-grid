@@ -13,4 +13,4 @@ export const randomInt = (
   rng: () => number,
   min: number,
   max: number
-): number => Math.floor(rng() * (max - min + 1)) + min;
+) => Math.floor(rng() * (max - min + 1)) + min;

@@ -6,7 +6,7 @@ export interface TooltipController {
   hide: () => void;
 }
 
-export function Tooltip(): TooltipController {
+export function Tooltip() {
   const tooltip = document.createElement("div");
   tooltip.className = "ma-grid__tooltip";
   tooltip.style.display = "none";

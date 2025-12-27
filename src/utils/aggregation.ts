@@ -1,7 +1,7 @@
 import type { Activity, CalendarData, DailyXP } from "@/types";
 import { formatDateKey, getLocalWeekdayIndex, parseDateKey } from "./timezone";
 
-export function buildCalendarData(activities: Activity[]): CalendarData {
+export function buildCalendarData(activities: Activity[]) {
   if (activities.length === 0) {
     return {
       grid: [],

@@ -6,7 +6,7 @@ export function DayCell(
   colIndex: number,
   onHover: (day: DailyXP, x: number, y: number) => void,
   onLeave: () => void
-): HTMLElement {
+) {
   const level = getLevelFromXP(day.xp);
 
   const cell = document.createElement("div");
@@ -23,7 +23,7 @@ export function DayCell(
   return cell;
 }
 
-function getLevelFromXP(xp: number): "none" | "low" | "medium" | "high" {
+function getLevelFromXP(xp: number) {
   if (xp === 0) return "none";
   else if (xp < 15) return "low";
   else if (xp < 30) return "medium";

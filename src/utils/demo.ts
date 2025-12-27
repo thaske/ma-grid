@@ -1,6 +1,6 @@
 import type { CalendarData, DailyXP } from "@/types";
 
-export function enhanceCalendarForDemo(data: CalendarData): CalendarData {
+export function enhanceCalendarForDemo(data: CalendarData) {
   const allDays: DailyXP[] = [];
   const numWeeks = data.grid.length > 0 ? data.grid[0].length : 0;
 

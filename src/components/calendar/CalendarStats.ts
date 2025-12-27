@@ -1,6 +1,6 @@
 import type { CalendarStats } from "@/types";
 
-export function Stats(stats: CalendarStats): HTMLElement {
+export function Stats(stats: CalendarStats) {
   const container = document.createElement("div");
   container.className = "ma-grid__stats";
 

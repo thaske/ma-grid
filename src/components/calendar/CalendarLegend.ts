@@ -1,6 +1,6 @@
 const LEVELS = ["none", "low", "medium", "high"];
 
-export function Legend(): HTMLElement {
+export function Legend() {
   const container = document.createElement("div");
   container.className = "ma-grid__legend";
 

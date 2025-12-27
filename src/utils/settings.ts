@@ -9,14 +9,14 @@ export function isUiAnchor(value: unknown): value is UiAnchor {
   return value === "incompleteTasks" || value === "sidebar";
 }
 
-export async function getUiAnchor(): Promise<UiAnchor> {
+export async function getUiAnchor() {
   const stored = (await browser.storage.local.get(UI_ANCHOR_STORAGE_KEY))[
     UI_ANCHOR_STORAGE_KEY
   ];
   return isUiAnchor(stored) ? stored : DEFAULT_UI_ANCHOR;
 }
 
-export async function getHideXpFrame(): Promise<boolean> {
+export async function getHideXpFrame() {
   const stored = (await browser.storage.local.get(HIDE_XP_FRAME_STORAGE_KEY))[
     HIDE_XP_FRAME_STORAGE_KEY
   ];

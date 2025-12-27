@@ -21,12 +21,12 @@ export class PopupPage {
     this.clearCacheButton = page.locator("#clear-cache");
   }
 
-  async open(): Promise<void> {
+  async open() {
     await this.page.goto(`chrome-extension://${this.extensionId}/popup.html`);
     await this.root.waitFor();
   }
 
-  async selectAnchor(position: "incompleteTasks" | "sidebar"): Promise<void> {
+  async selectAnchor(position: "incompleteTasks" | "sidebar") {
     const radio = this.page.locator(
       `input[name="anchor"][value="${position}"]`
     );
@@ -34,7 +34,7 @@ export class PopupPage {
     await radio.check();
   }
 
-  async getAnchorValue(): Promise<string> {
+  async getAnchorValue() {
     const checked = this.anchorOptions.filter({
       has: this.page.locator(":checked"),
     });
@@ -42,28 +42,28 @@ export class PopupPage {
     return value || "";
   }
 
-  async toggleHideXpFrame(shouldHide: boolean): Promise<void> {
+  async toggleHideXpFrame(shouldHide: boolean) {
     const isChecked = await this.isHideXpFrameChecked();
     if (isChecked !== shouldHide) {
       await this.hideXpToggle.check();
     }
   }
 
-  async isHideXpFrameChecked(): Promise<boolean> {
+  async isHideXpFrameChecked() {
     return await this.hideXpToggle.isChecked();
   }
 
-  async clickClearCache(): Promise<void> {
+  async clickClearCache() {
     await this.clearCacheButton.click();
   }
 
-  async waitForCacheCleared(): Promise<void> {
+  async waitForCacheCleared() {
     await expect(this.clearCacheButton).toHaveText("Cleared", {
       timeout: 5000,
     });
   }
 
-  async getClearCacheButtonText(): Promise<string> {
+  async getClearCacheButtonText() {
     return (await this.clearCacheButton.textContent()) || "";
   }
 }

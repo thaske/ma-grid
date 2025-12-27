@@ -12,7 +12,7 @@ export function Grid(
   metrics: LayoutMetrics,
   onCellHover: (day: DailyXP, x: number, y: number) => void,
   onCellLeave: () => void
-): HTMLElement {
+) {
   let currentMonth: string | null = null;
   const monthPositions: { label: string; colStart: number }[] = [];
 

@@ -17,7 +17,7 @@ type MockTask = {
   [key: string]: unknown;
 };
 
-export const buildMockTasks = (): MockTask[] => {
+export const buildMockTasks = () => {
   const anchor = new Date(MOCK_TASKS_ANCHOR_MS);
   const anchorStart = Date.UTC(
     anchor.getUTCFullYear(),
@@ -172,7 +172,7 @@ export const buildMockTasks = (): MockTask[] => {
 
 let cachedTasks: MockTask[] | null = null;
 
-export const generateMockTasksData = async (): Promise<MockTask[]> => {
+export const generateMockTasksData = async () => {
   try {
     if (!cachedTasks) {
       cachedTasks = buildMockTasks();
