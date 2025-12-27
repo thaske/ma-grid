@@ -2,9 +2,19 @@ name: Test
 
 on:
   push:
-    branches: [master]
   pull_request:
     branches: [master]
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "e2e/**"
+      - "modules/**"
+      - "scripts/**"
+      - "public/**"
+      - "*.{ts,js,json,toml}"
+      - "package.json"
+      - "bun.lock"
+      - ".github/workflows/**"
 
 jobs:
   test:
