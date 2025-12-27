@@ -11,8 +11,8 @@ This project is still in very early development. If you have any feature ideas o
 
 <table>
   <tr>
-    <td><img src="./assets/screenshot_1.png" width="400" alt="Screenshot 1"></td>
-    <td><img src="./assets/screenshot_2.png" width="400" alt="Screenshot 2"></td>
+    <td><img src="./assets/screenshot_1.png" alt="Screenshot 1"></td>
+    <td><img src="./assets/screenshot_2.png" alt="Screenshot 2"></td>
   </tr>
 </table>
 
