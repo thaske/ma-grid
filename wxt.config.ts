@@ -1,6 +1,7 @@
+import preact from "@preact/preset-vite";
 import { defineConfig } from "wxt";
 
-const host_permissions = {
+const HOST_PERMISSIONS = {
   production: [
     "https://www.mathacademy.com/learn",
     "https://mathacademy.com/learn",
@@ -17,17 +18,16 @@ const host_permissions = {
     "http://localhost:*/api/previous-tasks/*",
   ],
 };
-type HostPermissionMode = keyof typeof host_permissions;
-const mode = (import.meta.env.MODE as HostPermissionMode) ?? "production";
+type HostPermissionMode = keyof typeof HOST_PERMISSIONS;
 
 export default defineConfig({
   srcDir: "src",
   manifestVersion: 3,
-  // modules: ["./modules/safari.ts", "./modules/firefox.ts"],
   manifest: {
     name: "MA Grid",
     permissions: ["storage"],
-    host_permissions: host_permissions[mode],
+    host_permissions:
+      HOST_PERMISSIONS[import.meta.env.MODE! as HostPermissionMode],
     icons: {
       16: "icons/icon16.png",
       32: "icons/icon32.png",
@@ -36,6 +36,7 @@ export default defineConfig({
     },
   },
   vite: () => ({
+    plugins: [preact()],
     build: {
       minify: process.env.MINIFY !== "false",
       sourcemap: true,

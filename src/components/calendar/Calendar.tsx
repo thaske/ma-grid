@@ -1,10 +1,11 @@
 import type { CalendarData } from "@/types";
 import { CALENDAR_CONTAINER_ID } from "@/utils/constants";
+import { useRef, useEffect } from "preact/hooks";
 import { CalendarGrid, type LayoutMetrics } from "./CalendarGrid";
 import { CalendarHeader } from "./CalendarHeader";
 import { CalendarLegend } from "./CalendarLegend";
 import { CalendarStats } from "./CalendarStats";
-import { CalendarTooltip } from "./CalendarTooltip";
+import { CalendarTooltip, type TooltipController } from "./CalendarTooltip";
 
 export type CalendarLayout = "default" | "sidebar";
 
@@ -21,37 +22,55 @@ export interface CalendarProps {
   metrics?: LayoutMetrics;
 }
 
-export function Calendar({ data, layout, metrics }: CalendarProps) {
-  if (!data) throw new Error("No calendar data provided");
+export function Calendar(props: CalendarProps) {
+  if (!props.data) throw new Error("No calendar data provided");
 
-  const tooltip = CalendarTooltip();
-  const grid = getGridForLayout(data.grid, layout);
+  const tooltipRef = useRef<TooltipController | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const classes = ["ma-grid"];
-  if (layout === "sidebar") {
-    classes.push("ma-grid--sidebar");
+  // Initialize tooltip once
+  if (!tooltipRef.current) {
+    tooltipRef.current = CalendarTooltip();
   }
 
-  const resolvedMetrics = metrics ?? LAYOUT_METRICS[layout];
+  // Append tooltip element to container
+  useEffect(() => {
+    if (containerRef.current && tooltipRef.current) {
+      containerRef.current.appendChild(tooltipRef.current.element);
+      return () => {
+        tooltipRef.current?.element.remove();
+      };
+    }
+  }, []);
+
+  const grid = getGridForLayout(props.data.grid, props.layout);
+
+  const resolvedMetrics = props.metrics ?? LAYOUT_METRICS[props.layout];
   const { cellSize, cellGap, labelWidth } = resolvedMetrics;
-  const style = `
-    --cell-size: ${cellSize}px;
-    --cell-gap: ${cellGap}px;
-    --label-width: ${labelWidth}px
-  `;
+
+  const className =
+    props.layout === "sidebar" ? "ma-grid ma-grid--sidebar" : "ma-grid";
 
   return (
-    <div className={classes} id={CALENDAR_CONTAINER_ID} style={style}>
+    <div
+      ref={containerRef}
+      class={className}
+      id={CALENDAR_CONTAINER_ID}
+      style={{
+        "--cell-size": `${cellSize}px`,
+        "--cell-gap": `${cellGap}px`,
+        "--label-width": `${labelWidth}px`,
+      }}
+    >
       <CalendarHeader />
-      <CalendarStats stats={data.stats} />
+      <CalendarStats stats={props.data.stats} />
       <CalendarGrid
         grid={grid}
         metrics={resolvedMetrics}
-        onCellHover={tooltip.show}
-        onCellLeave={tooltip.hide}
+        onCellHover={tooltipRef.current.show}
+        onCellLeave={tooltipRef.current.hide}
       />
       <CalendarLegend />
-      {tooltip.element}
     </div>
   );
 }

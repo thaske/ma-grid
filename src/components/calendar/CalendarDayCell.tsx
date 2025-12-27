@@ -18,7 +18,7 @@ export function CalendarDayCell({
   const level = getLevelFromXP(day.xp);
   return (
     <div
-      className={`ma-grid__cell ma-grid__cell--${level}`}
+      class={`ma-grid__cell ma-grid__cell--${level}`}
       style={{
         gridRow: String(rowIndex + 1),
         gridColumn: String(colIndex + 1),

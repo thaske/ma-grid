@@ -44,11 +44,11 @@ export function CalendarGrid({
   const cellWithGap = metrics.cellSize + metrics.cellGap;
 
   return (
-    <div className="ma-grid__wrapper">
-      <div className="ma-grid__month-labels" style={{ position: "relative" }}>
+    <div class="ma-grid__wrapper">
+      <div class="ma-grid__month-labels" style={{ position: "relative" }}>
         {monthPositions.map((month) => (
           <div
-            className="ma-grid__month-label"
+            class="ma-grid__month-label"
             style={{
               position: "absolute",
               left: `${month.colStart * cellWithGap}px`,
@@ -59,14 +59,14 @@ export function CalendarGrid({
         ))}
       </div>
 
-      <div className="ma-grid__grid">
-        <div className="ma-grid__weekday-labels">
+      <div class="ma-grid__grid">
+        <div class="ma-grid__weekday-labels">
           {["", "M", "", "W", "", "F", ""].map((label) => (
-            <div className="ma-grid__weekday-label">{label}</div>
+            <div class="ma-grid__weekday-label">{label}</div>
           ))}
         </div>
 
-        <div className="ma-grid__days">
+        <div class="ma-grid__days">
           {grid.map((weekRow, rowIdx) =>
             weekRow.map((dayData, colIdx) => (
               <CalendarDayCell

@@ -5,15 +5,10 @@ export interface CalendarErrorProps {
   layout: CalendarLayout;
 }
 
-export function CalendarError({ message, layout }: CalendarErrorProps) {
-  return (
-    <div
-      className={[
-        "ma-grid__error",
-        layout === "sidebar" && "ma-grid__error--sidebar",
-      ]}
-    >
-      {message}
-    </div>
-  );
+export function CalendarError(props: CalendarErrorProps) {
+  const className = props.layout === "sidebar"
+    ? "ma-grid__error ma-grid__error--sidebar"
+    : "ma-grid__error";
+
+  return <div class={className}>{props.message}</div>;
 }

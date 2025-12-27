@@ -12,11 +12,11 @@ export function CalendarStats({ stats }: CalendarStatsProps) {
   ];
 
   return (
-    <div className="ma-grid__stats">
+    <div class="ma-grid__stats">
       {statItems.map((item) => (
-        <div className="ma-grid__stat">
-          <div className="ma-grid__stat-value">{String(item.value)}</div>
-          <div className="ma-grid__stat-label">{item.label}</div>
+        <div class="ma-grid__stat">
+          <div class="ma-grid__stat-value">{String(item.value)}</div>
+          <div class="ma-grid__stat-label">{item.label}</div>
         </div>
       ))}
     </div>
