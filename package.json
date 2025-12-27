@@ -18,7 +18,6 @@
     "@playwright/test": "^1.47.2",
     "@types/bun": "latest",
     "@types/chrome": "^0.0.329",
-    "dotenv": "^17.2.3",
     "happy-dom": "^20.0.11",
     "prettier": "^3.4.2",
     "typescript": "^5.0.0",

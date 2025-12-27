@@ -1,12 +1,4 @@
 import { defineConfig, devices } from "@playwright/test";
-import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, ".env") });
-
-const ONE_SECOND = 1000;
 
 export default defineConfig({
   testDir: "e2e",
@@ -23,10 +15,9 @@ export default defineConfig({
   },
 
   webServer: {
-    command: "bun e2e/fixtures/server.ts",
+    command: "bun e2e/mocks/src/server.ts",
     port: 3456,
     reuseExistingServer: !process.env.CI,
-    timeout: 30 * ONE_SECOND,
     stdout: "pipe",
     stderr: "pipe",
   },

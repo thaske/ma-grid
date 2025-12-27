@@ -803,9 +803,9 @@ grammarly-extension {
 .revisionCell1 {
   text-align: center;
   vertical-align: top;
-  fontstyle: italic;
-  paddingtop: 15px;
-  fontfamily: Arial;
+  font-style: italic;
+  padding-top: 15px;
+  font-family: Arial;
   color: rgb(128, 128, 128);
   white-space: normal;
   line-height: normal;
@@ -896,7 +896,7 @@ div.freeResponseLine:first-of-type {
     margin-left: 80px;
     height: fit-content;
     display: flex;
-    align-items: center; 
+    align-items: center;
 }
 
 div.freeResponseLine {
@@ -904,7 +904,7 @@ div.freeResponseLine {
     margin-left: 80px;
     height: fit-content;
     display: flex;
-    align-items: center; 
+    align-items: center;
 }
 */
 
