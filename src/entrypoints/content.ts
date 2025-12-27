@@ -1,4 +1,3 @@
-import "@/assets/styles.css";
 import { App } from "@/components/App";
 import { safariFix } from "@/utils/compat";
 import { MATHACADEMY_MATCHES, SELECTOR } from "@/utils/constants";
@@ -10,11 +9,11 @@ import {
   UI_ANCHOR_STORAGE_KEY,
 } from "@/utils/settings";
 
-type UI = Awaited<ReturnType<typeof createShadowRootUi>> | null;
+type UI = HTMLElement | null;
 
 export default defineContentScript({
   matches: MATHACADEMY_MATCHES,
-  cssInjectionMode: "ui",
+  cssInjectionMode: "manual",
   async main(ctx) {
     logger.log("[MA-Grid] Content script loaded");
 
@@ -44,40 +43,42 @@ export default defineContentScript({
 
     let currentUI: UI = null;
 
-    async function recreateUI() {
+    function mountUI() {
       if (currentUI) {
         currentUI.remove();
         currentUI = null;
       }
 
       const layout = anchor === "sidebar" ? "sidebar" : "default";
-      const append =
-        anchor === "sidebar"
-          ? (anchorElement: Element, uiElement: Element) => {
-              anchorElement
-                .querySelector("#courseFrame")
-                ?.insertAdjacentElement("afterend", uiElement);
-            }
-          : "first";
+      const anchorElement = document.querySelector(SELECTOR[layout]);
+      if (!anchorElement) {
+        logger.log("[MA-Grid] Anchor element not found, will retry");
+        return;
+      }
 
-      const ui = await createShadowRootUi(ctx, {
-        name: "ma-grid-ui",
-        position: "inline",
-        anchor: SELECTOR[layout],
-        append,
-        onMount(container) {
-          logger.log("[MA-Grid] Dashboard detected, injecting calendar");
-          const app = App(layout);
-          container.appendChild(app);
-          return container;
-        },
-        onRemove(container) {
-          if (container) container.innerHTML = "";
-        },
-      });
+      logger.log("[MA-Grid] Dashboard detected, injecting calendar");
 
-      currentUI = ui;
-      ui.mount();
+      const host = document.createElement("div");
+      host.id = "ma-grid-ui";
+      const shadow = host.attachShadow({ mode: "open" });
+
+      const linkElem = document.createElement("link");
+      linkElem.rel = "stylesheet";
+      linkElem.href = browser.runtime.getURL("assets/styles.css" as any);
+      shadow.appendChild(linkElem);
+
+      const app = App(layout);
+      shadow.appendChild(app);
+
+      if (anchor === "sidebar") {
+        anchorElement
+          .querySelector("#courseFrame")
+          ?.insertAdjacentElement("afterend", host);
+      } else {
+        anchorElement.insertBefore(host, anchorElement.firstChild);
+      }
+
+      currentUI = host;
     }
 
     // Add storage listener
@@ -92,12 +93,11 @@ export default defineContentScript({
       if (UI_ANCHOR_STORAGE_KEY in changes) {
         anchor = changes[UI_ANCHOR_STORAGE_KEY]
           .newValue as typeof DEFAULT_UI_ANCHOR;
-        recreateUI();
+        mountUI();
       }
     });
 
-    // Initialize
     updateXpFrame();
-    recreateUI();
+    mountUI();
   },
 });
