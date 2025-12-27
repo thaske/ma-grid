@@ -1,6 +1,6 @@
 # <img src="./public/icons/icon128.png" height="22px" style="margin-right: 4px;"> MA Grid
 
-MA Grid is a web extension that displays a GitHub-style activity heatmap on Math Academy. It also includes some basic settings for heatmap location (main feed or sidebar), an option to hide the existing XP tracker, and a button to clear cache.
+MA Grid is a web extension that displays a GitHub-style activity graph on Math Academy. It also includes some basic settings for placement (main feed or sidebar), an option to hide the existing XP tracker, and a button to clear cache.
 
 This project is still in very early development. If you have any feature ideas or bugs, you're welcome to open an issue.
 
