@@ -1,5 +1,4 @@
 import type { DailyXP } from "@/types";
-import { render } from "preact";
 
 export interface TooltipController {
   element: HTMLElement;
@@ -7,7 +6,7 @@ export interface TooltipController {
   hide: () => void;
 }
 
-export function CalendarTooltip(_props?: {}): TooltipController {
+export function Tooltip(): TooltipController {
   const tooltip = document.createElement("div");
   tooltip.className = "ma-grid__tooltip";
   tooltip.style.display = "none";
@@ -24,14 +23,11 @@ export function CalendarTooltip(_props?: {}): TooltipController {
       day: "numeric",
     });
 
-    const content = (
-      <>
-        <div class="ma-grid__tooltip-date">{dateText}</div>
-        <div class="ma-grid__tooltip-xp">{xpText}</div>
-      </>
-    );
+    tooltip.innerHTML = `
+      <div class="ma-grid__tooltip-date">${dateText}</div>
+      <div class="ma-grid__tooltip-xp">${xpText}</div>
+    `;
 
-    render(content, tooltip);
     tooltip.style.display = "block";
 
     const offset = 10;

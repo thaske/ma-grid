@@ -180,9 +180,7 @@ test.describe("MA Grid Extension", () => {
     // Go back to main page and verify calendar shows loading UI
     await page.bringToFront();
     await page.reload();
-    const loading = page
-      .locator("ma-grid-ui")
-      .locator(".ma-grid__loading");
+    const loading = page.locator("ma-grid-ui").locator(".ma-grid__loading");
     await expect(loading).toBeVisible();
   });
 });

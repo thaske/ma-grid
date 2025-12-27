@@ -42,3 +42,8 @@ coverage
 # Misc
 *.min.js
 *.min.css
+
+scratch
+playwright-report
+.playwright
+.wxt
