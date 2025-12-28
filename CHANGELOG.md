@@ -1,11 +1,10 @@
-# Changelog
+# 1.1.1 (2025-12-28)
 
-All notable changes to this project will be documented in this file.
+### Fixed
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+- Month labels colliding in calendar grid when spacing is insufficient
 
-# [1.1.0] - 2025-12-24
+# 1.1.0 (2025-12-24)
 
 ### Fixed
 
@@ -22,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Test suite (aggregation, API, demo)
 - Prettier and Bun configuration
 
-# [1.0.0] - 2025-12-23
+# 1.0.0 (2025-12-23)
 
 ### Added
 
