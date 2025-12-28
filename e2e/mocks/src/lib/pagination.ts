@@ -18,10 +18,7 @@ export const parseCursorMs = (raw: string | undefined) => {
   return Number.isFinite(parsed) ? parsed : Date.now();
 };
 
-export const paginateTasks = (
-  tasks: MockTask[],
-  cursorMs: number
-) => {
+export const paginateTasks = (tasks: MockTask[], cursorMs: number) => {
   if (tasks.length === 0) return [];
 
   const sorted = [...tasks].sort((a, b) => {

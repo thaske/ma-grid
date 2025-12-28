@@ -42,13 +42,37 @@ export function Grid(
   monthLabels.className = "ma-grid__month-labels";
   monthLabels.style.position = "relative";
 
+  let lastAddedLabel: HTMLDivElement | null = null;
+  let lastAddedPosition = -1;
+
   monthPositions.forEach((month) => {
     const label = document.createElement("div");
     label.className = "ma-grid__month-label";
     label.style.position = "absolute";
     label.style.left = `${month.colStart * cellWithGap}px`;
     label.textContent = month.label;
+
+    // Check for collision with previous month label
+    if (lastAddedLabel) {
+      // Compute spacing based on the actual width of the previous label
+      const lastLabelLeft =
+        typeof lastAddedLabel.style.left === "string" &&
+        lastAddedLabel.style.left.endsWith("px")
+          ? parseFloat(lastAddedLabel.style.left)
+          : lastAddedPosition * cellWithGap;
+      const lastLabelWidth = lastAddedLabel.offsetWidth || metrics.labelWidth;
+      const currentLabelLeft = month.colStart * cellWithGap;
+      const spacing = currentLabelLeft - (lastLabelLeft + lastLabelWidth);
+
+      // If collision (negative or zero spacing) detected, remove the previous label
+      if (spacing <= 0) {
+        monthLabels.removeChild(lastAddedLabel);
+      }
+    }
+
     monthLabels.appendChild(label);
+    lastAddedLabel = label;
+    lastAddedPosition = month.colStart;
   });
 
   const gridContainer = document.createElement("div");

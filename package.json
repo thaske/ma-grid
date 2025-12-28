@@ -1,6 +1,6 @@
 {
   "name": "ma-grid",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "devDependencies": {
     "@playwright/test": "^1.47.2",
     "@types/bun": "latest",
@@ -11,13 +11,11 @@
     "vitest": "^1.6.0",
     "wxt": "^0.20.13"
   },
-  "description": "GitHub-style activity heatmap for Math Academy",
+  "description": "GitHub-style activity graph for Math Academy",
   "private": true,
   "scripts": {
     "dev": "wxt",
-    "build": "wxt zip",
-    "dev:firefox": "wxt --browser firefox --mv2",
-    "build:firefox": "wxt zip --browser firefox --mv2",
+    "build:release": "wxt zip && wxt zip -b firefox",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
     "format": "prettier . --write",

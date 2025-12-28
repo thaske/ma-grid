@@ -15,10 +15,7 @@ const LAYOUT_METRICS: Record<CalendarLayout, LayoutMetrics> = {
 
 const SIDEBAR_WEEKS = 22;
 
-export function Calendar(
-  data: CalendarData,
-  layout: CalendarLayout
-) {
+export function Calendar(data: CalendarData, layout: CalendarLayout) {
   const grid = getGridForLayout(data.grid, layout);
   const metrics = LAYOUT_METRICS[layout];
   const { cellSize, cellGap, labelWidth } = metrics;
@@ -42,10 +39,7 @@ export function Calendar(
   return container;
 }
 
-function getGridForLayout(
-  grid: CalendarData["grid"],
-  layout: CalendarLayout
-) {
+function getGridForLayout(grid: CalendarData["grid"], layout: CalendarLayout) {
   if (layout !== "sidebar" || grid.length === 0) {
     return grid;
   }

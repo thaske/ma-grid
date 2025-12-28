@@ -116,4 +116,51 @@ test.describe("MA Grid Extension", () => {
     const loading = page.locator("#ma-grid-ui").locator(".ma-grid__loading");
     await expect(loading).toBeVisible();
   });
+
+  test("should not have colliding month labels", async ({ page }) => {
+    await page.goto(MOCK_URL, {
+      waitUntil: "domcontentloaded",
+    });
+    await page.waitForLoadState("networkidle");
+
+    await page
+      .locator("#ma-grid-ui")
+      .locator(".ma-grid__cell")
+      .first()
+      .waitFor();
+
+    const monthLabels = page
+      .locator("#ma-grid-ui")
+      .locator(".ma-grid__month-label");
+
+    const count = await monthLabels.count();
+    expect(count).toBeGreaterThan(0);
+
+    const positions = await monthLabels.evaluateAll((labels) =>
+      labels.map((label) => {
+        const rect = label.getBoundingClientRect();
+        return {
+          left: rect.left,
+          right: rect.right,
+          width: rect.width,
+          text: label.textContent || "",
+        };
+      })
+    );
+
+    for (let i = 0; i < positions.length - 1; i++) {
+      const current = positions[i];
+      const next = positions[i + 1];
+
+      expect(current.right).toBeLessThanOrEqual(next.left);
+    }
+
+    const monthTexts = positions.map((p) => p.text);
+    const hasJan = monthTexts.includes("Jan");
+    const firstMonth = monthTexts[0];
+
+    if (hasJan) {
+      expect(firstMonth).not.toBe("Dec");
+    }
+  });
 });
