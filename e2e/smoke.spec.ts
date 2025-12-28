@@ -12,10 +12,10 @@ test.describe("MA Grid Extension", () => {
     });
     await page.waitForLoadState("networkidle");
 
-    page.locator("#ma-grid-ui").locator(".ma-grid__cell").first();
+    page.locator("#ma-grid").locator(".ma-grid__cell").first();
 
     await expect(
-      page.locator("#ma-grid-ui").locator(".ma-grid__cell").first()
+      page.locator("#ma-grid").locator(".ma-grid__cell").first()
     ).toBeVisible();
   });
 
@@ -44,7 +44,7 @@ test.describe("MA Grid Extension", () => {
     });
 
     await page
-      .locator("#ma-grid-ui")
+      .locator("#ma-grid")
       .locator(".ma-grid__cell")
       .first()
       .waitFor();
@@ -56,14 +56,14 @@ test.describe("MA Grid Extension", () => {
 
     await page.bringToFront();
     await expect(
-      page.locator("#ma-grid-ui").locator(".ma-grid.ma-grid--sidebar")
+      page.locator("#ma-grid").locator(".ma-grid.ma-grid--sidebar")
     ).toBeVisible();
 
     await popupPage.bringToFront();
     await popup.selectAnchor("incompleteTasks");
     await page.bringToFront();
     await expect(
-      page.locator("#ma-grid-ui").locator(".ma-grid:not(.ma-grid--sidebar)")
+      page.locator("#ma-grid").locator(".ma-grid:not(.ma-grid--sidebar)")
     ).toBeVisible();
   });
 
@@ -99,7 +99,7 @@ test.describe("MA Grid Extension", () => {
     });
     await page.waitForLoadState("networkidle");
 
-    page.locator("#ma-grid-ui").locator(".ma-grid__cell").first();
+    page.locator("#ma-grid").locator(".ma-grid__cell").first();
 
     const popupPage = await context.newPage();
     const popup = new PopupPage(popupPage, extensionId);
@@ -113,7 +113,7 @@ test.describe("MA Grid Extension", () => {
 
     await page.bringToFront();
     await page.reload();
-    const loading = page.locator("#ma-grid-ui").locator(".ma-grid__loading");
+    const loading = page.locator("#ma-grid").locator(".ma-grid__loading");
     await expect(loading).toBeVisible();
   });
 
@@ -124,13 +124,13 @@ test.describe("MA Grid Extension", () => {
     await page.waitForLoadState("networkidle");
 
     await page
-      .locator("#ma-grid-ui")
+      .locator("#ma-grid")
       .locator(".ma-grid__cell")
       .first()
       .waitFor();
 
     const monthLabels = page
-      .locator("#ma-grid-ui")
+      .locator("#ma-grid")
       .locator(".ma-grid__month-label");
 
     const count = await monthLabels.count();
