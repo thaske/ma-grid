@@ -48,6 +48,12 @@ export default defineContentScript({
         currentUI = null;
       }
 
+      const existing = document.querySelector("#ma-grid");
+      if (existing) {
+        logger.log("[MA-Grid] Removing existing element from previous session");
+        existing.remove();
+      }
+
       const layout = anchor === "sidebar" ? "sidebar" : "default";
       const anchorElement = document.querySelector(SELECTOR[layout]);
       if (!anchorElement) {
@@ -58,7 +64,7 @@ export default defineContentScript({
       logger.log("[MA-Grid] Dashboard detected, injecting calendar");
 
       const host = document.createElement("div");
-      host.id = "ma-grid-ui";
+      host.id = "ma-grid";
       const shadow = host.attachShadow({ mode: "open" });
 
       const linkElem = document.createElement("link");

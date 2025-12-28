@@ -1,3 +1,9 @@
+# Unreleased
+
+### Changed
+
+- Clean up leftover elements from previous script executions to prevent duplicates
+
 # 1.1.1 (2025-12-28)
 
 ### Fixed

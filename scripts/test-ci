@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -e
+
+echo "🧪 Running CI tests locally..."
+
+echo "📦 Installing dependencies..."
+bun ci
+
+echo "🔧 Preparing WXT..."
+bunx wxt prepare
+
+echo "🌐 Installing Playwright browsers..."
+bunx playwright install --with-deps
+
+echo "✅ Running Bun tests..."
+bun test
+
+echo "🎭 Running Playwright tests..."
+bunx playwright test
+
+echo "🎉 All tests passed!"
