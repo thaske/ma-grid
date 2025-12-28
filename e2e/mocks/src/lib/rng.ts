@@ -9,8 +9,5 @@ export const createSeededRng = (seed: number) => {
   };
 };
 
-export const randomInt = (
-  rng: () => number,
-  min: number,
-  max: number
-) => Math.floor(rng() * (max - min + 1)) + min;
+export const randomInt = (rng: () => number, min: number, max: number) =>
+  Math.floor(rng() * (max - min + 1)) + min;

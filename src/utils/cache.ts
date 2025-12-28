@@ -15,9 +15,7 @@ export async function readCache() {
   return [];
 }
 
-export async function isCacheFresh(
-  maxAgeMs: number = 30 * SECOND_MS
-) {
+export async function isCacheFresh(maxAgeMs: number = 30 * SECOND_MS) {
   try {
     const stored = await storage.getItem<CachePayload>(CACHE_KEY);
     if (!stored || !stored.updatedAt) return false;
