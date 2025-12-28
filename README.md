@@ -25,4 +25,4 @@ bun i     # install packages
 bun wxt   # launch wxt, opens chrome with extension loaded
 ```
 
-From there, you can login and navigate to the dashboard to view the heatmap.
+From there, you can login and navigate to the dashboard to view the graph.

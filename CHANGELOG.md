@@ -25,7 +25,7 @@
 
 ### Added
 
-- Activity heatmap
+- Activity graph
 - Settings popup
 - Option to change placement between "Incomplete tasks" or "Sidebar" sections
 - Option to hide original XP element

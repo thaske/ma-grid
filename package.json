@@ -11,7 +11,7 @@
     "vitest": "^1.6.0",
     "wxt": "^0.20.13"
   },
-  "description": "GitHub-style activity heatmap for Math Academy",
+  "description": "GitHub-style activity graph for Math Academy",
   "private": true,
   "scripts": {
     "dev": "wxt",
