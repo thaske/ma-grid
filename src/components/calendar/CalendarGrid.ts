@@ -42,13 +42,30 @@ export function Grid(
   monthLabels.className = "ma-grid__month-labels";
   monthLabels.style.position = "relative";
 
-  monthPositions.forEach((month) => {
+  let lastAddedLabel: HTMLDivElement | null = null;
+  let lastAddedPosition = -1;
+
+  monthPositions.forEach((month, index) => {
     const label = document.createElement("div");
     label.className = "ma-grid__month-label";
     label.style.position = "absolute";
     label.style.left = `${month.colStart * cellWithGap}px`;
     label.textContent = month.label;
+
+    // Check for collision with previous month label
+    if (lastAddedLabel && lastAddedPosition >= 0) {
+      const minSpacing = 30; // Minimum pixels needed for a 3-letter month abbreviation
+      const spacing = (month.colStart - lastAddedPosition) * cellWithGap;
+
+      // If collision detected, remove the previous label and add the current one
+      if (spacing < minSpacing) {
+        monthLabels.removeChild(lastAddedLabel);
+      }
+    }
+
     monthLabels.appendChild(label);
+    lastAddedLabel = label;
+    lastAddedPosition = month.colStart;
   });
 
   const gridContainer = document.createElement("div");
