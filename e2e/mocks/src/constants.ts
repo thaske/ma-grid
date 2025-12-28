@@ -3,9 +3,7 @@ import { join } from "path";
 export const PUBLIC_DIR = join(import.meta.dir, "../public");
 export const PORT = 3456;
 export const TASKS_PAGE_SIZE = 30;
-export const MOCK_TASKS_ANCHOR_MS = new Date("2025-12-28T12:00:00Z")
-  .getTime()
-  .toString();
+export const MOCK_TASKS_ANCHOR_MS = new Date("2025-12-28T12:00:00Z").getTime();
 export const MOCK_TASKS_DAYS = 365;
 export const DAY_MS = 24 * 60 * 60 * 1000;
 export const COURSE_NAME = "Mathematical Foundations II";

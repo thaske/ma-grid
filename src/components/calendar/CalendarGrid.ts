@@ -45,7 +45,7 @@ export function Grid(
   let lastAddedLabel: HTMLDivElement | null = null;
   let lastAddedPosition = -1;
 
-  monthPositions.forEach((month, index) => {
+  monthPositions.forEach((month) => {
     const label = document.createElement("div");
     label.className = "ma-grid__month-label";
     label.style.position = "absolute";
@@ -53,12 +53,19 @@ export function Grid(
     label.textContent = month.label;
 
     // Check for collision with previous month label
-    if (lastAddedLabel && lastAddedPosition >= 0) {
-      const minSpacing = 30; // Minimum pixels needed for a 3-letter month abbreviation
-      const spacing = (month.colStart - lastAddedPosition) * cellWithGap;
+    if (lastAddedLabel) {
+      // Compute spacing based on the actual width of the previous label
+      const lastLabelLeft =
+        typeof lastAddedLabel.style.left === "string" &&
+        lastAddedLabel.style.left.endsWith("px")
+          ? parseFloat(lastAddedLabel.style.left)
+          : lastAddedPosition * cellWithGap;
+      const lastLabelWidth = lastAddedLabel.offsetWidth || metrics.labelWidth;
+      const currentLabelLeft = month.colStart * cellWithGap;
+      const spacing = currentLabelLeft - (lastLabelLeft + lastLabelWidth);
 
-      // If collision detected, remove the previous label and add the current one
-      if (spacing < minSpacing) {
+      // If collision (negative or zero spacing) detected, remove the previous label
+      if (spacing <= 0) {
         monthLabels.removeChild(lastAddedLabel);
       }
     }
