@@ -1,7 +1,7 @@
 import { App } from "@/components/App";
 import { safariFix } from "@/utils/compat";
 import { MATHACADEMY_MATCHES, SELECTOR } from "@/utils/constants";
-import { ExtensionDataSource } from "@/utils/extension-data-source";
+import { ExtensionDataSource } from "@/utils/extensionDataSource";
 import { logger } from "@/utils/logger";
 import {
   DEFAULT_HIDE_XP_FRAME,

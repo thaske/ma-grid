@@ -1,4 +1,4 @@
-import type { DataSource } from "@/utils/data-source";
+import type { DataSource } from "@/utils/dataSource";
 import { logger } from "@/utils/logger";
 import { Calendar } from "./calendar/Calendar";
 

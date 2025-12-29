@@ -1,4 +1,4 @@
-import type { Activity, CachePayload } from "@/types";
+import type { CachePayload } from "@/types";
 import { CACHE_KEY } from "./constants";
 import { logger } from "./logger";
 

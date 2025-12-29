@@ -5,7 +5,7 @@
 
 // IMPORTANT: Set up storage global before any other imports
 // This provides the WXT-compatible storage API for shared utilities
-import { storage as storageAdapter } from "./storage-adapter";
+import { storage as storageAdapter } from "./storageAdapter";
 // @ts-ignore - Declare storage as global for WXT compatibility
 globalThis.storage = storageAdapter;
 
@@ -19,7 +19,7 @@ import {
 } from "@/utils/settings";
 import { SettingsButton } from "./components/SettingsButton";
 import { SettingsModal } from "./components/SettingsModal";
-import { DataManager } from "./data-manager";
+import { DataManager } from "./dataManager";
 
 // Import styles as raw strings (will be inlined by Vite)
 import mainStyles from "@/entrypoints/styles.css?raw";

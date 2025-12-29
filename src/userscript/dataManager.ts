@@ -7,7 +7,7 @@ import type { CalendarResponse } from "@/types";
 import { buildCalendarData } from "@/utils/aggregation";
 import { fetchAllActivities } from "@/utils/api";
 import { isCacheFresh, readCache } from "@/utils/cache";
-import type { DataSource } from "@/utils/data-source";
+import type { DataSource } from "@/utils/dataSource";
 import { logger } from "@/utils/logger";
 
 export class DataManager implements DataSource {

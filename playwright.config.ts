@@ -2,7 +2,7 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "e2e",
-  globalSetup: "e2e/global-setup.ts",
+  globalSetup: "e2e/globalSetup.ts",
   webServer: {
     command: "bun e2e/mocks/src/server.ts",
     port: 3456,
