@@ -1,16 +1,5 @@
 import { logger } from "@/shared/logger";
 
-function checkGMAvailable(): void {
-  // @ts-expect-error GM is provided by userscript manager
-  if (typeof GM === "undefined") {
-    throw new Error(
-      "GM API not available. This script must be run in a userscript manager like Tampermonkey, Greasemonkey, or Userscripts."
-    );
-  }
-}
-
-checkGMAvailable();
-
 export const storage = {
   async getItem<T>(key: string): Promise<T | null> {
     try {
