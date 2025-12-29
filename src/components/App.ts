@@ -16,6 +16,9 @@ export function App(
 
   const container: AppElement = document.createElement("div");
   container.className = "ma-grid__loading";
+  if (layout === "sidebar") {
+    container.classList.add("ma-grid__loading--sidebar");
+  }
   container.textContent = "Loading activity...";
 
   async function fetchData() {
@@ -26,6 +29,9 @@ export function App(
 
       if (response.error || !response.data) {
         container.className = "ma-grid__error";
+        if (layout === "sidebar") {
+          container.classList.add("ma-grid__error--sidebar");
+        }
         container.textContent = response.error || "No activity data available";
         return;
       }
@@ -55,6 +61,9 @@ export function App(
       if (!mounted) return;
       logger.error("[MA-Grid] Failed to load calendar:", err);
       container.className = "ma-grid__error";
+      if (layout === "sidebar") {
+        container.classList.add("ma-grid__error--sidebar");
+      }
       container.textContent =
         err instanceof Error ? err.message : "Failed to load activity data";
     }
