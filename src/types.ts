@@ -4,6 +4,8 @@ export interface Activity {
   pointsAwarded: number;
   started: string;
   completed: string;
+  dateCompletedStr?: string;
+  timeCompletedStr?: string;
   test: {
     course: {
       name: string | null;

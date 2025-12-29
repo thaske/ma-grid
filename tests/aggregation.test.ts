@@ -37,4 +37,20 @@ describe("buildCalendarData", () => {
     expect(day?.xp).toBe(10);
     expect(data.stats.activeDays).toBe(1);
   });
+
+  it("uses dateCompletedStr when available", () => {
+    const activity = buildActivity({
+      completed: "not-a-date",
+      started: "not-a-date",
+      dateCompletedStr: "Sun, Dec 8th, 2024",
+      pointsAwarded: 25,
+    });
+
+    const data = buildCalendarData([activity]);
+    const day = data.grid.flat().find((entry) => entry.date === "2024-12-08");
+
+    expect(day).toBeDefined();
+    expect(day?.xp).toBe(25);
+    expect(data.stats.activeDays).toBe(1);
+  });
 });

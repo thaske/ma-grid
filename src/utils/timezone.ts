@@ -31,6 +31,36 @@ const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export const formatDateKey = (date: Date) => DATE_KEY_FORMATTER.format(date);
 
+const MONTHS: Record<string, number> = {
+  Jan: 1,
+  Feb: 2,
+  Mar: 3,
+  Apr: 4,
+  May: 5,
+  Jun: 6,
+  Jul: 7,
+  Aug: 8,
+  Sep: 9,
+  Oct: 10,
+  Nov: 11,
+  Dec: 12,
+};
+
+export function parseDateCompletedStr(value: string): string | null {
+  const match =
+    /^(?:\w{3}),\s+([A-Za-z]{3})\s+(\d{1,2})(?:st|nd|rd|th)?,\s+(\d{4})$/.exec(
+      value.trim()
+    );
+  if (!match) return null;
+
+  const month = MONTHS[match[1]];
+  const day = Number(match[2]);
+  const year = Number(match[3]);
+  if (!month || !Number.isFinite(day) || !Number.isFinite(year)) return null;
+
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
 export function formatCursorParam(cursor: Date) {
   const parts = PATH_FORMATTER.formatToParts(cursor);
   const tzParts = TIMEZONE_NAME_FORMATTER.formatToParts(cursor);
