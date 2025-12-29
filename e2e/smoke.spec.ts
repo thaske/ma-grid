@@ -43,11 +43,7 @@ test.describe("MA Grid Extension", () => {
       waitUntil: "domcontentloaded",
     });
 
-    await page
-      .locator("#ma-grid")
-      .locator(".ma-grid__cell")
-      .first()
-      .waitFor();
+    await page.locator("#ma-grid").locator(".ma-grid__cell").first().waitFor();
 
     const popupPage = await context.newPage();
     const popup = new PopupPage(popupPage, extensionId);
@@ -123,11 +119,7 @@ test.describe("MA Grid Extension", () => {
     });
     await page.waitForLoadState("networkidle");
 
-    await page
-      .locator("#ma-grid")
-      .locator(".ma-grid__cell")
-      .first()
-      .waitFor();
+    await page.locator("#ma-grid").locator(".ma-grid__cell").first().waitFor();
 
     const monthLabels = page
       .locator("#ma-grid")

@@ -6,11 +6,4 @@
 /test-results
 /.playwright
 
-# Xcode
-/DerivedData
-**/*.xcuserdata
-**/*.xcworkspace/xcuserdata
-**/*.xcshareddata/WorkspaceSettings.xcsettings
-**/*.xcuserstate
-**/build
 /.playwright-mcp

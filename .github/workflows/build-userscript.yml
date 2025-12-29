@@ -1,0 +1,38 @@
+name: Build and Release Userscript
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build userscript
+        run: bun run build:userscript
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/ma-grid.user.js
+          body: |
+            ## Installation
+
+            Click on the userscript file below to install:
+            - [ma-grid.user.js](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/ma-grid.user.js)
+
+            Make sure you have a userscript manager installed (Tampermonkey, Greasemonkey, Userscripts, etc.)
+          draft: false
+          prerelease: false

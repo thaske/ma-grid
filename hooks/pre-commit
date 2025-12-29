@@ -1,0 +1,17 @@
+#!/bin/sh
+
+echo "✨ Formatting staged files..."
+
+git diff --cached --name-only --diff-filter=ACM -z | \
+  xargs -0 -r bunx prettier --write --ignore-unknown
+
+if [ $? -eq 0 ]; then
+  git diff --cached --name-only --diff-filter=ACM -z | \
+    xargs -0 -r git add
+  echo "✅ Files formatted"
+else
+  echo "❌ Formatting failed"
+  exit 1
+fi
+
+exit 0

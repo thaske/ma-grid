@@ -1,6 +1,16 @@
-export function Header() {
+export function Header(settingsButton?: HTMLElement) {
   const header = document.createElement("div");
   header.className = "ma-grid__header";
-  header.innerHTML = `<h3 class="ma-grid__title">Activity</h3>`;
+
+  const title = document.createElement("h3");
+  title.className = "ma-grid__title";
+  title.textContent = "Activity";
+
+  header.appendChild(title);
+
+  if (settingsButton) {
+    header.appendChild(settingsButton);
+  }
+
   return header;
 }

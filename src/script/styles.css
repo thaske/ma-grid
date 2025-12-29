@@ -1,0 +1,252 @@
+/**
+ * Settings modal styles for userscript
+ * Based on popup styles but adapted for in-page modal
+ */
+
+/* Settings button in calendar header */
+.ma-grid-settings-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border: none;
+  background: transparent;
+  color: #6c6c6c;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.ma-grid-settings-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #656d76;
+}
+
+.ma-grid-settings-btn:active {
+  transform: scale(0.95);
+}
+
+.ma-grid-settings-btn .st0 {
+  fill: currentColor;
+}
+
+/* Modal overlay */
+.ma-grid-settings-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999999;
+}
+
+.ma-grid-settings-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: ma-grid-fade-in 0.2s ease;
+}
+
+@keyframes ma-grid-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal panel */
+.ma-grid-settings-panel {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  max-width: 420px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: ma-grid-slide-up 0.2s ease;
+}
+
+@keyframes ma-grid-slide-up {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ma-grid-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.ma-grid-settings-modal.ma-grid-fading-out .ma-grid-settings-overlay {
+  animation: ma-grid-fade-out 0.15s ease forwards;
+}
+
+.ma-grid-settings-modal.ma-grid-fading-out .ma-grid-settings-panel {
+  animation: ma-grid-fade-out 0.15s ease forwards;
+}
+
+/* Close button */
+.ma-grid-settings-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: #656d76;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  padding: 0;
+  margin-left: auto;
+}
+
+.ma-grid-settings-close:hover {
+  background: #f6f8fa;
+  color: #24292f;
+}
+
+/* Popup styles - copied from popup/style.css */
+.ma-grid-settings-panel {
+  color-scheme: light;
+  --ink: #24292f;
+  --muted: #656d76;
+  --surface: #ffffff;
+  --surface-weak: #f6f8fa;
+  --line: #d0d7de;
+  --soft-line: rgb(234, 234, 234);
+  --focus: rgba(46, 164, 79, 0.25);
+}
+
+.ma-grid-settings-panel * {
+  box-sizing: border-box;
+}
+
+.ma-grid-settings-panel .popup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  font-family: "Futura Light", "Trebuchet MS", Arial, sans-serif;
+  color: var(--ink);
+  background: var(--surface);
+}
+
+.ma-grid-settings-panel .popup__header {
+  display: flex;
+  align-items: center;
+}
+
+.ma-grid-settings-panel .popup__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: rgb(30, 25, 78);
+}
+
+.ma-grid-settings-panel .popup__section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ma-grid-settings-panel .popup__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ma-grid-settings-panel .popup__section-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ma-grid-settings-panel .popup__card {
+  padding: 12px;
+  border-radius: 6px;
+  background: var(--surface-weak);
+  border: 1px solid var(--soft-line);
+}
+
+.ma-grid-settings-panel .popup__form {
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.ma-grid-settings-panel .popup__fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.ma-grid-settings-panel .popup__legend {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.ma-grid-settings-panel .popup__option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.ma-grid-settings-panel .popup__option input {
+  margin: 0;
+}
+
+.ma-grid-settings-panel .popup__option input:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.ma-grid-settings-panel .popup__button {
+  display: inline-flex;
+  align-items: center;
+  font-family: inherit;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  width: fit-content;
+}
+
+.ma-grid-settings-panel .popup__button:hover {
+  background: var(--surface-weak);
+}
+
+.ma-grid-settings-panel .popup__button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

@@ -1,4 +1,4 @@
-import type { Activity, CalendarData, DailyXP } from "@/types";
+import type { Activity, DailyXP } from "@/types";
 import { formatDateKey, getLocalWeekdayIndex, parseDateKey } from "./timezone";
 
 export function buildCalendarData(activities: Activity[]) {

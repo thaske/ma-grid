@@ -1,6 +1,6 @@
+import { buildCalendarData } from "@/shared/aggregation";
+import { formatDateKey } from "@/shared/timezone";
 import type { Activity } from "@/types";
-import { buildCalendarData } from "@/utils/aggregation";
-import { formatDateKey } from "@/utils/timezone";
 import { describe, expect, it } from "bun:test";
 
 const buildActivity = (overrides: Partial<Activity>): Activity => ({
