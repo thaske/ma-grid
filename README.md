@@ -26,10 +26,8 @@ For Safari, you can install MA Grid as a userscript. This should work on iOS, iP
 
 2. Install the userscript:
    - Navigate to the [latest release](https://github.com/thaske/ma-grid/releases/latest) and click on **ma-grid.user.js**
-   - Your userscript manager should detect the script and prompt you to install
-   - Review the script details and click **Install** to confirm
-
-   Alternatively, you can use this direct link: [Install ma-grid.user.js](https://github.com/thaske/ma-grid/releases/latest/download/ma-grid.user.js)
+   - Click the Userscripts extension popup and select **Userscript Detected: Click to install**
+   - In the installation dialog, review the script details and click **Install** to confirm
 
    <img src="./assets/userscripts_1.png" alt="Userscripts installation step 1">
    <img src="./assets/userscripts_2.png" alt="Userscripts installation step 2">
