@@ -57,7 +57,6 @@ ${iconData ? `// @icon         ${iconData}` : ""}
 // @grant        GM.getValue
 // @grant        GM.setValue
 // @grant        GM.deleteValue
-// @grant        GM.listValues
 // @connect      mathacademy.com
 // @connect      www.mathacademy.com
 // @run-at       document-end
