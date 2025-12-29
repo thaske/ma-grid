@@ -1,15 +1,13 @@
 import type { DataSource } from "../shared/dataSource";
-import type { CalendarResponse } from "../types";
+import type { CalendarData, CalendarResponse } from "../types";
 
-/**
- * DataSource implementation for browser extension that uses browser.runtime messaging
- * to communicate with the background script.
- */
+type RuntimeMessage =
+  | ({ type: "calendar_update" } & CalendarResponse)
+  | { type: string };
+
 export class ExtensionDataSource implements DataSource {
   private updateCallback: ((data: CalendarResponse) => void) | null = null;
-  private messageListener:
-    | ((message: any, sender: any, sendResponse: any) => void)
-    | null = null;
+  private messageListener: ((message: RuntimeMessage) => void) | null = null;
 
   async fetchData(): Promise<CalendarResponse> {
     return (await browser.runtime.sendMessage({})) as CalendarResponse;
@@ -18,9 +16,10 @@ export class ExtensionDataSource implements DataSource {
   onUpdate(callback: (data: CalendarResponse) => void): void {
     this.updateCallback = callback;
 
-    this.messageListener = (message: any) => {
+    this.messageListener = (message: RuntimeMessage) => {
       if (
         message.type === "calendar_update" &&
+        "isFresh" in message &&
         message.isFresh &&
         message.data
       ) {
