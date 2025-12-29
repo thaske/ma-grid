@@ -1,4 +1,5 @@
 import { CACHE_KEY } from "@/shared/constants";
+import { logger } from "@/shared/logger";
 import {
   HIDE_XP_FRAME_STORAGE_KEY,
   UI_ANCHOR_STORAGE_KEY,
@@ -123,7 +124,7 @@ export function SettingsModal(options: SettingsModalOptions): HTMLElement {
       try {
         await storageApi.removeItem(CACHE_KEY);
       } catch (error) {
-        console.error("[MA-Grid] Failed to clear cache:", error);
+        logger.error("[MA-Grid] Failed to clear cache:", error);
       }
       clearCacheButton.textContent = "Cleared";
       window.setTimeout(() => {
@@ -150,7 +151,7 @@ export function SettingsModal(options: SettingsModalOptions): HTMLElement {
         hideXpInput.checked = hideXpFrame;
       }
     } catch (error) {
-      console.error("[MA-Grid] Failed to initialize settings modal:", error);
+      logger.error("[MA-Grid] Failed to initialize settings modal:", error);
     }
   }
 

@@ -1,3 +1,5 @@
+import { logger } from "@/shared/logger";
+
 function checkGMAvailable(): void {
   // @ts-expect-error GM is provided by userscript manager
   if (typeof GM === "undefined") {
@@ -16,7 +18,7 @@ export const storage = {
       const value = await GM.getValue(key, null);
       return value;
     } catch (error) {
-      console.error(`[MA-Grid] Failed to get item "${key}":`, error);
+      logger.error(`[MA-Grid] Failed to get item "${key}":`, error);
       return null;
     }
   },
@@ -26,7 +28,7 @@ export const storage = {
       // @ts-expect-error GM is provided by userscript manager
       await GM.setValue(key, value);
     } catch (error) {
-      console.error(`[MA-Grid] Failed to set item "${key}":`, error);
+      logger.error(`[MA-Grid] Failed to set item "${key}":`, error);
     }
   },
 
@@ -35,7 +37,7 @@ export const storage = {
       // @ts-expect-error GM is provided by userscript manager
       await GM.deleteValue(key);
     } catch (error) {
-      console.error(`[MA-Grid] Failed to remove item "${key}":`, error);
+      logger.error(`[MA-Grid] Failed to remove item "${key}":`, error);
     }
   },
 };
