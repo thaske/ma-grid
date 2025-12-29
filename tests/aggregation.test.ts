@@ -1,5 +1,5 @@
 import { buildCalendarData } from "@/utils/aggregation";
-import { formatDateKey } from "@/utils/timezone";
+import { formatDateKey, parseDateCompletedStr } from "@/utils/timezone";
 import type { Activity } from "@/types";
 import { describe, expect, it } from "bun:test";
 
@@ -39,18 +39,39 @@ describe("buildCalendarData", () => {
   });
 
   it("uses dateCompletedStr when available", () => {
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() - 3);
+    const day = targetDate.getDate();
+    const suffix =
+      day % 10 === 1 && day !== 11
+        ? "st"
+        : day % 10 === 2 && day !== 12
+          ? "nd"
+          : day % 10 === 3 && day !== 13
+            ? "rd"
+            : "th";
+    const weekday = new Intl.DateTimeFormat("en-US", {
+      weekday: "short",
+    }).format(targetDate);
+    const month = new Intl.DateTimeFormat("en-US", {
+      month: "short",
+    }).format(targetDate);
+    const dateCompletedStr = `${weekday}, ${month} ${day}${suffix}, ${targetDate.getFullYear()}`;
+    const expectedKey = parseDateCompletedStr(dateCompletedStr);
+
     const activity = buildActivity({
       completed: "not-a-date",
       started: "not-a-date",
-      dateCompletedStr: "Sun, Dec 8th, 2024",
+      dateCompletedStr,
       pointsAwarded: 25,
     });
 
     const data = buildCalendarData([activity]);
-    const day = data.grid.flat().find((entry) => entry.date === "2024-12-08");
+    expect(expectedKey).not.toBeNull();
+    const entry = data.grid.flat().find((item) => item.date === expectedKey);
 
-    expect(day).toBeDefined();
-    expect(day?.xp).toBe(25);
+    expect(entry).toBeDefined();
+    expect(entry?.xp).toBe(25);
     expect(data.stats.activeDays).toBe(1);
   });
 });
