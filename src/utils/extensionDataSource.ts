@@ -24,8 +24,8 @@ export class ExtensionDataSource implements DataSource {
     this.messageListener = (message: RuntimeMessage) => {
       if (
         message.type === "calendar_update" &&
-        "isFresh" in message &&
-        message.isFresh &&
+        "status" in message &&
+        message.status === "fresh" &&
         message.data
       ) {
         this.updateCallback?.(message);

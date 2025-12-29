@@ -1,3 +1,13 @@
+import { CACHE_KEY } from "@/utils/constants";
+import {
+  getHideXpFrame,
+  getUiAnchor,
+  HIDE_XP_FRAME_STORAGE_KEY,
+  isUiAnchor,
+  UI_ANCHOR_STORAGE_KEY,
+} from "@/utils/settings";
+import { storage } from "@/utils/storage";
+
 const selector = 'input[name="anchor"]';
 const inputs = Array.from(
   document.querySelectorAll<HTMLInputElement>(selector)

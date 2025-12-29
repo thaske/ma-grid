@@ -1,4 +1,8 @@
+import { defineBackground } from "wxt/utils/define-background";
 import type { CalendarResponse } from "@/types";
+import { getCalendarResponse } from "@/utils/calendarResponse";
+import { MATHACADEMY_MATCHES } from "@/utils/constants";
+import { logger } from "@/utils/logger";
 
 export default defineBackground({
   type: { chrome: "module" },
@@ -35,7 +39,7 @@ export default defineBackground({
                     browser.tabs.sendMessage(tab.id, {
                       type: "calendar_update",
                       data: freshResponse.data,
-                      isFresh: true,
+                      status: "fresh",
                     });
                   }
                 }

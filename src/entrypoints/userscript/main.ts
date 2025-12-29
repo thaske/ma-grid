@@ -6,12 +6,7 @@ import {
   updateXpFrameHidden,
 } from "@/utils/mount";
 import { ScriptDataSource } from "@/utils/scriptDataSource";
-import {
-  HIDE_XP_FRAME_STORAGE_KEY,
-  UI_ANCHOR_STORAGE_KEY,
-  type UiAnchor,
-} from "@/utils/settings";
-import { storage } from "@/utils/storage";
+import { getHideXpFrame, getUiAnchor } from "@/utils/settings";
 import { SettingsButton } from "../../components/SettingsButton";
 import { SettingsModal } from "../../components/SettingsModal";
 import settingsStyles from "./styles.css?raw";
@@ -21,11 +16,8 @@ import settingsStyles from "./styles.css?raw";
 
   const dataSource = new ScriptDataSource();
 
-  let hideXpFrame =
-    (await storage.getItem<boolean>(HIDE_XP_FRAME_STORAGE_KEY)) ?? false;
-  let anchor =
-    (await storage.getItem<UiAnchor>(UI_ANCHOR_STORAGE_KEY)) ??
-    "incompleteTasks";
+  let hideXpFrame = await getHideXpFrame();
+  let anchor = await getUiAnchor();
 
   let currentHost: HTMLElement | null = null;
   let currentShadow: ShadowRoot | null = null;
@@ -36,11 +28,8 @@ import settingsStyles from "./styles.css?raw";
 
     const handleSettingsChange = async (): Promise<void> => {
       const previousAnchor = anchor;
-      hideXpFrame =
-        (await storage.getItem<boolean>(HIDE_XP_FRAME_STORAGE_KEY)) ?? false;
-      anchor =
-        (await storage.getItem<UiAnchor>(UI_ANCHOR_STORAGE_KEY)) ??
-        "incompleteTasks";
+      hideXpFrame = await getHideXpFrame();
+      anchor = await getUiAnchor();
 
       updateXpFrameHidden(hideXpFrame);
 

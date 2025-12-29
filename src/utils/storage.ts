@@ -1,4 +1,16 @@
 type StorageChangeHandler = (newValue: unknown, oldValue?: unknown) => void;
+type StorageChangeListener = (
+  changes: Record<string, { newValue?: unknown; oldValue?: unknown }>,
+  areaName: string
+) => void;
+
+type LocalStorageBackend = {
+  get: (keys: string | string[]) => Promise<Record<string, unknown>>;
+  set: (items: Record<string, unknown>) => Promise<void>;
+  remove: (keys: string | string[]) => Promise<void>;
+  addChangeListener: (listener: StorageChangeListener) => void;
+  removeChangeListener: (listener: StorageChangeListener) => void;
+};
 
 const LEGACY_PREFIX = "local:";
 const GM_MISSING = "__MA_GRID_MISSING__";
@@ -27,67 +39,70 @@ function hasChromeStorageLocal(): boolean {
   );
 }
 
-async function storageLocalGet(keys: string | string[]) {
+function resolveLocalStorageBackend(): LocalStorageBackend | null {
   if (hasBrowserStorageLocal()) {
-    return browser.storage.local.get(keys);
+    return {
+      get: (keys) => browser.storage.local.get(keys),
+      set: (items) => browser.storage.local.set(items),
+      remove: (keys) => browser.storage.local.remove(keys),
+      addChangeListener: (listener) =>
+        browser.storage.onChanged.addListener(listener),
+      removeChangeListener: (listener) =>
+        browser.storage.onChanged.removeListener(listener),
+    };
   }
   if (hasChromeStorageLocal()) {
-    return await new Promise<Record<string, unknown>>((resolve, reject) => {
-      chrome.storage.local.get(keys, (items) => {
-        const error = chrome.runtime?.lastError;
-        if (error) {
-          reject(new Error(error.message));
-          return;
-        }
-        resolve(items);
-      });
-    });
+    return {
+      get: (keys) =>
+        new Promise<Record<string, unknown>>((resolve, reject) => {
+          chrome.storage.local.get(keys, (items) => {
+            const error = chrome.runtime?.lastError;
+            if (error) {
+              reject(new Error(error.message));
+              return;
+            }
+            resolve(items as Record<string, unknown>);
+          });
+        }),
+      set: (items) =>
+        new Promise<void>((resolve, reject) => {
+          chrome.storage.local.set(items, () => {
+            const error = chrome.runtime?.lastError;
+            if (error) {
+              reject(new Error(error.message));
+              return;
+            }
+            resolve();
+          });
+        }),
+      remove: (keys) =>
+        new Promise<void>((resolve, reject) => {
+          chrome.storage.local.remove(keys, () => {
+            const error = chrome.runtime?.lastError;
+            if (error) {
+              reject(new Error(error.message));
+              return;
+            }
+            resolve();
+          });
+        }),
+      addChangeListener: (listener) =>
+        chrome.storage.onChanged.addListener(listener),
+      removeChangeListener: (listener) =>
+        chrome.storage.onChanged.removeListener(listener),
+    };
   }
-  return {};
+  return null;
 }
 
-async function storageLocalSet(items: Record<string, unknown>) {
-  if (hasBrowserStorageLocal()) {
-    await browser.storage.local.set(items);
-    return;
-  }
-  if (hasChromeStorageLocal()) {
-    await new Promise<void>((resolve, reject) => {
-      chrome.storage.local.set(items, () => {
-        const error = chrome.runtime?.lastError;
-        if (error) {
-          reject(new Error(error.message));
-          return;
-        }
-        resolve();
-      });
-    });
-  }
-}
-
-async function storageLocalRemove(keys: string | string[]) {
-  if (hasBrowserStorageLocal()) {
-    await browser.storage.local.remove(keys);
-    return;
-  }
-  if (hasChromeStorageLocal()) {
-    await new Promise<void>((resolve, reject) => {
-      chrome.storage.local.remove(keys, () => {
-        const error = chrome.runtime?.lastError;
-        if (error) {
-          reject(new Error(error.message));
-          return;
-        }
-        resolve();
-      });
-    });
-  }
-}
+const localBackend = resolveLocalStorageBackend();
 
 function storageLocalWatch(
   key: string,
   callback: StorageChangeHandler
 ): () => void {
+  if (!localBackend) return () => {};
+
   const normalized = normalizeKey(key);
   const legacy = legacyKeyFor(normalized);
 
@@ -105,15 +120,8 @@ function storageLocalWatch(
     }
   };
 
-  if (hasBrowserStorageLocal()) {
-    browser.storage.onChanged.addListener(listener);
-    return () => browser.storage.onChanged.removeListener(listener);
-  }
-  if (hasChromeStorageLocal()) {
-    chrome.storage.onChanged.addListener(listener);
-    return () => chrome.storage.onChanged.removeListener(listener);
-  }
-  return () => {};
+  localBackend.addChangeListener(listener);
+  return () => localBackend.removeChangeListener(listener);
 }
 
 async function gmGetValue<T>(key: string): Promise<T | null> {
@@ -143,18 +151,18 @@ export const storage = {
     const normalized = normalizeKey(key);
     const legacy = legacyKeyFor(normalized);
 
-    if (hasBrowserStorageLocal() || hasChromeStorageLocal()) {
-      const items = await storageLocalGet([normalized]);
+    if (localBackend) {
+      const items = await localBackend.get([normalized]);
       const value = (items as Record<string, unknown>)[normalized];
       if (typeof value !== "undefined") {
         return value as T;
       }
       if (legacy !== normalized) {
-        const legacyItems = await storageLocalGet([legacy]);
+        const legacyItems = await localBackend.get([legacy]);
         const legacyValue = (legacyItems as Record<string, unknown>)[legacy];
         if (typeof legacyValue !== "undefined") {
-          await storageLocalSet({ [normalized]: legacyValue });
-          await storageLocalRemove(legacy);
+          await localBackend.set({ [normalized]: legacyValue });
+          await localBackend.remove(legacy);
           return legacyValue as T;
         }
       }
@@ -180,10 +188,10 @@ export const storage = {
     const normalized = normalizeKey(key);
     const legacy = legacyKeyFor(normalized);
 
-    if (hasBrowserStorageLocal() || hasChromeStorageLocal()) {
-      await storageLocalSet({ [normalized]: value });
+    if (localBackend) {
+      await localBackend.set({ [normalized]: value });
       if (legacy !== normalized) {
-        await storageLocalRemove(legacy);
+        await localBackend.remove(legacy);
       }
       return;
     }
@@ -198,11 +206,11 @@ export const storage = {
     const normalized = normalizeKey(key);
     const legacy = legacyKeyFor(normalized);
 
-    if (hasBrowserStorageLocal() || hasChromeStorageLocal()) {
+    if (localBackend) {
       if (legacy !== normalized) {
-        await storageLocalRemove([normalized, legacy]);
+        await localBackend.remove([normalized, legacy]);
       } else {
-        await storageLocalRemove(normalized);
+        await localBackend.remove(normalized);
       }
       return;
     }

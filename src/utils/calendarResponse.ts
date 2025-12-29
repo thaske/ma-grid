@@ -22,7 +22,7 @@ async function refreshInBackground(
     const activities = await fetchAllActivities(origin);
     const freshData = buildCalendarData(activities);
     logger.log("Background refresh complete");
-    await onFresh({ data: freshData, isFresh: true });
+    await onFresh({ data: freshData, status: "fresh" });
   } catch (error) {
     logger.error("Background refresh failed:", error);
   }
@@ -40,7 +40,7 @@ export async function getCalendarResponse(
     if (isFresh && cached.length > 0) {
       logger.log("Returning fresh cached data:", cached.length, "activities");
       const calendarData = buildCalendarData(cached);
-      return { data: calendarData, isFresh: true };
+      return { data: calendarData, status: "fresh" };
     }
 
     if (!isFresh && cached.length > 0) {
@@ -51,7 +51,7 @@ export async function getCalendarResponse(
         void refreshInBackground(origin, onFresh);
       }
 
-      return { data: staleData, isStale: true };
+      return { data: staleData, status: "stale" };
     }
 
     logger.log("Cache empty, fetching fresh data...");
@@ -59,11 +59,12 @@ export async function getCalendarResponse(
     const calendarData = buildCalendarData(activities);
 
     logger.log("Calendar data built:", calendarData.stats);
-    return { data: calendarData, isFresh: true };
+    return { data: calendarData, status: "fresh" };
   } catch (error) {
     logger.error("Error:", error);
     return {
       error: error instanceof Error ? error.message : String(error),
+      status: "error",
     };
   }
 }

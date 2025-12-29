@@ -1,4 +1,15 @@
+import { defineContentScript } from "wxt/utils/define-content-script";
 import calendarStyles from "./styles.css?raw";
+import { ExtensionDataSource } from "@/utils/extensionDataSource";
+import { logger } from "@/utils/logger";
+import { mountCalendarUI, updateXpFrameHidden } from "@/utils/mount";
+import { MATHACADEMY_MATCHES } from "@/utils/constants";
+import {
+  getHideXpFrame,
+  getUiAnchor,
+  watchHideXpFrame,
+  watchUiAnchor,
+} from "@/utils/settings";
 
 export default defineContentScript({
   matches: MATHACADEMY_MATCHES,
@@ -34,13 +45,13 @@ export default defineContentScript({
       currentApp = mounted?.app ?? null;
     }
 
-    storage.watch(HIDE_XP_FRAME_STORAGE_KEY, (newValue) => {
-      hideXpFrame = typeof newValue === "boolean" ? newValue : false;
+    watchHideXpFrame((newValue) => {
+      hideXpFrame = newValue;
       updateXpFrameHidden(hideXpFrame);
     });
 
-    storage.watch(UI_ANCHOR_STORAGE_KEY, (newValue) => {
-      anchor = newValue === "sidebar" ? "sidebar" : "incompleteTasks";
+    watchUiAnchor((newValue) => {
+      anchor = newValue;
       mountUI();
     });
 
