@@ -134,21 +134,27 @@ export function SettingsModal(options: SettingsModalOptions): HTMLElement {
     });
   }
 
-  void (async () => {
-    const anchor =
-      (await storageApi.getItem<UiAnchor>(UI_ANCHOR_STORAGE_KEY)) ??
-      "incompleteTasks";
-    const hideXpFrame =
-      (await storageApi.getItem<boolean>(HIDE_XP_FRAME_STORAGE_KEY)) ?? false;
+  async function initializeModalState() {
+    try {
+      const anchor =
+        (await storageApi.getItem<UiAnchor>(UI_ANCHOR_STORAGE_KEY)) ??
+        "incompleteTasks";
+      const hideXpFrame =
+        (await storageApi.getItem<boolean>(HIDE_XP_FRAME_STORAGE_KEY)) ?? false;
 
-    anchorInputs.forEach((input) => {
-      input.checked = input.value === anchor;
-    });
+      anchorInputs.forEach((input) => {
+        input.checked = input.value === anchor;
+      });
 
-    if (hideXpInput) {
-      hideXpInput.checked = hideXpFrame;
+      if (hideXpInput) {
+        hideXpInput.checked = hideXpFrame;
+      }
+    } catch (error) {
+      console.error("[MA-Grid] Failed to initialize settings modal:", error);
     }
-  })();
+  }
+
+  initializeModalState();
 
   return modal;
 }
