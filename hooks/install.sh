@@ -1,20 +1,24 @@
 #!/bin/sh
-# Install git hooks for this repository
 
 HOOKS_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+cd "$HOOKS_DIR/.." || exit 1
+
+if ! git rev-parse --git-dir > /dev/null 2>&1; then
+  echo "Error: Not in a git repository"
+  exit 1
+fi
+
 GIT_HOOKS_DIR="$(git rev-parse --git-dir)/hooks"
 
 echo "Installing git hooks..."
 
 for hook in "$HOOKS_DIR"/*; do
-  # Skip this install script
   if [ "$(basename "$hook")" = "install.sh" ]; then
     continue
   fi
 
   hook_name=$(basename "$hook")
-
-  # Copy hook to .git/hooks
   cp "$hook" "$GIT_HOOKS_DIR/$hook_name"
   chmod +x "$GIT_HOOKS_DIR/$hook_name"
 
