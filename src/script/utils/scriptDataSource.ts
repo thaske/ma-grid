@@ -13,18 +13,10 @@ import type { CalendarResponse } from "@/types";
 export class ScriptDataSource implements DataSource {
   private updateCallback: ((response: CalendarResponse) => void) | null = null;
 
-  /**
-   * Register callback to be called when background refresh completes
-   */
   onUpdate(callback: (response: CalendarResponse) => void): void {
     this.updateCallback = callback;
   }
 
-  /**
-   * Fetch calendar data from cache or API
-   * Returns fresh data if cache is recent, stale data if cache exists but is old,
-   * or fetches new data if cache is empty
-   */
   async fetchData(): Promise<CalendarResponse> {
     try {
       const isFresh = await isCacheFresh();
@@ -46,7 +38,6 @@ export class ScriptDataSource implements DataSource {
         );
         const staleData = buildCalendarData(cached);
 
-        // Start background refresh (don't await)
         void this.backgroundRefresh();
 
         return { data: staleData, isStale: true };
@@ -66,10 +57,6 @@ export class ScriptDataSource implements DataSource {
     }
   }
 
-  /**
-   * Background refresh logic
-   * Fetches fresh data and calls refresh callback if set
-   */
   private async backgroundRefresh() {
     try {
       logger.log("[MA-Grid] Starting background refresh...");
@@ -78,7 +65,6 @@ export class ScriptDataSource implements DataSource {
 
       logger.log("[MA-Grid] Background refresh complete");
 
-      // Notify UI if callback is set
       if (this.updateCallback) {
         this.updateCallback({
           data: freshData,

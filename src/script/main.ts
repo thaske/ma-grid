@@ -21,11 +21,9 @@ import { SettingsButton } from "./components/SettingsButton";
 import { SettingsModal } from "./components/SettingsModal";
 import { ScriptDataSource } from "./utils/scriptDataSource";
 
-// Import styles as raw strings (will be inlined by Vite)
 import mainStyles from "@/entrypoints/styles.css?raw";
 import settingsStyles from "./styles.css?raw";
 
-// Use storage from global for consistency
 const storage = storageAdapter;
 
 (async function () {
@@ -44,9 +42,6 @@ const storage = storageAdapter;
   let currentHost: HTMLElement | null = null;
   let currentShadow: ShadowRoot | null = null;
 
-  /**
-   * Update XP frame visibility based on settings
-   */
   function updateXpFrame() {
     const xpFrame = document.querySelector<HTMLElement>("#xpFrame");
     if (!xpFrame) return;
@@ -58,15 +53,10 @@ const storage = storageAdapter;
     }
   }
 
-  /**
-   * Open settings modal
-   */
   function openSettings() {
     if (!currentShadow) return;
 
-    // Callback that handles settings changes and can recreate itself
     const handleSettingsChange = async (): Promise<void> => {
-      // Reload settings
       const previousAnchor = anchor;
       hideXpFrame =
         (await storage.getItem<boolean>(HIDE_XP_FRAME_STORAGE_KEY)) ?? false;
@@ -74,22 +64,17 @@ const storage = storageAdapter;
         (await storage.getItem<UiAnchor>(UI_ANCHOR_STORAGE_KEY)) ??
         "incompleteTasks";
 
-      // Update XP frame
       updateXpFrame();
 
-      // Only remount if anchor position changed
       if (previousAnchor !== anchor && currentShadow) {
-        // Fade out existing modal
         const existingModal = currentShadow.querySelector(
           ".ma-grid-settings-modal"
         );
         if (existingModal) {
           existingModal.classList.add("ma-grid-fading-out");
-          // Wait for fade-out animation to complete
           await new Promise((resolve) => setTimeout(resolve, 150));
         }
 
-        // Remount UI at new position
         mountUI();
 
         // Reopen settings in new shadow root with slight delay for smoother transition
@@ -110,11 +95,7 @@ const storage = storageAdapter;
     currentShadow.appendChild(modal);
   }
 
-  /**
-   * Mount the calendar UI
-   */
   function mountUI() {
-    // Remove existing
     if (currentHost) {
       currentHost.remove();
       currentHost = null;
@@ -127,7 +108,6 @@ const storage = storageAdapter;
       existing.remove();
     }
 
-    // Find anchor element
     const layout = anchor === "sidebar" ? "sidebar" : "default";
     const anchorElement = document.querySelector(SELECTOR[layout]);
     if (!anchorElement) {
@@ -137,24 +117,19 @@ const storage = storageAdapter;
 
     logger.log("[MA-Grid] Dashboard detected, injecting calendar");
 
-    // Create host with Shadow DOM
     const host = document.createElement("div");
     host.id = "ma-grid";
     const shadow = host.attachShadow({ mode: "open" });
 
-    // Inject styles
     const styleElem = document.createElement("style");
     styleElem.textContent = mainStyles + "\n\n" + settingsStyles;
     shadow.appendChild(styleElem);
 
-    // Create settings button to be placed inside calendar header
     const settingsBtn = SettingsButton(openSettings);
 
-    // Create app with settings button
     const app = App(layout, dataSource, settingsBtn);
     shadow.appendChild(app);
 
-    // Insert into DOM
     if (anchor === "sidebar") {
       anchorElement
         .querySelector("#courseFrame")
@@ -167,7 +142,6 @@ const storage = storageAdapter;
     currentShadow = shadow;
   }
 
-  // Initialize
   updateXpFrame();
   mountUI();
 

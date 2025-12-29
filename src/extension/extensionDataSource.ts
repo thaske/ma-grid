@@ -25,7 +25,6 @@ export class ExtensionDataSource implements DataSource {
         message.data
       ) {
         this.updateCallback?.(message);
-        // Remove listener after receiving fresh data
         if (this.messageListener) {
           browser.runtime.onMessage.removeListener(this.messageListener);
           this.messageListener = null;

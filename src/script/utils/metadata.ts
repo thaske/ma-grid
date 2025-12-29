@@ -21,13 +21,11 @@ export function generateMetadata(
   updateURL?: string,
   downloadURL?: string
 ): string {
-  // Read package.json
   const packageJsonPath = join(process.cwd(), "package.json");
   const packageJson: PackageJson = JSON.parse(
     readFileSync(packageJsonPath, "utf-8")
   );
 
-  // Read and convert icon to base64
   const iconPath = join(process.cwd(), "public/icons/icon16.png");
   let iconData = "";
   try {

@@ -72,11 +72,9 @@ export default defineConfig(({ mode }) => {
       },
     },
     define: {
-      // Polyfill for userscript environment
       "import.meta.env.MODE": JSON.stringify("production"),
     },
     plugins: [userscriptHeaderPlugin(env.USERSCRIPT_OUTPUT_PATH)],
-    // Disables copying of the public directory
     publicDir: false,
   };
 });
