@@ -1,38 +1,15 @@
 #!/bin/sh
-# Pre-commit hook to format code and rebuild userscript
-# Skip with: git commit --no-verify
 
-# Format staged files with Prettier
 echo "✨ Formatting staged files..."
 
 STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
 
 if [ -n "$STAGED_FILES" ]; then
   echo "$STAGED_FILES" | xargs bunx prettier --write --ignore-unknown
-
-  # Re-add formatted files
   echo "$STAGED_FILES" | xargs git add
   echo "✅ Files formatted"
 else
   echo "✅ No files to format"
-fi
-
-# Rebuild userscript
-echo "🔨 Rebuilding userscript..."
-
-if ! bun run build:userscript; then
-  echo "❌ Build failed! Commit aborted."
-  echo "   Fix the build errors or use --no-verify to skip this hook."
-  exit 1
-fi
-
-# Check if dist folder has changes
-if git diff --quiet dist/; then
-  echo "✅ Userscript built (no changes)"
-else
-  echo "📦 Adding updated dist/ to commit..."
-  git add dist/
-  echo "✅ Userscript rebuilt and staged"
 fi
 
 exit 0

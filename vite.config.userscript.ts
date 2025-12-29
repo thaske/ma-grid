@@ -20,10 +20,15 @@ function userscriptHeaderPlugin(outputPath?: string): Plugin {
   return {
     name: "userscript-header",
     closeBundle() {
-      const updateURL =
-        "https://raw.githubusercontent.com/thaske/ma-grid/master/dist/ma-grid.user.js";
-      const downloadURL =
-        "https://raw.githubusercontent.com/thaske/ma-grid/master/dist/ma-grid.user.js";
+      const packageJsonPath = resolve(__dirname, "package.json");
+      const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
+
+      const repoUrl = packageJson.repository?.url || "";
+      const githubMatch = repoUrl.match(/github\.com[:/](.+?)(?:\.git)?$/);
+      const repoPath = githubMatch?.[1] || "thaske/ma-grid";
+
+      const updateURL = `https://github.com/${repoPath}/releases/latest/download/ma-grid.user.js`;
+      const downloadURL = `https://github.com/${repoPath}/releases/latest/download/ma-grid.user.js`;
       const headers = generateMetadata(updateURL, downloadURL);
 
       const filePath = resolve(__dirname, "dist/ma-grid.user.js");

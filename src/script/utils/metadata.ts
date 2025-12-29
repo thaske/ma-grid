@@ -10,6 +10,11 @@ interface PackageJson {
   name: string;
   version: string;
   description: string;
+  author?: string;
+  repository?: {
+    type: string;
+    url: string;
+  };
 }
 
 /**
@@ -26,6 +31,11 @@ export function generateMetadata(
     readFileSync(packageJsonPath, "utf-8")
   );
 
+  const repoUrl =
+    packageJson.repository?.url.replace(/\.git$/, "") ||
+    "https://github.com/thaske/ma-grid";
+  const namespace = repoUrl.replace("https://", "").replace("http://", "");
+
   const iconPath = join(process.cwd(), "public/icons/icon16.png");
   let iconData = "";
   try {
@@ -37,10 +47,10 @@ export function generateMetadata(
 
   const metadata = `// ==UserScript==
 // @name         MA Grid
-// @namespace    https://github.com/thaske/ma-grid
+// @namespace    ${namespace}
 // @version      ${packageJson.version}
 // @description  ${packageJson.description}
-// @author       thaske
+// @author       ${packageJson.author}
 // @match        https://mathacademy.com/learn
 // @match        https://www.mathacademy.com/learn
 ${iconData ? `// @icon         ${iconData}` : ""}

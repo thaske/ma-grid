@@ -1,13 +1,6 @@
-/**
- * MA Grid Userscript - Main Entry Point
- * GitHub-style activity graph for Math Academy (Safari/Userscripts compatible)
- */
-
-// IMPORTANT: Set up storage global before any other imports
-// This provides the WXT-compatible storage API for shared utilities
-import { storage as storageAdapter } from "./utils/storageAdapter";
-// @ts-ignore - Declare storage as global for WXT compatibility
-globalThis.storage = storageAdapter;
+import { storage } from "./utils/storageAdapter";
+import { setStorage, storageApi } from "@/shared/storage";
+setStorage(storage);
 
 import { App } from "@/components/App";
 import { SELECTOR } from "@/shared/constants";
@@ -24,8 +17,6 @@ import { ScriptDataSource } from "./utils/scriptDataSource";
 import mainStyles from "@/entrypoints/styles.css?raw";
 import settingsStyles from "./styles.css?raw";
 
-const storage = storageAdapter;
-
 (async function () {
   "use strict";
 
@@ -34,9 +25,9 @@ const storage = storageAdapter;
   const dataSource = new ScriptDataSource();
 
   let hideXpFrame =
-    (await storage.getItem<boolean>(HIDE_XP_FRAME_STORAGE_KEY)) ?? false;
+    (await storageApi.getItem<boolean>(HIDE_XP_FRAME_STORAGE_KEY)) ?? false;
   let anchor =
-    (await storage.getItem<UiAnchor>(UI_ANCHOR_STORAGE_KEY)) ??
+    (await storageApi.getItem<UiAnchor>(UI_ANCHOR_STORAGE_KEY)) ??
     "incompleteTasks";
 
   let currentHost: HTMLElement | null = null;
@@ -59,9 +50,9 @@ const storage = storageAdapter;
     const handleSettingsChange = async (): Promise<void> => {
       const previousAnchor = anchor;
       hideXpFrame =
-        (await storage.getItem<boolean>(HIDE_XP_FRAME_STORAGE_KEY)) ?? false;
+        (await storageApi.getItem<boolean>(HIDE_XP_FRAME_STORAGE_KEY)) ?? false;
       anchor =
-        (await storage.getItem<UiAnchor>(UI_ANCHOR_STORAGE_KEY)) ??
+        (await storageApi.getItem<UiAnchor>(UI_ANCHOR_STORAGE_KEY)) ??
         "incompleteTasks";
 
       updateXpFrame();
