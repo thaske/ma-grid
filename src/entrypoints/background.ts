@@ -1,9 +1,9 @@
+import { buildCalendarData } from "@/shared/aggregation";
+import { fetchAllActivities } from "@/shared/api";
+import { isCacheFresh, readCache } from "@/shared/cache";
+import { MATHACADEMY_MATCHES } from "@/shared/constants";
+import { logger } from "@/shared/logger";
 import type { CalendarResponse } from "@/types";
-import { buildCalendarData } from "@/utils/aggregation";
-import { fetchAllActivities } from "@/utils/api";
-import { isCacheFresh, readCache } from "@/utils/cache";
-import { MATHACADEMY_MATCHES } from "@/utils/constants";
-import { logger } from "@/utils/logger";
 
 export default defineBackground({
   type: { chrome: "module" },

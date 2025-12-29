@@ -3,14 +3,14 @@
  * Ports the background service worker logic from background.ts
  */
 
+import { buildCalendarData } from "@/shared/aggregation";
+import { fetchAllActivities } from "@/shared/api";
+import { isCacheFresh, readCache } from "@/shared/cache";
+import type { DataSource } from "@/shared/dataSource";
+import { logger } from "@/shared/logger";
 import type { CalendarResponse } from "@/types";
-import { buildCalendarData } from "@/utils/aggregation";
-import { fetchAllActivities } from "@/utils/api";
-import { isCacheFresh, readCache } from "@/utils/cache";
-import type { DataSource } from "@/utils/dataSource";
-import { logger } from "@/utils/logger";
 
-export class DataManager implements DataSource {
+export class ScriptDataSource implements DataSource {
   private updateCallback: ((response: CalendarResponse) => void) | null = null;
 
   /**

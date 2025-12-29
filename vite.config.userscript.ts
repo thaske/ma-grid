@@ -7,7 +7,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { resolve } from "node:path";
 import { defineConfig, loadEnv, type Plugin } from "vite";
-import { generateMetadata } from "./src/userscript/metadata";
+import { generateMetadata } from "./src/script/utils/metadata";
 
 function expandTilde(filepath: string): string {
   if (filepath.startsWith("~/") || filepath === "~") {
@@ -53,7 +53,7 @@ export default defineConfig(({ mode }) => {
       outDir: "dist",
       emptyOutDir: true,
       lib: {
-        entry: resolve(__dirname, "src/userscript/main.ts"),
+        entry: resolve(__dirname, "src/script/main.ts"),
         name: "MAGrid",
         formats: ["iife"],
         fileName: () => "ma-grid.user.js",

@@ -1,5 +1,5 @@
-import type { DataSource } from "@/utils/dataSource";
-import { logger } from "@/utils/logger";
+import type { DataSource } from "@/shared/dataSource";
+import { logger } from "@/shared/logger";
 import { Calendar } from "./calendar/Calendar";
 
 export function App(

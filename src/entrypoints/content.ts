@@ -1,14 +1,14 @@
 import { App } from "@/components/App";
-import { safariFix } from "@/utils/compat";
-import { MATHACADEMY_MATCHES, SELECTOR } from "@/utils/constants";
-import { ExtensionDataSource } from "@/utils/extensionDataSource";
-import { logger } from "@/utils/logger";
+import { safariFix } from "@/extension/compat";
+import { ExtensionDataSource } from "@/extension/extensionDataSource";
+import { MATHACADEMY_MATCHES, SELECTOR } from "@/shared/constants";
+import { logger } from "@/shared/logger";
 import {
   DEFAULT_HIDE_XP_FRAME,
   DEFAULT_UI_ANCHOR,
   HIDE_XP_FRAME_STORAGE_KEY,
   UI_ANCHOR_STORAGE_KEY,
-} from "@/utils/settings";
+} from "@/shared/settings";
 
 type UI = HTMLElement | null;
 

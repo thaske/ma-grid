@@ -5,25 +5,25 @@
 
 // IMPORTANT: Set up storage global before any other imports
 // This provides the WXT-compatible storage API for shared utilities
-import { storage as storageAdapter } from "./storageAdapter";
+import { storage as storageAdapter } from "./utils/storageAdapter";
 // @ts-ignore - Declare storage as global for WXT compatibility
 globalThis.storage = storageAdapter;
 
 import { App } from "@/components/App";
-import { SELECTOR } from "@/utils/constants";
-import { logger } from "@/utils/logger";
+import { SELECTOR } from "@/shared/constants";
+import { logger } from "@/shared/logger";
 import {
   HIDE_XP_FRAME_STORAGE_KEY,
   UI_ANCHOR_STORAGE_KEY,
   type UiAnchor,
-} from "@/utils/settings";
+} from "@/shared/settings";
 import { SettingsButton } from "./components/SettingsButton";
 import { SettingsModal } from "./components/SettingsModal";
-import { DataManager } from "./dataManager";
+import { ScriptDataSource } from "./utils/scriptDataSource";
 
 // Import styles as raw strings (will be inlined by Vite)
 import mainStyles from "@/entrypoints/styles.css?raw";
-import settingsStyles from "./components/settings.css?raw";
+import settingsStyles from "./styles.css?raw";
 
 // Use storage from global for consistency
 const storage = storageAdapter;
@@ -33,7 +33,7 @@ const storage = storageAdapter;
 
   logger.log("[MA-Grid] Userscript loaded");
 
-  const dataManager = new DataManager();
+  const dataSource = new ScriptDataSource();
 
   let hideXpFrame =
     (await storage.getItem<boolean>(HIDE_XP_FRAME_STORAGE_KEY)) ?? false;
@@ -151,7 +151,7 @@ const storage = storageAdapter;
     const settingsBtn = SettingsButton(openSettings);
 
     // Create app with settings button
-    const app = App(layout, dataManager, settingsBtn);
+    const app = App(layout, dataSource, settingsBtn);
     shadow.appendChild(app);
 
     // Insert into DOM

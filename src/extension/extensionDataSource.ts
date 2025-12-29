@@ -1,5 +1,5 @@
+import type { DataSource } from "../shared/dataSource";
 import type { CalendarResponse } from "../types";
-import type { DataSource } from "./dataSource";
 
 /**
  * DataSource implementation for browser extension that uses browser.runtime messaging

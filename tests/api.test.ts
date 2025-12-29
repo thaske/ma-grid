@@ -19,7 +19,7 @@ mock.module(constantsModule, () => ({
   OVERLAP_DAYS: 1000,
 }));
 
-const { fetchAllActivities } = await import("@/utils/api");
+const { fetchAllActivities } = await import("@/shared/api");
 
 const buildActivity = (id: number, completed: string): Activity => ({
   id,
