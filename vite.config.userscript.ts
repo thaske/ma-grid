@@ -1,13 +1,8 @@
-/**
- * Vite configuration for userscript build
- * Bundles everything into a single .user.js file
- */
-
 import { readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { resolve } from "node:path";
 import { defineConfig, loadEnv, type Plugin } from "vite";
-import { generateMetadata } from "./src/script/utils/metadata";
+import { generateMetadata } from "./src/script/metadata";
 
 function expandTilde(filepath: string): string {
   if (filepath.startsWith("~/") || filepath === "~") {
@@ -68,7 +63,7 @@ export default defineConfig(({ mode }) => {
           inlineDynamicImports: true,
         },
       },
-      minify: true,
+      minify: false,
       sourcemap: false,
     },
     resolve: {

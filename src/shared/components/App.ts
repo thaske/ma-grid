@@ -1,5 +1,5 @@
-import type { DataSource } from "@/shared/dataSource";
-import { logger } from "@/shared/logger";
+import type { DataSource } from "@/shared/data/dataSource";
+import { logger } from "@/shared/utils/logger";
 import { Calendar } from "./calendar/Calendar";
 
 export type AppElement = HTMLElement & {
@@ -43,7 +43,7 @@ export function App(
       if (response.isStale) {
         dataSource.onUpdate((freshResponse) => {
           if (freshResponse.data && mounted && currentCalendar) {
-            logger.log("[MA-Grid] Received fresh data, updating calendar");
+            logger.log("Received fresh data, updating calendar");
             const newCalendar = Calendar(
               freshResponse.data,
               layout,
@@ -59,7 +59,7 @@ export function App(
       }
     } catch (err) {
       if (!mounted) return;
-      logger.error("[MA-Grid] Failed to load calendar:", err);
+      logger.error("Failed to load calendar:", err);
       container.className = "ma-grid__error";
       if (layout === "sidebar") {
         container.classList.add("ma-grid__error--sidebar");

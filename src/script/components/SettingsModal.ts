@@ -1,12 +1,11 @@
-import { CACHE_KEY } from "@/shared/constants";
-import { logger } from "@/shared/logger";
+import { CACHE_KEY } from "@/shared/utils/constants";
+import { logger } from "@/shared/utils/logger";
 import {
   HIDE_XP_FRAME_STORAGE_KEY,
   UI_ANCHOR_STORAGE_KEY,
   type UiAnchor,
   isUiAnchor,
-} from "@/shared/settings";
-import { storageApi } from "@/shared/storage";
+} from "@/shared/utils/settings";
 
 export interface SettingsModalOptions {
   onSettingsChange: () => void;
@@ -104,14 +103,14 @@ export function SettingsModal(options: SettingsModalOptions): HTMLElement {
       if (target.name !== "anchor") return;
       if (!isUiAnchor(target.value)) return;
 
-      await storageApi.setItem(UI_ANCHOR_STORAGE_KEY, target.value);
+      await storage.setItem(UI_ANCHOR_STORAGE_KEY, target.value);
       options.onSettingsChange();
     });
   });
 
   if (hideXpInput) {
     hideXpInput.addEventListener("change", async () => {
-      await storageApi.setItem(HIDE_XP_FRAME_STORAGE_KEY, hideXpInput.checked);
+      await storage.setItem(HIDE_XP_FRAME_STORAGE_KEY, hideXpInput.checked);
       options.onSettingsChange();
     });
   }
@@ -122,9 +121,9 @@ export function SettingsModal(options: SettingsModalOptions): HTMLElement {
       clearCacheButton.disabled = true;
       clearCacheButton.textContent = "Clearing...";
       try {
-        await storageApi.removeItem(CACHE_KEY);
+        await storage.removeItem(CACHE_KEY);
       } catch (error) {
-        logger.error("[MA-Grid] Failed to clear cache:", error);
+        logger.error("Failed to clear cache:", error);
       }
       clearCacheButton.textContent = "Cleared";
       window.setTimeout(() => {
@@ -138,10 +137,10 @@ export function SettingsModal(options: SettingsModalOptions): HTMLElement {
   async function initializeModalState() {
     try {
       const anchor =
-        (await storageApi.getItem<UiAnchor>(UI_ANCHOR_STORAGE_KEY)) ??
+        (await storage.getItem<UiAnchor>(UI_ANCHOR_STORAGE_KEY)) ??
         "incompleteTasks";
       const hideXpFrame =
-        (await storageApi.getItem<boolean>(HIDE_XP_FRAME_STORAGE_KEY)) ?? false;
+        (await storage.getItem<boolean>(HIDE_XP_FRAME_STORAGE_KEY)) ?? false;
 
       anchorInputs.forEach((input) => {
         input.checked = input.value === anchor;
@@ -151,7 +150,7 @@ export function SettingsModal(options: SettingsModalOptions): HTMLElement {
         hideXpInput.checked = hideXpFrame;
       }
     } catch (error) {
-      logger.error("[MA-Grid] Failed to initialize settings modal:", error);
+      logger.error("Failed to initialize settings modal:", error);
     }
   }
 

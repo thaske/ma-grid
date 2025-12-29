@@ -1,33 +1,26 @@
-import { setStorage, storageApi } from "@/shared/storage";
-import { storage } from "./utils/storageAdapter";
-setStorage(storage);
-
-import { App, type AppElement } from "@/components/App";
-import { SELECTOR } from "@/shared/constants";
-import { logger } from "@/shared/logger";
+import mainStyles from "@/entrypoints/styles.css?raw";
+import { storage } from "@/script/storage";
+import { App, type AppElement } from "@/shared/components/App";
+import { SELECTOR } from "@/shared/utils/constants";
 import {
   HIDE_XP_FRAME_STORAGE_KEY,
   UI_ANCHOR_STORAGE_KEY,
   type UiAnchor,
-} from "@/shared/settings";
+} from "@/shared/utils/settings";
+import { ScriptDataSource } from "../shared/data/scriptDataSource";
 import { SettingsButton } from "./components/SettingsButton";
 import { SettingsModal } from "./components/SettingsModal";
-import { ScriptDataSource } from "./utils/scriptDataSource";
-
-import mainStyles from "@/entrypoints/styles.css?raw";
 import settingsStyles from "./styles.css?raw";
 
 (async function () {
-  "use strict";
-
-  logger.log("[MA-Grid] Userscript loaded");
+  ("use strict");
 
   const dataSource = new ScriptDataSource();
 
   let hideXpFrame =
-    (await storageApi.getItem<boolean>(HIDE_XP_FRAME_STORAGE_KEY)) ?? false;
+    (await storage.getItem<boolean>(HIDE_XP_FRAME_STORAGE_KEY)) ?? false;
   let anchor =
-    (await storageApi.getItem<UiAnchor>(UI_ANCHOR_STORAGE_KEY)) ??
+    (await storage.getItem<UiAnchor>(UI_ANCHOR_STORAGE_KEY)) ??
     "incompleteTasks";
 
   let currentHost: HTMLElement | null = null;
@@ -51,9 +44,9 @@ import settingsStyles from "./styles.css?raw";
     const handleSettingsChange = async (): Promise<void> => {
       const previousAnchor = anchor;
       hideXpFrame =
-        (await storageApi.getItem<boolean>(HIDE_XP_FRAME_STORAGE_KEY)) ?? false;
+        (await storage.getItem<boolean>(HIDE_XP_FRAME_STORAGE_KEY)) ?? false;
       anchor =
-        (await storageApi.getItem<UiAnchor>(UI_ANCHOR_STORAGE_KEY)) ??
+        (await storage.getItem<UiAnchor>(UI_ANCHOR_STORAGE_KEY)) ??
         "incompleteTasks";
 
       updateXpFrame();
@@ -101,18 +94,12 @@ import settingsStyles from "./styles.css?raw";
 
     const existing = document.querySelector("#ma-grid");
     if (existing) {
-      logger.log("[MA-Grid] Removing existing element from previous session");
       existing.remove();
     }
 
     const layout = anchor === "sidebar" ? "sidebar" : "default";
     const anchorElement = document.querySelector(SELECTOR[layout]);
-    if (!anchorElement) {
-      logger.log("[MA-Grid] Anchor element not found, will retry");
-      return;
-    }
-
-    logger.log("[MA-Grid] Dashboard detected, injecting calendar");
+    if (!anchorElement) return;
 
     const host = document.createElement("div");
     host.id = "ma-grid";
@@ -142,6 +129,4 @@ import settingsStyles from "./styles.css?raw";
 
   updateXpFrame();
   mountUI();
-
-  logger.log("[MA-Grid] Userscript initialized");
 })();

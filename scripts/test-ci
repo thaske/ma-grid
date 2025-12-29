@@ -3,6 +3,9 @@ set -e
 
 echo "🧪 Running CI tests locally..."
 
+echo "📝 TypeScript check..."
+bun tsc --noEmit
+
 echo "📦 Installing dependencies..."
 bun ci
 

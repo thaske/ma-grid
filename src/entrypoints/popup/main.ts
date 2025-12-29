@@ -1,11 +1,11 @@
-import { CACHE_KEY } from "@/shared/constants";
+import { CACHE_KEY } from "@/shared/utils/constants";
 import {
   HIDE_XP_FRAME_STORAGE_KEY,
   UI_ANCHOR_STORAGE_KEY,
   getHideXpFrame,
   getUiAnchor,
   isUiAnchor,
-} from "@/shared/settings";
+} from "@/shared/utils/settings";
 
 const selector = 'input[name="anchor"]';
 const inputs = Array.from(
@@ -23,17 +23,13 @@ inputs.forEach((input) => {
     if (target.name !== "anchor") return;
 
     if (!isUiAnchor(target.value)) return;
-    await browser.storage.local.set({
-      [UI_ANCHOR_STORAGE_KEY]: target.value,
-    });
+    await storage.setItem(UI_ANCHOR_STORAGE_KEY, target.value);
   });
 });
 
 if (hideXpFrameInput) {
   hideXpFrameInput.addEventListener("change", async () => {
-    await browser.storage.local.set({
-      [HIDE_XP_FRAME_STORAGE_KEY]: hideXpFrameInput.checked,
-    });
+    await storage.setItem(HIDE_XP_FRAME_STORAGE_KEY, hideXpFrameInput.checked);
   });
 }
 

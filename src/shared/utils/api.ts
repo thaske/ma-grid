@@ -2,7 +2,6 @@ import type { Activity } from "@/types";
 import { readCache } from "./cache";
 import { CACHE_KEY, MAX_PAGES, OVERLAP_DAYS, SLEEP_MS } from "./constants";
 import { logger } from "./logger";
-import { storageApi } from "./storage";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const THREE_YEARS_MS = 3 * 365 * DAY_MS;
@@ -41,11 +40,11 @@ type PaginationState = {
 };
 
 export async function fetchAllActivities(origin: string) {
-  logger.log("[MA Grid] Activity base URL:", `${origin}/api/previous-tasks/`);
+  logger.log("Activity base URL:", `${origin}/api/previous-tasks/`);
 
   const cached = await readCache();
   if (cached.length > 0) {
-    logger.log("[MA Grid] Loaded", cached.length, "cached activities.");
+    logger.log("Loaded", cached.length, "cached activities.");
   }
 
   const windowEndMs = Date.now();
@@ -60,10 +59,7 @@ export async function fetchAllActivities(origin: string) {
     }
   }
 
-  logger.log(
-    "[MA Grid] Fetching activities since",
-    windowStartDate.toISOString()
-  );
+  logger.log("Fetching activities since", windowStartDate.toISOString());
 
   let state: PaginationState = {
     cursor: new Date(windowEndMs),
@@ -106,7 +102,7 @@ export async function fetchAllActivities(origin: string) {
       throw new Error("Unexpected response: expected an array");
     }
 
-    logger.log(`[MA Grid] Page ${pageIndex + 1} size:`, page.length);
+    logger.log(`Page ${pageIndex + 1} size:`, page.length);
 
     if (page.length === 0) {
       state = {
@@ -169,15 +165,13 @@ export async function fetchAllActivities(origin: string) {
 
     if (state.stopReason) {
       if (state.stopReason === "cached_id") {
-        logger.log("[MA Grid] Reached cached activity, stopping pagination.");
+        logger.log("Reached cached activity, stopping pagination.");
       } else if (state.stopReason === "cursor_stuck") {
-        logger.warn("[MA Grid] Cursor did not move; ending pagination.");
+        logger.warn("Cursor did not move; ending pagination.");
       } else if (state.stopReason === "window_exceeded") {
-        logger.log("[MA Grid] Cursor moved past window start; finishing.");
+        logger.log("Cursor moved past window start; finishing.");
       } else if (state.stopReason === "empty_page") {
-        logger.log(
-          "[MA Grid] Received empty page from API; stopping pagination."
-        );
+        logger.log("Received empty page from API; stopping pagination.");
       }
       break;
     }
@@ -214,14 +208,11 @@ export async function fetchAllActivities(origin: string) {
     );
   });
 
-  await storageApi.setItem(CACHE_KEY, {
+  await storage.setItem(CACHE_KEY, {
     items: activities,
     updatedAt: new Date().toISOString(),
   });
 
-  logger.log(
-    "[MA Grid] Total activities after deduplication:",
-    activities.length
-  );
+  logger.log("Total activities after deduplication:", activities.length);
   return activities;
 }

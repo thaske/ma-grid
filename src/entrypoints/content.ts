@@ -1,35 +1,22 @@
-import { App, type AppElement } from "@/components/App";
-import { safariFix } from "@/extension/compat";
-import { ExtensionDataSource } from "@/extension/extensionDataSource";
-import { MATHACADEMY_MATCHES, SELECTOR } from "@/shared/constants";
-import { logger } from "@/shared/logger";
+import { App, type AppElement } from "@/shared/components/App";
+import { ExtensionDataSource } from "@/shared/data/extensionDataSource";
+import { MATHACADEMY_MATCHES, SELECTOR } from "@/shared/utils/constants";
+import { logger } from "@/shared/utils/logger";
 import {
-  DEFAULT_HIDE_XP_FRAME,
-  DEFAULT_UI_ANCHOR,
+  getHideXpFrame,
+  getUiAnchor,
   HIDE_XP_FRAME_STORAGE_KEY,
   UI_ANCHOR_STORAGE_KEY,
-} from "@/shared/settings";
+} from "@/shared/utils/settings";
 
 export default defineContentScript({
   matches: MATHACADEMY_MATCHES,
   cssInjectionMode: "manual",
-  async main(ctx) {
-    logger.log("[MA-Grid] Content script loaded");
+  async main(_ctx) {
+    logger.log("Content script loaded");
 
-    safariFix(ctx);
-
-    let hideXpFrame = DEFAULT_HIDE_XP_FRAME;
-    let anchor = DEFAULT_UI_ANCHOR;
-
-    const result = await browser.storage.local.get([
-      HIDE_XP_FRAME_STORAGE_KEY,
-      UI_ANCHOR_STORAGE_KEY,
-    ]);
-    hideXpFrame =
-      (result[HIDE_XP_FRAME_STORAGE_KEY] as boolean) ?? DEFAULT_HIDE_XP_FRAME;
-    anchor =
-      (result[UI_ANCHOR_STORAGE_KEY] as typeof DEFAULT_UI_ANCHOR) ??
-      DEFAULT_UI_ANCHOR;
+    let hideXpFrame = await getHideXpFrame();
+    let anchor = await getUiAnchor();
 
     function updateXpFrame() {
       const xpFrame = document.querySelector<HTMLElement>("#xpFrame");
@@ -50,18 +37,18 @@ export default defineContentScript({
 
       const existing = document.querySelector("#ma-grid");
       if (existing) {
-        logger.log("[MA-Grid] Removing existing element from previous session");
+        logger.log("Removing existing element from previous session");
         existing.remove();
       }
 
       const layout = anchor === "sidebar" ? "sidebar" : "default";
       const anchorElement = document.querySelector(SELECTOR[layout]);
       if (!anchorElement) {
-        logger.log("[MA-Grid] Anchor element not found, will retry");
+        logger.log("Anchor element not found, will retry");
         return;
       }
 
-      logger.log("[MA-Grid] Dashboard detected, injecting calendar");
+      logger.log("Dashboard detected, injecting calendar");
 
       const host = document.createElement("div");
       host.id = "ma-grid";
@@ -86,19 +73,14 @@ export default defineContentScript({
       currentApp = app;
     }
 
-    browser.storage.onChanged.addListener((changes, area) => {
-      if (area !== "local") return;
+    storage.watch(HIDE_XP_FRAME_STORAGE_KEY, (newValue) => {
+      hideXpFrame = typeof newValue === "boolean" ? newValue : false;
+      updateXpFrame();
+    });
 
-      if (HIDE_XP_FRAME_STORAGE_KEY in changes) {
-        hideXpFrame = changes[HIDE_XP_FRAME_STORAGE_KEY].newValue as boolean;
-        updateXpFrame();
-      }
-
-      if (UI_ANCHOR_STORAGE_KEY in changes) {
-        anchor = changes[UI_ANCHOR_STORAGE_KEY]
-          .newValue as typeof DEFAULT_UI_ANCHOR;
-        mountUI();
-      }
+    storage.watch(UI_ANCHOR_STORAGE_KEY, (newValue) => {
+      anchor = newValue === "sidebar" ? "sidebar" : "incompleteTasks";
+      mountUI();
     });
 
     updateXpFrame();
