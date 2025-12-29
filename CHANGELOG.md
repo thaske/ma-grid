@@ -1,5 +1,9 @@
 # Unreleased
 
+### Added
+
+- Userscript version for Safari and browsers without extension stores
+
 ### Changed
 
 - Clean up leftover elements from previous script executions to prevent duplicates
