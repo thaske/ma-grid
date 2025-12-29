@@ -30,9 +30,9 @@ jobs:
           body: |
             ## Installation
 
-            Click on the userscript file below to install:
+            Click on the userscript file below to download:
             - [ma-grid.user.js](https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/ma-grid.user.js)
 
-            Make sure you have a userscript manager installed (Tampermonkey, Greasemonkey, Userscripts, etc.)
+            Please see the [README](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/README.md) for installation instructions.
           draft: false
           prerelease: false

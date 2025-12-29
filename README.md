@@ -25,12 +25,15 @@ For Safari, you can install MA Grid as a userscript. This should work on iOS, iP
 1. Install [Userscripts](https://apps.apple.com/us/app/userscripts/id1463298887) from the App Store
 
 2. Install the userscript:
-   - Navigate to the [latest release](https://github.com/thaske/ma-grid/releases/latest) and click on **ma-grid.user.js**
-   - Click the Userscripts extension popup and select **Userscript Detected: Click to install**
-   - In the installation dialog, review the script details and click **Install** to confirm
+   - Navigate to the [latest release](https://github.com/thaske/ma-grid/releases/latest) and click on **ma-grid.user.js** to download the userscript file
+   - Click the Userscripts extension popup and select the Folder icon
+     <br><img src="assets/install_1.png" alt="Userscripts extension popup" height="400px">
+   - Drag or paste the downloaded **ma-grid.user.js** file into the folder
+     <br><img src="assets/install_2.png" alt="scripts folder" height="400px">
+   - Click "Open Extension Page" in the Userscripts popup, you should see **MA Grid** listed
+     <br><img src="assets/install_3.png" alt="Userscripts page" height="400px">
 
-   <img src="./assets/userscripts_1.png" alt="Userscripts installation step 1">
-   <img src="./assets/userscripts_2.png" alt="Userscripts installation step 2">
+3. Done! You should see the activity graph on your dashboard.
 
 # Development
 

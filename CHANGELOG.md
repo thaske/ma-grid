@@ -1,8 +1,8 @@
-# Unreleased
+# 1.2.0 (2025-12-28)
 
 ### Added
 
-- Userscript version for Safari and browsers without extension stores
+- Userscript version for Safari
 
 ### Changed
 
