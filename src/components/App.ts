@@ -1,19 +1,22 @@
-import { CalendarResponse } from "@/types";
+import type { DataSource } from "@/utils/data-source";
 import { logger } from "@/utils/logger";
 import { Calendar } from "./calendar/Calendar";
 
-export function App(layout: "sidebar" | "default") {
+export function App(
+  layout: "sidebar" | "default",
+  dataSource: DataSource,
+  settingsButton?: HTMLElement
+) {
   const container = document.createElement("div");
   container.className = "ma-grid__loading";
   container.textContent = "Loading activity...";
 
   let mounted = true;
+  let currentCalendar: HTMLElement | null = null;
 
   async function fetchData() {
     try {
-      const response = (await browser.runtime.sendMessage(
-        {}
-      )) as CalendarResponse;
+      const response = await dataSource.fetchData();
 
       if (!mounted) return;
 
@@ -23,24 +26,26 @@ export function App(layout: "sidebar" | "default") {
         return;
       }
 
-      const calendar = Calendar(response.data, layout);
+      const calendar = Calendar(response.data, layout, settingsButton);
       container.parentNode?.replaceChild(calendar, container);
+      currentCalendar = calendar;
 
       if (response.isStale) {
-        const messageListener = (message: any) => {
-          if (
-            message.type === "calendar_update" &&
-            message.isFresh &&
-            message.data &&
-            mounted
-          ) {
+        dataSource.onUpdate((freshResponse) => {
+          if (freshResponse.data && mounted && currentCalendar) {
             logger.log("[MA-Grid] Received fresh data, updating calendar");
-            const newCalendar = Calendar(message.data, layout);
-            calendar.parentNode?.replaceChild(newCalendar, calendar);
-            browser.runtime.onMessage.removeListener(messageListener);
+            const newCalendar = Calendar(
+              freshResponse.data,
+              layout,
+              settingsButton
+            );
+            currentCalendar.parentNode?.replaceChild(
+              newCalendar,
+              currentCalendar
+            );
+            currentCalendar = newCalendar;
           }
-        };
-        browser.runtime.onMessage.addListener(messageListener);
+        });
       }
     } catch (err) {
       if (!mounted) return;

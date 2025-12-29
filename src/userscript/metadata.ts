@@ -1,0 +1,63 @@
+/**
+ * Userscript metadata header generator
+ * Generates the ==UserScript== header block for Greasemonkey/Tampermonkey
+ */
+
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
+interface PackageJson {
+  name: string;
+  version: string;
+  description: string;
+}
+
+/**
+ * Generate userscript metadata headers
+ * @param updateURL - Optional URL for auto-updates
+ * @param downloadURL - Optional URL for downloads
+ */
+export function generateMetadata(
+  updateURL?: string,
+  downloadURL?: string
+): string {
+  // Read package.json
+  const packageJsonPath = join(process.cwd(), "package.json");
+  const packageJson: PackageJson = JSON.parse(
+    readFileSync(packageJsonPath, "utf-8")
+  );
+
+  // Read and convert icon to base64
+  const iconPath = join(process.cwd(), "public/icons/icon16.png");
+  let iconData = "";
+  try {
+    const iconBuffer = readFileSync(iconPath);
+    iconData = `data:image/png;base64,${iconBuffer.toString("base64")}`;
+  } catch (error) {
+    console.warn("[MA-Grid] Could not read icon file:", error);
+  }
+
+  const metadata = `// ==UserScript==
+// @name         MA Grid
+// @namespace    https://github.com/thaske/ma-grid
+// @version      ${packageJson.version}
+// @description  ${packageJson.description}
+// @author       thaske
+// @match        https://mathacademy.com/learn
+// @match        https://www.mathacademy.com/learn
+${iconData ? `// @icon         ${iconData}` : ""}
+// @grant        GM.getValue
+// @grant        GM.setValue
+// @grant        GM.deleteValue
+// @grant        GM.listValues
+// @connect      mathacademy.com
+// @connect      www.mathacademy.com
+// @run-at       document-end
+${updateURL ? `// @updateURL    ${updateURL}` : ""}
+${downloadURL ? `// @downloadURL  ${downloadURL}` : ""}
+// ==/UserScript==
+
+`;
+
+  return metadata;
+}

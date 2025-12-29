@@ -15,7 +15,11 @@ const LAYOUT_METRICS: Record<CalendarLayout, LayoutMetrics> = {
 
 const SIDEBAR_WEEKS = 22;
 
-export function Calendar(data: CalendarData, layout: CalendarLayout) {
+export function Calendar(
+  data: CalendarData,
+  layout: CalendarLayout,
+  settingsButton?: HTMLElement
+) {
   const grid = getGridForLayout(data.grid, layout);
   const metrics = LAYOUT_METRICS[layout];
   const { cellSize, cellGap, labelWidth } = metrics;
@@ -30,7 +34,7 @@ export function Calendar(data: CalendarData, layout: CalendarLayout) {
   container.style.setProperty("--cell-gap", `${cellGap}px`);
   container.style.setProperty("--label-width", `${labelWidth}px`);
 
-  container.appendChild(Header());
+  container.appendChild(Header(settingsButton));
   container.appendChild(Stats(data.stats));
   container.appendChild(Grid(grid, metrics, tooltip.show, tooltip.hide));
   container.appendChild(Legend());

@@ -1,6 +1,7 @@
 import { App } from "@/components/App";
 import { safariFix } from "@/utils/compat";
 import { MATHACADEMY_MATCHES, SELECTOR } from "@/utils/constants";
+import { ExtensionDataSource } from "@/utils/extension-data-source";
 import { logger } from "@/utils/logger";
 import {
   DEFAULT_HIDE_XP_FRAME,
@@ -72,7 +73,8 @@ export default defineContentScript({
       linkElem.href = browser.runtime.getURL("assets/styles.css" as any);
       shadow.appendChild(linkElem);
 
-      const app = App(layout);
+      const dataSource = new ExtensionDataSource();
+      const app = App(layout, dataSource);
       shadow.appendChild(app);
 
       if (anchor === "sidebar") {
