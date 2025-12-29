@@ -1,89 +1,20 @@
-export const LOCAL_TIMEZONE =
-  Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+const pad2 = (value: number) => String(value).padStart(2, "0");
 
-const DATE_KEY_FORMATTER = new Intl.DateTimeFormat("en-CA", {
-  timeZone: LOCAL_TIMEZONE,
-});
-
-const WEEKDAY_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  timeZone: LOCAL_TIMEZONE,
-  weekday: "short",
-});
-
-const PATH_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  timeZone: LOCAL_TIMEZONE,
-  weekday: "short",
-  month: "short",
-  day: "2-digit",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-  second: "2-digit",
-  hour12: false,
-});
-
-const TIMEZONE_NAME_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  timeZone: LOCAL_TIMEZONE,
-  timeZoneName: "long",
-});
-
-const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-export const formatDateKey = (date: Date) => DATE_KEY_FORMATTER.format(date);
-
-const MONTHS: Record<string, number> = {
-  Jan: 1,
-  Feb: 2,
-  Mar: 3,
-  Apr: 4,
-  May: 5,
-  Jun: 6,
-  Jul: 7,
-  Aug: 8,
-  Sep: 9,
-  Oct: 10,
-  Nov: 11,
-  Dec: 12,
+export const formatDateKey = (date: Date) => {
+  const year = date.getFullYear();
+  const month = pad2(date.getMonth() + 1);
+  const day = pad2(date.getDate());
+  return `${year}-${month}-${day}`;
 };
 
-export function parseDateCompletedStr(value: string): string | null {
-  const match =
-    /^(?:\w{3}),\s+([A-Za-z]{3})\s+(\d{1,2})(?:st|nd|rd|th)?,\s+(\d{4})$/.exec(
-      value.trim()
-    );
-  if (!match) return null;
-
-  const month = MONTHS[match[1]];
-  const day = Number(match[2]);
-  const year = Number(match[3]);
-  if (!month || !Number.isFinite(day) || !Number.isFinite(year)) return null;
-
-  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+export function parseCompletedDate(completed: string): Date | null {
+  const completedMs = Date.parse(completed);
+  if (!Number.isFinite(completedMs)) return null;
+  return new Date(completedMs);
 }
 
 export function formatCursorParam(cursor: Date) {
-  const parts = PATH_FORMATTER.formatToParts(cursor);
-  const tzParts = TIMEZONE_NAME_FORMATTER.formatToParts(cursor);
-  const tzName =
-    tzParts.find((part) => part.type === "timeZoneName")?.value ||
-    LOCAL_TIMEZONE;
-
-  const offsetMinutes = -cursor.getTimezoneOffset();
-  const sign = offsetMinutes >= 0 ? "+" : "-";
-  const abs = Math.abs(offsetMinutes);
-  const hours = String(Math.floor(abs / 60)).padStart(2, "0");
-  const minutes = String(abs % 60).padStart(2, "0");
-  const offset = `GMT${sign}${hours}${minutes}`;
-
-  const partsByType = parts.reduce<Record<string, string>>((acc, part) => {
-    acc[part.type] = part.value;
-    return acc;
-  }, {});
-  const { weekday, month, day, year, hour, minute, second } = partsByType;
-
-  return encodeURIComponent(
-    `${weekday} ${month} ${day} ${year} ${hour}:${minute}:${second} ${offset} (${tzName})`
-  );
+  return encodeURIComponent(cursor.toString());
 }
 
 // Parse YYYY-MM-DD as local date (avoids UTC interpretation issues)
@@ -92,8 +23,4 @@ export function parseDateKey(dateStr: string) {
   return new Date(year, month - 1, day);
 }
 
-export const getLocalWeekdayIndex = (date: Date) => {
-  const dayName = WEEKDAY_FORMATTER.format(date);
-  const index = DAYS.indexOf(dayName);
-  return index === -1 ? date.getDay() : index;
-};
+export const getLocalWeekdayIndex = (date: Date) => date.getDay();

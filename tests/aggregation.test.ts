@@ -1,5 +1,5 @@
 import { buildCalendarData } from "@/utils/aggregation";
-import { formatDateKey, parseDateCompletedStr } from "@/utils/timezone";
+import { formatDateKey } from "@/utils/timezone";
 import type { Activity } from "@/types";
 import { describe, expect, it } from "bun:test";
 
@@ -38,36 +38,16 @@ describe("buildCalendarData", () => {
     expect(data.stats.activeDays).toBe(1);
   });
 
-  it("uses dateCompletedStr when available", () => {
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() - 3);
-    const day = targetDate.getDate();
-    const suffix =
-      day % 10 === 1 && day !== 11
-        ? "st"
-        : day % 10 === 2 && day !== 12
-          ? "nd"
-          : day % 10 === 3 && day !== 13
-            ? "rd"
-            : "th";
-    const weekday = new Intl.DateTimeFormat("en-US", {
-      weekday: "short",
-    }).format(targetDate);
-    const month = new Intl.DateTimeFormat("en-US", {
-      month: "short",
-    }).format(targetDate);
-    const dateCompletedStr = `${weekday}, ${month} ${day}${suffix}, ${targetDate.getFullYear()}`;
-    const expectedKey = parseDateCompletedStr(dateCompletedStr);
-
+  it("uses completed dates with local timezone", () => {
+    const completed = "2025-09-30T23:30:00.000Z";
     const activity = buildActivity({
-      completed: "not-a-date",
-      started: "not-a-date",
-      dateCompletedStr,
+      completed,
+      started: completed,
       pointsAwarded: 25,
     });
 
     const data = buildCalendarData([activity]);
-    expect(expectedKey).not.toBeNull();
+    const expectedKey = formatDateKey(new Date(completed));
     const entry = data.grid.flat().find((item) => item.date === expectedKey);
 
     expect(entry).toBeDefined();
