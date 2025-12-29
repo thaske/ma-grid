@@ -1,5 +1,5 @@
 import type { DataSource } from "../shared/dataSource";
-import type { CalendarData, CalendarResponse } from "../types";
+import type { CalendarResponse } from "../types";
 
 type RuntimeMessage =
   | ({ type: "calendar_update" } & CalendarResponse)
