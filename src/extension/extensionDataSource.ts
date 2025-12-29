@@ -16,6 +16,11 @@ export class ExtensionDataSource implements DataSource {
   onUpdate(callback: (data: CalendarResponse) => void): void {
     this.updateCallback = callback;
 
+    if (this.messageListener) {
+      browser.runtime.onMessage.removeListener(this.messageListener);
+      this.messageListener = null;
+    }
+
     this.messageListener = (message: RuntimeMessage) => {
       if (
         message.type === "calendar_update" &&

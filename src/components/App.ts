@@ -2,17 +2,21 @@ import type { DataSource } from "@/shared/dataSource";
 import { logger } from "@/shared/logger";
 import { Calendar } from "./calendar/Calendar";
 
+export type AppElement = HTMLElement & {
+  cleanup?: () => void;
+};
+
 export function App(
   layout: "sidebar" | "default",
   dataSource: DataSource,
   settingsButton?: HTMLElement
-) {
-  const container = document.createElement("div");
-  container.className = "ma-grid__loading";
-  container.textContent = "Loading activity...";
-
+): AppElement {
   let mounted = true;
   let currentCalendar: HTMLElement | null = null;
+
+  const container: AppElement = document.createElement("div");
+  container.className = "ma-grid__loading";
+  container.textContent = "Loading activity...";
 
   async function fetchData() {
     try {
@@ -55,6 +59,11 @@ export function App(
         err instanceof Error ? err.message : "Failed to load activity data";
     }
   }
+
+  container.cleanup = () => {
+    mounted = false;
+    currentCalendar = null;
+  };
 
   fetchData();
 

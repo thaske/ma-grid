@@ -1,8 +1,8 @@
-import { storage } from "./utils/storageAdapter";
 import { setStorage, storageApi } from "@/shared/storage";
+import { storage } from "./utils/storageAdapter";
 setStorage(storage);
 
-import { App } from "@/components/App";
+import { App, type AppElement } from "@/components/App";
 import { SELECTOR } from "@/shared/constants";
 import { logger } from "@/shared/logger";
 import {
@@ -32,6 +32,7 @@ import settingsStyles from "./styles.css?raw";
 
   let currentHost: HTMLElement | null = null;
   let currentShadow: ShadowRoot | null = null;
+  let currentApp: AppElement | null = null;
 
   function updateXpFrame() {
     const xpFrame = document.querySelector<HTMLElement>("#xpFrame");
@@ -87,6 +88,11 @@ import settingsStyles from "./styles.css?raw";
   }
 
   function mountUI() {
+    if (currentApp) {
+      currentApp.cleanup?.();
+      currentApp = null;
+    }
+
     if (currentHost) {
       currentHost.remove();
       currentHost = null;
@@ -131,6 +137,7 @@ import settingsStyles from "./styles.css?raw";
 
     currentHost = host;
     currentShadow = shadow;
+    currentApp = app;
   }
 
   updateXpFrame();

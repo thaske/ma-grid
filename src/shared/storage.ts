@@ -11,10 +11,12 @@ export function setStorage(adapter: StorageAdapter): void {
 }
 
 function getStorage(): StorageAdapter {
-  if (typeof storage !== "undefined") {
-    return storage as StorageAdapter;
+  // Check for WXT-provided global storage (extension environment)
+  if (typeof (globalThis as any).storage !== "undefined") {
+    return (globalThis as any).storage as StorageAdapter;
   }
 
+  // Check for manually set storage adapter (userscript environment)
   if (storageInstance) {
     return storageInstance;
   }

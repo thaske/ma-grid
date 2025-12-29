@@ -1,4 +1,4 @@
-import { App } from "@/components/App";
+import { App, type AppElement } from "@/components/App";
 import { safariFix } from "@/extension/compat";
 import { ExtensionDataSource } from "@/extension/extensionDataSource";
 import { MATHACADEMY_MATCHES, SELECTOR } from "@/shared/constants";
@@ -9,8 +9,6 @@ import {
   HIDE_XP_FRAME_STORAGE_KEY,
   UI_ANCHOR_STORAGE_KEY,
 } from "@/shared/settings";
-
-type UI = HTMLElement | null;
 
 export default defineContentScript({
   matches: MATHACADEMY_MATCHES,
@@ -41,12 +39,13 @@ export default defineContentScript({
       else xpFrame.style.removeProperty("display");
     }
 
-    let currentUI: UI = null;
+    let currentApp: AppElement | null = null;
+    const dataSource = new ExtensionDataSource();
 
     function mountUI() {
-      if (currentUI) {
-        currentUI.remove();
-        currentUI = null;
+      if (currentApp) {
+        currentApp.cleanup?.();
+        currentApp = null;
       }
 
       const existing = document.querySelector("#ma-grid");
@@ -73,7 +72,6 @@ export default defineContentScript({
       linkElem.href = browser.runtime.getURL("assets/styles.css" as any);
       shadow.appendChild(linkElem);
 
-      const dataSource = new ExtensionDataSource();
       const app = App(layout, dataSource);
       shadow.appendChild(app);
 
@@ -85,7 +83,7 @@ export default defineContentScript({
         anchorElement.insertBefore(host, anchorElement.firstChild);
       }
 
-      currentUI = host;
+      currentApp = app;
     }
 
     browser.storage.onChanged.addListener((changes, area) => {
