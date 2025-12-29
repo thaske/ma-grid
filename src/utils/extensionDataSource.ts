@@ -1,49 +1,31 @@
-import type { DataSource } from "./dataSource";
+import { createDataSource, type DataSource } from "./dataSource";
 import type { CalendarResponse } from "@/types";
 
 type RuntimeMessage =
   | ({ type: "calendar_update" } & CalendarResponse)
   | { type: string };
 
-export class ExtensionDataSource implements DataSource {
-  private updateCallback: ((data: CalendarResponse) => void) | null = null;
-  private messageListener: ((message: RuntimeMessage) => void) | null = null;
-
-  async fetchData(): Promise<CalendarResponse> {
-    return (await browser.runtime.sendMessage({})) as CalendarResponse;
-  }
-
-  onUpdate(callback: (data: CalendarResponse) => void): void {
-    this.updateCallback = callback;
-
-    if (this.messageListener) {
-      browser.runtime.onMessage.removeListener(this.messageListener);
-      this.messageListener = null;
-    }
-
-    this.messageListener = (message: RuntimeMessage) => {
-      if (
-        message.type === "calendar_update" &&
-        "status" in message &&
-        message.status === "fresh" &&
-        message.data
-      ) {
-        this.updateCallback?.(message);
-        if (this.messageListener) {
-          browser.runtime.onMessage.removeListener(this.messageListener);
-          this.messageListener = null;
+export function createExtensionDataSource(): DataSource {
+  return createDataSource({
+    fetchData: async () =>
+      (await browser.runtime.sendMessage({})) as CalendarResponse,
+    subscribe: (emit) => {
+      const listener = (message: RuntimeMessage) => {
+        if (
+          message.type === "calendar_update" &&
+          "status" in message &&
+          message.status === "fresh" &&
+          message.data
+        ) {
+          emit(message);
+          browser.runtime.onMessage.removeListener(listener);
         }
-      }
-    };
+      };
 
-    browser.runtime.onMessage.addListener(this.messageListener);
-  }
-
-  cleanup(): void {
-    if (this.messageListener) {
-      browser.runtime.onMessage.removeListener(this.messageListener);
-      this.messageListener = null;
-    }
-    this.updateCallback = null;
-  }
+      browser.runtime.onMessage.addListener(listener);
+      return () => {
+        browser.runtime.onMessage.removeListener(listener);
+      };
+    },
+  });
 }

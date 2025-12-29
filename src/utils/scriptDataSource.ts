@@ -1,22 +1,24 @@
 import { getCalendarResponse } from "./calendarResponse";
-import type { DataSource } from "./dataSource";
-import type { CalendarResponse } from "@/types";
+import { createDataSource, type DataSourceUpdate } from "./dataSource";
 
-export class ScriptDataSource implements DataSource {
-  private updateCallback: ((response: CalendarResponse) => void) | null = null;
+export function createScriptDataSource() {
+  let emitUpdate: DataSourceUpdate | null = null;
 
-  onUpdate(callback: (response: CalendarResponse) => void): void {
-    this.updateCallback = callback;
-  }
-
-  async fetchData(): Promise<CalendarResponse> {
-    return getCalendarResponse({
-      origin: window.location.origin,
-      onFresh: (response) => {
-        if (response.data && this.updateCallback) {
-          this.updateCallback(response);
-        }
-      },
-    });
-  }
+  return createDataSource({
+    fetchData: () =>
+      getCalendarResponse({
+        origin: window.location.origin,
+        onFresh: (response) => {
+          if (response.data && emitUpdate) {
+            emitUpdate(response);
+          }
+        },
+      }),
+    subscribe: (emit) => {
+      emitUpdate = emit;
+      return () => {
+        emitUpdate = null;
+      };
+    },
+  });
 }

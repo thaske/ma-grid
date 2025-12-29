@@ -5,7 +5,7 @@ import {
   mountCalendarUI,
   updateXpFrameHidden,
 } from "@/utils/mount";
-import { ScriptDataSource } from "@/utils/scriptDataSource";
+import { createScriptDataSource } from "@/utils/scriptDataSource";
 import { getHideXpFrame, getUiAnchor } from "@/utils/settings";
 import { SettingsButton } from "../../components/SettingsButton";
 import { SettingsModal } from "../../components/SettingsModal";
@@ -14,7 +14,7 @@ import settingsStyles from "./styles.css?raw";
 (async function () {
   ("use strict");
 
-  const dataSource = new ScriptDataSource();
+  const dataSource = createScriptDataSource();
 
   let hideXpFrame = await getHideXpFrame();
   let anchor = await getUiAnchor();

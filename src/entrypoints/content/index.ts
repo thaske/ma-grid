@@ -1,6 +1,7 @@
 import { defineContentScript } from "wxt/utils/define-content-script";
 import calendarStyles from "./styles.css?raw";
-import { ExtensionDataSource } from "@/utils/extensionDataSource";
+import type { AppElement } from "@/components/App";
+import { createExtensionDataSource } from "@/utils/extensionDataSource";
 import { logger } from "@/utils/logger";
 import { mountCalendarUI, updateXpFrameHidden } from "@/utils/mount";
 import { MATHACADEMY_MATCHES } from "@/utils/constants";
@@ -21,7 +22,7 @@ export default defineContentScript({
     let anchor = await getUiAnchor();
 
     let currentApp: AppElement | null = null;
-    const dataSource = new ExtensionDataSource();
+    const dataSource = createExtensionDataSource();
 
     function mountUI() {
       if (currentApp) {
