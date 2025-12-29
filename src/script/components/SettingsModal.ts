@@ -6,7 +6,6 @@ import {
   type UiAnchor,
   isUiAnchor,
 } from "@/shared/utils/settings";
-import { storage } from "@/shared/utils/storage";
 
 export interface SettingsModalOptions {
   onSettingsChange: () => void;

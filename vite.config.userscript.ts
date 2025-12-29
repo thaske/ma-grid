@@ -1,8 +1,3 @@
-/**
- * Vite configuration for userscript build
- * Bundles everything into a single .user.js file
- */
-
 import { readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { resolve } from "node:path";
@@ -68,7 +63,7 @@ export default defineConfig(({ mode }) => {
           inlineDynamicImports: true,
         },
       },
-      minify: true,
+      minify: false,
       sourcemap: false,
     },
     resolve: {

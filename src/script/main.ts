@@ -1,4 +1,5 @@
 import mainStyles from "@/entrypoints/styles.css?raw";
+import { storage } from "@/script/storage";
 import { App, type AppElement } from "@/shared/components/App";
 import { SELECTOR } from "@/shared/utils/constants";
 import {
@@ -6,14 +7,13 @@ import {
   UI_ANCHOR_STORAGE_KEY,
   type UiAnchor,
 } from "@/shared/utils/settings";
-import { storage } from "@/shared/utils/storage";
 import { ScriptDataSource } from "../shared/data/scriptDataSource";
 import { SettingsButton } from "./components/SettingsButton";
 import { SettingsModal } from "./components/SettingsModal";
 import settingsStyles from "./styles.css?raw";
 
 (async function () {
-  "use strict";
+  ("use strict");
 
   const dataSource = new ScriptDataSource();
 
