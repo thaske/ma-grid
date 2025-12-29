@@ -1,5 +1,10 @@
 import type { Activity, DailyXP } from "@/types";
-import { formatDateKey, getLocalWeekdayIndex, parseDateKey } from "./timezone";
+import {
+  formatDateKey,
+  getLocalWeekdayIndex,
+  parseCompletedDate,
+  parseDateKey,
+} from "./timezone";
 
 export function buildCalendarData(activities: Activity[]) {
   if (activities.length === 0) {
@@ -17,16 +22,20 @@ export function buildCalendarData(activities: Activity[]) {
 
   const dailyMap = new Map<string, DailyXP>();
   activities.forEach((activity) => {
-    const completedMs = Date.parse(activity.completed);
-    if (!Number.isFinite(completedMs)) return;
-    const date = new Date(completedMs);
-    const dateKey = formatDateKey(date);
+    let dateKey: string | null = null;
+    let dateForWeekday: Date | null = null;
+
+    const completedDate = parseCompletedDate(activity.completed);
+    if (!completedDate) return;
+    dateKey = formatDateKey(completedDate);
+    dateForWeekday = completedDate;
 
     if (!dailyMap.has(dateKey)) {
+      const weekdaySource = dateForWeekday ?? parseDateKey(dateKey);
       dailyMap.set(dateKey, {
         date: dateKey,
         xp: 0,
-        weekday: getLocalWeekdayIndex(date),
+        weekday: getLocalWeekdayIndex(weekdaySource),
       });
     }
 

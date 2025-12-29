@@ -11,15 +11,41 @@ import {
 
 const constantsModule = new URL("../src/utils/constants.ts", import.meta.url)
   .href;
+const storageModule = new URL("../src/utils/storage.ts", import.meta.url).href;
 
 mock.module(constantsModule, () => ({
-  CACHE_KEY: "local:maGridActivitiesCache",
+  CACHE_KEY: "maGridActivitiesCache",
   MAX_PAGES: 2,
   SLEEP_MS: 0,
   OVERLAP_DAYS: 1000,
 }));
 
-const { fetchAllActivities } = await import("@/shared/utils/api");
+const storageGetItemMock = mock<(key: string) => Promise<CachePayload | null>>(
+  () => Promise.resolve(null)
+);
+const storageSetItemMock = mock<
+  (key: string, value: CachePayload) => Promise<void>
+>(() => Promise.resolve());
+const storageRemoveItemMock = mock<(key: string) => Promise<void>>(() =>
+  Promise.resolve()
+);
+const storageWatchMock = mock<
+  (
+    key: string,
+    callback: (newValue: unknown, oldValue?: unknown) => void
+  ) => () => void
+>(() => () => {});
+
+mock.module(storageModule, () => ({
+  storage: {
+    getItem: storageGetItemMock,
+    setItem: storageSetItemMock,
+    removeItem: storageRemoveItemMock,
+    watch: storageWatchMock,
+  },
+}));
+
+const { fetchAllActivities } = await import("@/utils/api");
 
 const buildActivity = (id: number, completed: string): Activity => ({
   id,
@@ -32,26 +58,8 @@ const buildActivity = (id: number, completed: string): Activity => ({
 
 describe("fetchAllActivities", () => {
   let fetchSpy: ReturnType<typeof spyOn> | null = null;
-  const globalThisAny = globalThis as typeof globalThis & {
-    storage?: {
-      getItem: (key: string) => Promise<CachePayload | null>;
-      setItem: (key: string, value: CachePayload) => Promise<void>;
-    };
-  };
-  const originalStorage = globalThisAny.storage;
-  const storageGetItemMock = mock<
-    (key: string) => Promise<CachePayload | null>
-  >(() => Promise.resolve(null));
-  const storageSetItemMock = mock<
-    (key: string, value: CachePayload) => Promise<void>
-  >(() => Promise.resolve());
-  const storageValue = {
-    getItem: storageGetItemMock,
-    setItem: storageSetItemMock,
-  };
 
   beforeEach(() => {
-    globalThisAny.storage = storageValue;
     storageGetItemMock.mockResolvedValue(null);
     storageSetItemMock.mockResolvedValue();
   });
@@ -59,11 +67,6 @@ describe("fetchAllActivities", () => {
   afterEach(() => {
     fetchSpy?.mockRestore();
     fetchSpy = null;
-    if (originalStorage === undefined) {
-      delete globalThisAny.storage;
-    } else {
-      globalThisAny.storage = originalStorage;
-    }
     mock.clearAllMocks();
   });
 

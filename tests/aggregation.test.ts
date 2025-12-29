@@ -1,5 +1,5 @@
-import { buildCalendarData } from "@/shared/utils/aggregation";
-import { formatDateKey } from "@/shared/utils/timezone";
+import { buildCalendarData } from "@/utils/aggregation";
+import { formatDateKey } from "@/utils/timezone";
 import type { Activity } from "@/types";
 import { describe, expect, it } from "bun:test";
 
@@ -35,6 +35,23 @@ describe("buildCalendarData", () => {
 
     expect(day).toBeDefined();
     expect(day?.xp).toBe(10);
+    expect(data.stats.activeDays).toBe(1);
+  });
+
+  it("uses completed dates with local timezone", () => {
+    const completed = "2025-09-30T23:30:00.000Z";
+    const activity = buildActivity({
+      completed,
+      started: completed,
+      pointsAwarded: 25,
+    });
+
+    const data = buildCalendarData([activity]);
+    const expectedKey = formatDateKey(new Date(completed));
+    const entry = data.grid.flat().find((item) => item.date === expectedKey);
+
+    expect(entry).toBeDefined();
+    expect(entry?.xp).toBe(25);
     expect(data.stats.activeDays).toBe(1);
   });
 });

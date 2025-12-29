@@ -1,11 +1,12 @@
-import { CACHE_KEY } from "@/shared/utils/constants";
-import { logger } from "@/shared/utils/logger";
+import { CACHE_KEY } from "@/utils/constants";
+import { logger } from "@/utils/logger";
+import { storage } from "@/utils/storage";
 import {
   HIDE_XP_FRAME_STORAGE_KEY,
   UI_ANCHOR_STORAGE_KEY,
   type UiAnchor,
   isUiAnchor,
-} from "@/shared/utils/settings";
+} from "@/utils/settings";
 
 export interface SettingsModalOptions {
   onSettingsChange: () => void;
