@@ -51,7 +51,7 @@ export default defineConfig(({ mode }) => {
   return {
     build: {
       outDir: "dist",
-      emptyOutDir: false,
+      emptyOutDir: true,
       lib: {
         entry: resolve(__dirname, "src/userscript/main.ts"),
         name: "MAGrid",
@@ -76,5 +76,7 @@ export default defineConfig(({ mode }) => {
       "import.meta.env.MODE": JSON.stringify("production"),
     },
     plugins: [userscriptHeaderPlugin(env.USERSCRIPT_OUTPUT_PATH)],
+    // Disables copying of the public directory
+    publicDir: false,
   };
 });
