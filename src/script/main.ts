@@ -1,24 +1,19 @@
-import { setStorage, storage } from "@/shared/utils/storage";
-setStorage(storage);
-
 import mainStyles from "@/entrypoints/styles.css?raw";
 import { App, type AppElement } from "@/shared/components/App";
 import { SELECTOR } from "@/shared/utils/constants";
-import { logger } from "@/shared/utils/logger";
 import {
   HIDE_XP_FRAME_STORAGE_KEY,
   UI_ANCHOR_STORAGE_KEY,
   type UiAnchor,
 } from "@/shared/utils/settings";
+import { storage } from "@/shared/utils/storage";
+import { ScriptDataSource } from "../shared/data/scriptDataSource";
 import { SettingsButton } from "./components/SettingsButton";
 import { SettingsModal } from "./components/SettingsModal";
 import settingsStyles from "./styles.css?raw";
-import { ScriptDataSource } from "./utils/scriptDataSource";
 
 (async function () {
   "use strict";
-
-  logger.log("Userscript loaded");
 
   const dataSource = new ScriptDataSource();
 
@@ -99,18 +94,12 @@ import { ScriptDataSource } from "./utils/scriptDataSource";
 
     const existing = document.querySelector("#ma-grid");
     if (existing) {
-      logger.log("Removing existing element from previous session");
       existing.remove();
     }
 
     const layout = anchor === "sidebar" ? "sidebar" : "default";
     const anchorElement = document.querySelector(SELECTOR[layout]);
-    if (!anchorElement) {
-      logger.log("Anchor element not found, will retry");
-      return;
-    }
-
-    logger.log("Dashboard detected, injecting calendar");
+    if (!anchorElement) return;
 
     const host = document.createElement("div");
     host.id = "ma-grid";
@@ -140,6 +129,4 @@ import { ScriptDataSource } from "./utils/scriptDataSource";
 
   updateXpFrame();
   mountUI();
-
-  logger.log("Userscript initialized");
 })();

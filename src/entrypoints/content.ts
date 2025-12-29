@@ -1,5 +1,5 @@
-import { ExtensionDataSource } from "@/extension/extensionDataSource";
 import { App, type AppElement } from "@/shared/components/App";
+import { ExtensionDataSource } from "@/shared/data/extensionDataSource";
 import { MATHACADEMY_MATCHES, SELECTOR } from "@/shared/utils/constants";
 import { logger } from "@/shared/utils/logger";
 import {

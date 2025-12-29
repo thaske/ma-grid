@@ -1,4 +1,4 @@
-import type { DataSource } from "@/shared/utils/dataSource";
+import type { DataSource } from "@/shared/data/dataSource";
 import { logger } from "@/shared/utils/logger";
 import { Calendar } from "./calendar/Calendar";
 

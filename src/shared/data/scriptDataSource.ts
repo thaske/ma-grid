@@ -1,7 +1,7 @@
+import type { DataSource } from "@/shared/data/dataSource";
 import { buildCalendarData } from "@/shared/utils/aggregation";
 import { fetchAllActivities } from "@/shared/utils/api";
 import { isCacheFresh, readCache } from "@/shared/utils/cache";
-import type { DataSource } from "@/shared/utils/dataSource";
 import { logger } from "@/shared/utils/logger";
 import type { CalendarResponse } from "@/types";
 

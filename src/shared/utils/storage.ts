@@ -4,13 +4,11 @@ type StorageAdapter = {
   removeItem(key: string): Promise<void>;
 };
 
-let storageInstance: StorageAdapter | null = null;
-
-export function setStorage(adapter: StorageAdapter): void {
-  storageInstance = adapter;
-}
-
 function getStorage(): StorageAdapter {
+  if (typeof storage !== "undefined") {
+    return storage as StorageAdapter;
+  }
+
   // Check if GM (Greasemonkey/Tampermonkey) is available
   // @ts-expect-error GM is provided by userscript manager
   if (typeof GM !== "undefined" && GM) {
@@ -32,14 +30,6 @@ function getStorage(): StorageAdapter {
         await GM.deleteValue(key);
       },
     };
-  }
-
-  if (typeof storage !== "undefined") {
-    return storage as StorageAdapter;
-  }
-
-  if (storageInstance) {
-    return storageInstance;
   }
 
   throw new Error(

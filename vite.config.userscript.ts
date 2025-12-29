@@ -7,7 +7,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { resolve } from "node:path";
 import { defineConfig, loadEnv, type Plugin } from "vite";
-import { generateMetadata } from "./src/script/utils/metadata";
+import { generateMetadata } from "./src/script/metadata";
 
 function expandTilde(filepath: string): string {
   if (filepath.startsWith("~/") || filepath === "~") {
