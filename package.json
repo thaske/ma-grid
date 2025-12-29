@@ -1,6 +1,6 @@
 {
   "name": "ma-grid",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "devDependencies": {
     "@playwright/test": "^1.47.2",
     "@types/bun": "latest",
