@@ -1,4 +1,4 @@
-import { CALENDAR_CONTAINER_ID } from "@/shared/constants";
+import { CALENDAR_CONTAINER_ID } from "@/shared/utils/constants";
 import type { CalendarData } from "@/types";
 import { Grid, type LayoutMetrics } from "./CalendarGrid";
 import { Header } from "./CalendarHeader";

@@ -1,8 +1,8 @@
-import { buildCalendarData } from "@/shared/aggregation";
-import { fetchAllActivities } from "@/shared/api";
-import { isCacheFresh, readCache } from "@/shared/cache";
-import { MATHACADEMY_MATCHES } from "@/shared/constants";
-import { logger } from "@/shared/logger";
+import { buildCalendarData } from "@/shared/utils/aggregation";
+import { fetchAllActivities } from "@/shared/utils/api";
+import { isCacheFresh, readCache } from "@/shared/utils/cache";
+import { MATHACADEMY_MATCHES } from "@/shared/utils/constants";
+import { logger } from "@/shared/utils/logger";
 import type { CalendarResponse } from "@/types";
 
 export default defineBackground({
@@ -25,7 +25,7 @@ export default defineBackground({
 
             if (isFresh && cached.length > 0) {
               logger.log(
-                "[MA-Grid] Returning fresh cached data:",
+                "Returning fresh cached data:",
                 cached.length,
                 "activities"
               );
@@ -36,14 +36,14 @@ export default defineBackground({
 
             if (!isFresh && cached.length > 0) {
               logger.log(
-                "[MA-Grid] Returning stale cached data, refreshing in background..."
+                "Returning stale cached data, refreshing in background..."
               );
               const staleData = buildCalendarData(cached);
               sendResponse({ data: staleData, isStale: true });
 
               void (async () => {
                 try {
-                  logger.log("[MA-Grid] Starting background refresh...");
+                  logger.log("Starting background refresh...");
                   const activities = await fetchAllActivities(url.origin);
                   const freshData = buildCalendarData(activities);
 
@@ -52,7 +52,7 @@ export default defineBackground({
                   });
 
                   logger.log(
-                    "[MA-Grid] Background refresh complete, updating",
+                    "Background refresh complete, updating",
                     tabs.length,
                     "tab(s)"
                   );
@@ -67,20 +67,20 @@ export default defineBackground({
                     }
                   }
                 } catch (error) {
-                  logger.error("[MA-Grid] Background refresh failed:", error);
+                  logger.error("Background refresh failed:", error);
                 }
               })();
               return;
             }
 
-            logger.log("[MA-Grid] Cache empty, fetching fresh data...");
+            logger.log("Cache empty, fetching fresh data...");
             const activities = await fetchAllActivities(url.origin);
             const calendarData = buildCalendarData(activities);
 
-            logger.log("[MA-Grid] Calendar data built:", calendarData.stats);
+            logger.log("Calendar data built:", calendarData.stats);
             sendResponse({ data: calendarData, isFresh: true });
           } catch (error) {
-            logger.error("[MA-Grid] Error:", error);
+            logger.error("Error:", error);
             sendResponse({
               error: error instanceof Error ? error.message : String(error),
             });
@@ -91,6 +91,6 @@ export default defineBackground({
       }
     );
 
-    logger.log("[MA-Grid] Service worker initialized");
+    logger.log("Service worker initialized");
   },
 });

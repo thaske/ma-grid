@@ -1,11 +1,11 @@
-import { CACHE_KEY } from "@/shared/constants";
+import { CACHE_KEY } from "@/shared/utils/constants";
 import {
   HIDE_XP_FRAME_STORAGE_KEY,
   UI_ANCHOR_STORAGE_KEY,
   getHideXpFrame,
   getUiAnchor,
   isUiAnchor,
-} from "@/shared/settings";
+} from "@/shared/utils/settings";
 
 const selector = 'input[name="anchor"]';
 const inputs = Array.from(

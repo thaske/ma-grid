@@ -42,7 +42,7 @@ export function generateMetadata(
     const iconBuffer = readFileSync(iconPath);
     iconData = `data:image/png;base64,${iconBuffer.toString("base64")}`;
   } catch (error) {
-    console.warn("[MA-Grid] Could not read icon file:", error);
+    console.warn("Could not read icon file:", error);
   }
 
   const metadata = `// ==UserScript==

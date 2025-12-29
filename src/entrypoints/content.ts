@@ -1,22 +1,19 @@
-import { App, type AppElement } from "@/components/App";
-import { safariFix } from "@/extension/compat";
 import { ExtensionDataSource } from "@/extension/extensionDataSource";
-import { MATHACADEMY_MATCHES, SELECTOR } from "@/shared/constants";
-import { logger } from "@/shared/logger";
+import { App, type AppElement } from "@/shared/components/App";
+import { MATHACADEMY_MATCHES, SELECTOR } from "@/shared/utils/constants";
+import { logger } from "@/shared/utils/logger";
 import {
   DEFAULT_HIDE_XP_FRAME,
   DEFAULT_UI_ANCHOR,
   HIDE_XP_FRAME_STORAGE_KEY,
   UI_ANCHOR_STORAGE_KEY,
-} from "@/shared/settings";
+} from "@/shared/utils/settings";
 
 export default defineContentScript({
   matches: MATHACADEMY_MATCHES,
   cssInjectionMode: "manual",
-  async main(ctx) {
-    logger.log("[MA-Grid] Content script loaded");
-
-    safariFix(ctx);
+  async main(_ctx) {
+    logger.log("Content script loaded");
 
     let hideXpFrame = DEFAULT_HIDE_XP_FRAME;
     let anchor = DEFAULT_UI_ANCHOR;
@@ -50,18 +47,18 @@ export default defineContentScript({
 
       const existing = document.querySelector("#ma-grid");
       if (existing) {
-        logger.log("[MA-Grid] Removing existing element from previous session");
+        logger.log("Removing existing element from previous session");
         existing.remove();
       }
 
       const layout = anchor === "sidebar" ? "sidebar" : "default";
       const anchorElement = document.querySelector(SELECTOR[layout]);
       if (!anchorElement) {
-        logger.log("[MA-Grid] Anchor element not found, will retry");
+        logger.log("Anchor element not found, will retry");
         return;
       }
 
-      logger.log("[MA-Grid] Dashboard detected, injecting calendar");
+      logger.log("Dashboard detected, injecting calendar");
 
       const host = document.createElement("div");
       host.id = "ma-grid";

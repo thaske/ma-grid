@@ -1,4 +1,4 @@
-import type { CalendarResponse } from "../types";
+import type { CalendarResponse } from "@/types";
 
 /**
  * Abstraction for fetching calendar data and receiving updates.

@@ -1,13 +1,8 @@
-/**
- * Data manager for userscript
- * Ports the background service worker logic from background.ts
- */
-
-import { buildCalendarData } from "@/shared/aggregation";
-import { fetchAllActivities } from "@/shared/api";
-import { isCacheFresh, readCache } from "@/shared/cache";
-import type { DataSource } from "@/shared/dataSource";
-import { logger } from "@/shared/logger";
+import { buildCalendarData } from "@/shared/utils/aggregation";
+import { fetchAllActivities } from "@/shared/utils/api";
+import { isCacheFresh, readCache } from "@/shared/utils/cache";
+import type { DataSource } from "@/shared/utils/dataSource";
+import { logger } from "@/shared/utils/logger";
 import type { CalendarResponse } from "@/types";
 
 export class ScriptDataSource implements DataSource {
@@ -23,19 +18,13 @@ export class ScriptDataSource implements DataSource {
       const cached = await readCache();
 
       if (isFresh && cached.length > 0) {
-        logger.log(
-          "[MA-Grid] Returning fresh cached data:",
-          cached.length,
-          "activities"
-        );
+        logger.log("Returning fresh cached data:", cached.length, "activities");
         const calendarData = buildCalendarData(cached);
         return { data: calendarData, isFresh: true };
       }
 
       if (!isFresh && cached.length > 0) {
-        logger.log(
-          "[MA-Grid] Returning stale cached data, refreshing in background..."
-        );
+        logger.log("Returning stale cached data, refreshing in background...");
         const staleData = buildCalendarData(cached);
 
         void this.backgroundRefresh();
@@ -43,14 +32,14 @@ export class ScriptDataSource implements DataSource {
         return { data: staleData, isStale: true };
       }
 
-      logger.log("[MA-Grid] Cache empty, fetching fresh data...");
+      logger.log("Cache empty, fetching fresh data...");
       const activities = await fetchAllActivities(window.location.origin);
       const calendarData = buildCalendarData(activities);
 
-      logger.log("[MA-Grid] Calendar data built:", calendarData.stats);
+      logger.log("Calendar data built:", calendarData.stats);
       return { data: calendarData, isFresh: true };
     } catch (error) {
-      logger.error("[MA-Grid] Error:", error);
+      logger.error("Error:", error);
       return {
         error: error instanceof Error ? error.message : String(error),
       };
@@ -59,11 +48,11 @@ export class ScriptDataSource implements DataSource {
 
   private async backgroundRefresh() {
     try {
-      logger.log("[MA-Grid] Starting background refresh...");
+      logger.log("Starting background refresh...");
       const activities = await fetchAllActivities(window.location.origin);
       const freshData = buildCalendarData(activities);
 
-      logger.log("[MA-Grid] Background refresh complete");
+      logger.log("Background refresh complete");
 
       if (this.updateCallback) {
         this.updateCallback({
@@ -72,7 +61,7 @@ export class ScriptDataSource implements DataSource {
         });
       }
     } catch (error) {
-      logger.error("[MA-Grid] Background refresh failed:", error);
+      logger.error("Background refresh failed:", error);
     }
   }
 }
