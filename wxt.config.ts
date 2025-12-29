@@ -33,12 +33,6 @@ export default defineConfig({
       48: "icons/icon48.png",
       128: "icons/icon128.png",
     },
-    web_accessible_resources: [
-      {
-        resources: ["assets/styles.css"],
-        matches: ["<all_urls>"],
-      },
-    ],
   },
   vite: () => ({
     build: {

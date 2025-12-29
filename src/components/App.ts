@@ -1,6 +1,6 @@
-import type { DataSource } from "@/shared/data/dataSource";
-import { logger } from "@/shared/utils/logger";
-import { Calendar } from "./calendar/Calendar";
+import type { DataSource } from "@/utils/dataSource";
+import { logger } from "@/utils/logger";
+import { Calendar } from "./Calendar";
 
 export type AppElement = HTMLElement & {
   cleanup?: () => void;

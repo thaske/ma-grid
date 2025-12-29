@@ -1,5 +1,5 @@
-import { buildCalendarData } from "@/shared/utils/aggregation";
-import { formatDateKey } from "@/shared/utils/timezone";
+import { buildCalendarData } from "@/utils/aggregation";
+import { formatDateKey } from "@/utils/timezone";
 import type { Activity } from "@/types";
 import { describe, expect, it } from "bun:test";
 

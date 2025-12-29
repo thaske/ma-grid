@@ -2,6 +2,7 @@ import type { Activity } from "@/types";
 import { readCache } from "./cache";
 import { CACHE_KEY, MAX_PAGES, OVERLAP_DAYS, SLEEP_MS } from "./constants";
 import { logger } from "./logger";
+import { storage } from "./storage";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const THREE_YEARS_MS = 3 * 365 * DAY_MS;
@@ -25,6 +26,31 @@ const TIMEZONE_NAME_FORMATTER = new Intl.DateTimeFormat("en-US", {
   timeZone: LOCAL_TIMEZONE,
   timeZoneName: "long",
 });
+
+function formatCursorParam(cursor: Date) {
+  const parts = PATH_FORMATTER.formatToParts(cursor);
+  const tzParts = TIMEZONE_NAME_FORMATTER.formatToParts(cursor);
+  const tzName =
+    tzParts.find((part) => part.type === "timeZoneName")?.value ||
+    LOCAL_TIMEZONE;
+
+  const offsetMinutes = -cursor.getTimezoneOffset();
+  const sign = offsetMinutes >= 0 ? "+" : "-";
+  const abs = Math.abs(offsetMinutes);
+  const hours = String(Math.floor(abs / 60)).padStart(2, "0");
+  const minutes = String(abs % 60).padStart(2, "0");
+  const offset = `GMT${sign}${hours}${minutes}`;
+
+  const partsByType = parts.reduce<Record<string, string>>((acc, part) => {
+    acc[part.type] = part.value;
+    return acc;
+  }, {});
+  const { weekday, month, day, year, hour, minute, second } = partsByType;
+
+  return encodeURIComponent(
+    `${weekday} ${month} ${day} ${year} ${hour}:${minute}:${second} ${offset} (${tzName})`
+  );
+}
 
 type StopReason =
   | "cached_id"
@@ -68,28 +94,7 @@ export async function fetchAllActivities(origin: string) {
   };
 
   for (let pageIndex = 0; pageIndex < MAX_PAGES; pageIndex++) {
-    const parts = PATH_FORMATTER.formatToParts(state.cursor);
-    const tzParts = TIMEZONE_NAME_FORMATTER.formatToParts(state.cursor);
-    const tzName =
-      tzParts.find((part) => part.type === "timeZoneName")?.value ||
-      LOCAL_TIMEZONE;
-
-    const offsetMinutes = -state.cursor.getTimezoneOffset();
-    const sign = offsetMinutes >= 0 ? "+" : "-";
-    const abs = Math.abs(offsetMinutes);
-    const hours = String(Math.floor(abs / 60)).padStart(2, "0");
-    const minutes = String(abs % 60).padStart(2, "0");
-    const offset = `GMT${sign}${hours}${minutes}`;
-
-    const partsByType = parts.reduce<Record<string, string>>((acc, part) => {
-      acc[part.type] = part.value;
-      return acc;
-    }, {});
-    const { weekday, month, day, year, hour, minute, second } = partsByType;
-
-    const cursorParam = encodeURIComponent(
-      `${weekday} ${month} ${day} ${year} ${hour}:${minute}:${second} ${offset} (${tzName})`
-    );
+    const cursorParam = formatCursorParam(state.cursor);
     const url = `${origin}/api/previous-tasks/${cursorParam}`;
 
     const response = await fetch(url, { credentials: "include" });

@@ -1,6 +1,7 @@
 import type { CachePayload } from "@/types";
 import { CACHE_KEY } from "./constants";
 import { logger } from "./logger";
+import { storage } from "./storage";
 
 const SECOND_MS = 1000;
 

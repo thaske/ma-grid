@@ -5,7 +5,7 @@ export const XP_COLORS = {
   HIGH: "#30a14e",
 } as const;
 
-export const CACHE_KEY = "local:maGridActivitiesCache";
+export const CACHE_KEY = "maGridActivitiesCache";
 
 export const MAX_PAGES = 200;
 export const SLEEP_MS = 200;

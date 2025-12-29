@@ -1,8 +1,10 @@
+import { storage } from "./storage";
+
 export type UiAnchor = "incompleteTasks" | "sidebar";
 
-export const UI_ANCHOR_STORAGE_KEY = "local:maGridAnchor";
+export const UI_ANCHOR_STORAGE_KEY = "maGridAnchor";
 export const DEFAULT_UI_ANCHOR: UiAnchor = "incompleteTasks";
-export const HIDE_XP_FRAME_STORAGE_KEY = "local:maGridHideXpFrame";
+export const HIDE_XP_FRAME_STORAGE_KEY = "maGridHideXpFrame";
 export const DEFAULT_HIDE_XP_FRAME = false;
 
 export function isUiAnchor(value: unknown): value is UiAnchor {

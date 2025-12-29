@@ -1,4 +1,4 @@
-import type { DataSource } from "@/shared/data/dataSource";
+import type { DataSource } from "./dataSource";
 import type { CalendarResponse } from "@/types";
 
 type RuntimeMessage =
