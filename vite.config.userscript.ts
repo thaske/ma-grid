@@ -3,6 +3,7 @@ import { homedir } from "node:os";
 import { resolve } from "node:path";
 import { defineConfig, loadEnv, type Plugin } from "vite";
 import { generateMetadata } from "./scripts/metadata";
+import { stripLogger } from "./scripts/strip-logger-plugin";
 
 function expandTilde(filepath: string): string {
   if (filepath.startsWith("~/") || filepath === "~") {
@@ -74,7 +75,10 @@ export default defineConfig(({ mode }) => {
     define: {
       "import.meta.env.MODE": JSON.stringify("production"),
     },
-    plugins: [userscriptHeaderPlugin(env.USERSCRIPT_OUTPUT_PATH)],
+    plugins: [
+      stripLogger({ enabled: true }),
+      userscriptHeaderPlugin(env.USERSCRIPT_OUTPUT_PATH),
+    ],
     publicDir: false,
   };
 });
