@@ -2,19 +2,106 @@ import type { AppElement } from "@/components/App";
 import { SettingsButton } from "@/components/SettingsButton";
 import { SettingsModal } from "@/components/SettingsModal";
 import mainStyles from "@/entrypoints/content/style.css?raw";
+import { buildCalendarData } from "@/utils/aggregation";
+import { fetchAllActivities } from "@/utils/api";
+import { isCacheFresh, readCache } from "@/utils/cache";
+import { logger } from "@/utils/logger";
 import {
   cleanupMountedApp,
   mountCalendarUI,
   updateXpFrameHidden,
 } from "@/utils/mount";
-import { createScriptDataSource } from "@/utils/scriptDataSource";
 import { getHideXpFrame, getUiAnchor } from "@/utils/settings";
+import type {
+  CalendarResponse,
+  DataSource,
+  DataSourceUpdate,
+} from "@/utils/types";
 import settingsStyles from "./style.css?raw";
 
 (async function () {
   "use strict";
 
-  const dataSource = createScriptDataSource();
+  // Data source implementation for userscript
+  function createDataSource(): DataSource {
+    let updateCallback: DataSourceUpdate | null = null;
+    let isRefreshing = false;
+
+    const fetchData = async (): Promise<CalendarResponse> => {
+      const origin = window.location.origin;
+
+      try {
+        const isFresh = await isCacheFresh();
+        const cached = await readCache();
+
+        if (isFresh && cached.length > 0) {
+          logger.log(
+            "Returning fresh cached data:",
+            cached.length,
+            "activities"
+          );
+          const calendarData = buildCalendarData(cached);
+          return { data: calendarData, status: "fresh" };
+        }
+
+        if (!isFresh && cached.length > 0) {
+          logger.log(
+            "Returning stale cached data, refreshing in background..."
+          );
+          const staleData = buildCalendarData(cached);
+
+          // Start background refresh
+          if (!isRefreshing && updateCallback) {
+            isRefreshing = true;
+            (async () => {
+              try {
+                logger.log("Starting background refresh...");
+                const activities = await fetchAllActivities(origin);
+                const freshData = buildCalendarData(activities);
+                logger.log("Background refresh complete");
+
+                if (updateCallback) {
+                  updateCallback({ data: freshData, status: "fresh" });
+                }
+              } catch (error) {
+                logger.error("Background refresh failed:", error);
+              } finally {
+                isRefreshing = false;
+              }
+            })();
+          }
+
+          return { data: staleData, status: "stale" };
+        }
+
+        logger.log("Cache empty, fetching fresh data...");
+        const activities = await fetchAllActivities(origin);
+        const calendarData = buildCalendarData(activities);
+
+        logger.log("Calendar data built:", calendarData.stats);
+        return { data: calendarData, status: "fresh" };
+      } catch (error) {
+        logger.error("Error:", error);
+        return {
+          error: error instanceof Error ? error.message : String(error),
+          status: "error",
+        };
+      }
+    };
+
+    return {
+      fetchData,
+      onUpdate(callback) {
+        updateCallback = callback;
+      },
+      cleanup() {
+        updateCallback = null;
+        isRefreshing = false;
+      },
+    };
+  }
+
+  const dataSource = createDataSource();
 
   let hideXpFrame = await getHideXpFrame();
   let anchor = await getUiAnchor();

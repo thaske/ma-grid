@@ -1,5 +1,5 @@
-import type { DataSource } from "@/utils/dataSource";
 import { logger } from "@/utils/logger";
+import type { DataSource } from "@/utils/types";
 import { Calendar } from "./Calendar";
 
 export type AppElement = HTMLElement & {
@@ -73,6 +73,7 @@ export function App(
   container.cleanup = () => {
     mounted = false;
     currentCalendar = null;
+    dataSource.cleanup();
   };
 
   fetchData();

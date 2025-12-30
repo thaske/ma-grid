@@ -1,8 +1,8 @@
 import { App, type AppElement } from "@/components/App";
 import { SELECTOR } from "./constants";
-import type { DataSource } from "./dataSource";
 import { logger } from "./logger";
 import type { UiAnchor } from "./settings";
+import type { DataSource } from "./types";
 
 export interface MountCalendarOptions {
   anchor: UiAnchor;
@@ -18,35 +18,13 @@ export interface MountedCalendar {
   app: AppElement;
 }
 
-export function updateXpFrameHidden(hideXpFrame: boolean) {
-  const xpFrame = document.querySelector<HTMLElement>("#xpFrame");
-  if (!xpFrame) return;
-
-  if (hideXpFrame) {
-    xpFrame.style.setProperty("display", "none", "important");
-  } else {
-    xpFrame.style.removeProperty("display");
-  }
-}
-
-export function cleanupMountedApp(
-  currentApp: AppElement | null,
-  currentHost?: HTMLElement | null
-) {
-  if (currentApp) {
-    currentApp.cleanup?.();
-  }
-  if (currentHost) {
-    currentHost.remove();
-  }
-}
-
-export function mountCalendarUI(
-  options: MountCalendarOptions
-): MountedCalendar | null {
-  const { anchor, dataSource, settingsButton, injectStyles, onMissingAnchor } =
-    options;
-
+export function mountCalendarUI({
+  anchor,
+  dataSource,
+  settingsButton,
+  injectStyles,
+  onMissingAnchor,
+}: MountCalendarOptions): MountedCalendar | null {
   const existing = document.querySelector("#ma-grid");
   if (existing) {
     logger.log("Removing existing element from previous session");
@@ -80,4 +58,27 @@ export function mountCalendarUI(
   }
 
   return { host, shadow, app };
+}
+
+export function updateXpFrameHidden(hideXpFrame: boolean) {
+  const xpFrame = document.querySelector<HTMLElement>("#xpFrame");
+  if (!xpFrame) return;
+
+  if (hideXpFrame) {
+    xpFrame.style.setProperty("display", "none", "important");
+  } else {
+    xpFrame.style.removeProperty("display");
+  }
+}
+
+export function cleanupMountedApp(
+  currentApp: AppElement | null,
+  currentHost?: HTMLElement | null
+) {
+  if (currentApp) {
+    currentApp.cleanup?.();
+  }
+  if (currentHost) {
+    currentHost.remove();
+  }
 }
