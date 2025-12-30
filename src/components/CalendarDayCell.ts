@@ -1,4 +1,5 @@
-import type { DailyXP } from "@/types";
+import { XP_THRESHOLDS } from "@/utils/constants";
+import type { DailyXP } from "@/utils/types";
 
 export function DayCell(
   day: DailyXP,
@@ -25,7 +26,7 @@ export function DayCell(
 
 function getLevelFromXP(xp: number) {
   if (xp === 0) return "none";
-  else if (xp < 15) return "low";
-  else if (xp < 30) return "medium";
+  else if (xp < XP_THRESHOLDS.LOW) return "low";
+  else if (xp < XP_THRESHOLDS.MEDIUM) return "medium";
   else return "high";
 }

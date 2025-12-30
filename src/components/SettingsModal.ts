@@ -1,12 +1,4 @@
-import { CACHE_KEY } from "@/utils/constants";
-import { logger } from "@/utils/logger";
-import { storage } from "@/utils/storage";
-import {
-  HIDE_XP_FRAME_STORAGE_KEY,
-  UI_ANCHOR_STORAGE_KEY,
-  type UiAnchor,
-  isUiAnchor,
-} from "@/utils/settings";
+import { SettingsPanel } from "@/components/SettingsPanel";
 
 export interface SettingsModalOptions {
   onSettingsChange: () => void;
@@ -18,64 +10,16 @@ export function SettingsModal(options: SettingsModalOptions): HTMLElement {
 
   modal.innerHTML = `
     <div class="ma-grid-settings-overlay">
-      <div class="ma-grid-settings-panel">
-        <main class="popup" aria-label="MA Grid settings">
-          <header class="popup__header">
-            <h1 class="popup__title">MA Grid</h1>
-            <button class="ma-grid-settings-close" aria-label="Close settings">&times;</button>
-          </header>
-
-          <section class="popup__section" aria-labelledby="settings-title">
-            <div class="popup__section-header">
-              <h2 id="settings-title" class="popup__section-title">Settings</h2>
-            </div>
-            <div class="popup__card">
-              <form class="popup__form" aria-label="Calendar placement">
-                <fieldset class="popup__fieldset">
-                  <legend class="popup__legend">Placement</legend>
-                  <label class="popup__option">
-                    <input type="radio" name="anchor" value="incompleteTasks" />
-                    <span>Incomplete tasks</span>
-                  </label>
-                  <label class="popup__option">
-                    <input type="radio" name="anchor" value="sidebar" />
-                    <span>Sidebar</span>
-                  </label>
-                </fieldset>
-                <fieldset class="popup__fieldset">
-                  <legend class="popup__legend">Display</legend>
-                  <label class="popup__option">
-                    <input type="checkbox" id="ma-grid-hide-xp" />
-                    <span>Hide XP panel</span>
-                  </label>
-                </fieldset>
-                <fieldset class="popup__fieldset">
-                  <legend class="popup__legend">Debug</legend>
-                  <button class="popup__button" type="button" id="ma-grid-clear-cache">
-                    Clear cache
-                  </button>
-                </fieldset>
-              </form>
-            </div>
-          </section>
-        </main>
-      </div>
+      <div class="ma-grid-settings-panel"></div>
     </div>
   `;
 
   const overlay = modal.querySelector(
     ".ma-grid-settings-overlay"
   ) as HTMLElement;
-  const closeButton = modal.querySelector(
-    ".ma-grid-settings-close"
-  ) as HTMLButtonElement;
-  const anchorInputs = Array.from(
-    modal.querySelectorAll<HTMLInputElement>('input[name="anchor"]')
-  );
-  const hideXpInput = modal.querySelector<HTMLInputElement>("#ma-grid-hide-xp");
-  const clearCacheButton = modal.querySelector<HTMLButtonElement>(
-    "#ma-grid-clear-cache"
-  );
+  const panelContainer = modal.querySelector(
+    ".ma-grid-settings-panel"
+  ) as HTMLElement;
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Escape") {
@@ -95,67 +39,16 @@ export function SettingsModal(options: SettingsModalOptions): HTMLElement {
     }
   });
 
-  closeButton.addEventListener("click", close);
-
-  anchorInputs.forEach((input) => {
-    input.addEventListener("change", async (event: Event) => {
-      const target = event.target;
-      if (!(target instanceof HTMLInputElement)) return;
-      if (target.name !== "anchor") return;
-      if (!isUiAnchor(target.value)) return;
-
-      await storage.setItem(UI_ANCHOR_STORAGE_KEY, target.value);
-      options.onSettingsChange();
-    });
+  // Instantiate and mount the settings panel
+  const panel = SettingsPanel({
+    onChange: options.onSettingsChange,
+    showCloseButton: true,
+    onClose: close,
+    idPrefix: "ma-grid",
   });
 
-  if (hideXpInput) {
-    hideXpInput.addEventListener("change", async () => {
-      await storage.setItem(HIDE_XP_FRAME_STORAGE_KEY, hideXpInput.checked);
-      options.onSettingsChange();
-    });
-  }
-
-  if (clearCacheButton) {
-    clearCacheButton.addEventListener("click", async () => {
-      const originalText = clearCacheButton.textContent ?? "";
-      clearCacheButton.disabled = true;
-      clearCacheButton.textContent = "Clearing...";
-      try {
-        await storage.removeItem(CACHE_KEY);
-      } catch (error) {
-        logger.error("Failed to clear cache:", error);
-      }
-      clearCacheButton.textContent = "Cleared";
-      window.setTimeout(() => {
-        clearCacheButton.textContent = originalText;
-        clearCacheButton.disabled = false;
-      }, 1200);
-      options.onSettingsChange();
-    });
-  }
-
-  async function initializeModalState() {
-    try {
-      const anchor =
-        (await storage.getItem<UiAnchor>(UI_ANCHOR_STORAGE_KEY)) ??
-        "incompleteTasks";
-      const hideXpFrame =
-        (await storage.getItem<boolean>(HIDE_XP_FRAME_STORAGE_KEY)) ?? false;
-
-      anchorInputs.forEach((input) => {
-        input.checked = input.value === anchor;
-      });
-
-      if (hideXpInput) {
-        hideXpInput.checked = hideXpFrame;
-      }
-    } catch (error) {
-      logger.error("Failed to initialize settings modal:", error);
-    }
-  }
-
-  initializeModalState();
+  panelContainer.appendChild(panel.element);
+  panel.initialize();
 
   return modal;
 }

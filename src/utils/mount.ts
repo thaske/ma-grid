@@ -1,6 +1,6 @@
-import type { DataSource } from "./dataSource";
 import { App, type AppElement } from "@/components/App";
 import { SELECTOR } from "./constants";
+import type { DataSource } from "./dataSource";
 import { logger } from "./logger";
 import type { UiAnchor } from "./settings";
 

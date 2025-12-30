@@ -1,4 +1,4 @@
-import type { CalendarResponse } from "@/types";
+import type { CalendarResponse } from "@/utils/types";
 
 export type DataSourceUpdate = (data: CalendarResponse) => void;
 export type DataSourceSubscribe = (emit: DataSourceUpdate) => () => void;

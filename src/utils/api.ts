@@ -1,12 +1,16 @@
-import type { Activity } from "@/types";
+import type { Activity } from "@/utils/types";
 import { readCache } from "./cache";
-import { CACHE_KEY, MAX_PAGES, OVERLAP_DAYS, SLEEP_MS } from "./constants";
+import {
+  CACHE_KEY,
+  DAY_MS,
+  MAX_PAGES,
+  OVERLAP_DAYS,
+  SLEEP_MS,
+  THREE_YEARS_MS,
+} from "./constants";
 import { logger } from "./logger";
 import { storage } from "./storage";
 import { formatCursorParam } from "./timezone";
-
-const DAY_MS = 24 * 60 * 60 * 1000;
-const THREE_YEARS_MS = 3 * 365 * DAY_MS;
 
 type StopReason =
   | "cached_id"

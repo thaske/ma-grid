@@ -1,5 +1,7 @@
 import type { AppElement } from "@/components/App";
-import mainStyles from "@/entrypoints/content/styles.css?raw";
+import { SettingsButton } from "@/components/SettingsButton";
+import { SettingsModal } from "@/components/SettingsModal";
+import mainStyles from "@/entrypoints/content/style.css?raw";
 import {
   cleanupMountedApp,
   mountCalendarUI,
@@ -7,12 +9,10 @@ import {
 } from "@/utils/mount";
 import { createScriptDataSource } from "@/utils/scriptDataSource";
 import { getHideXpFrame, getUiAnchor } from "@/utils/settings";
-import { SettingsButton } from "../../components/SettingsButton";
-import { SettingsModal } from "../../components/SettingsModal";
-import settingsStyles from "./styles.css?raw";
+import settingsStyles from "./style.css?raw";
 
 (async function () {
-  ("use strict");
+  "use strict";
 
   const dataSource = createScriptDataSource();
 

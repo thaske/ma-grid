@@ -1,4 +1,4 @@
-import type { CalendarStats } from "@/types";
+import type { CalendarStats } from "@/utils/types";
 
 export function Stats(stats: CalendarStats) {
   const container = document.createElement("div");

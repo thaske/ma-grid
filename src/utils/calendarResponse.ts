@@ -1,8 +1,8 @@
+import type { CalendarResponse } from "@/utils/types";
 import { buildCalendarData } from "./aggregation";
 import { fetchAllActivities } from "./api";
 import { isCacheFresh, readCache } from "./cache";
 import { logger } from "./logger";
-import type { CalendarResponse } from "@/types";
 
 type CalendarUpdateCallback = (
   response: CalendarResponse

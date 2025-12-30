@@ -1,9 +1,7 @@
-import type { CachePayload } from "@/types";
-import { CACHE_KEY } from "./constants";
+import type { CachePayload } from "@/utils/types";
+import { CACHE_KEY, SECOND_MS } from "./constants";
 import { logger } from "./logger";
 import { storage } from "./storage";
-
-const SECOND_MS = 1000;
 
 export async function readCache() {
   try {

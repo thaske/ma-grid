@@ -1,4 +1,4 @@
-import type { Activity, DailyXP } from "@/types";
+import type { Activity, DailyXP } from "@/utils/types";
 import {
   formatDateKey,
   getLocalWeekdayIndex,

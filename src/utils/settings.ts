@@ -11,24 +11,37 @@ export function isUiAnchor(value: unknown): value is UiAnchor {
   return value === "incompleteTasks" || value === "sidebar";
 }
 
-export async function getUiAnchor() {
-  const stored = await storage.getItem(UI_ANCHOR_STORAGE_KEY);
-  return isUiAnchor(stored) ? stored : DEFAULT_UI_ANCHOR;
+function createSetting<T>(
+  key: string,
+  defaultValue: T,
+  validator: (value: unknown) => value is T
+) {
+  return {
+    get: async () => {
+      const stored = await storage.getItem(key);
+      return validator(stored) ? stored : defaultValue;
+    },
+    watch: (callback: (value: T) => void) => {
+      return storage.watch(key, (newValue) => {
+        callback(validator(newValue) ? newValue : defaultValue);
+      });
+    },
+  };
 }
 
-export async function getHideXpFrame() {
-  const stored = await storage.getItem(HIDE_XP_FRAME_STORAGE_KEY);
-  return typeof stored === "boolean" ? stored : DEFAULT_HIDE_XP_FRAME;
-}
+const uiAnchorSetting = createSetting(
+  UI_ANCHOR_STORAGE_KEY,
+  DEFAULT_UI_ANCHOR,
+  isUiAnchor
+);
 
-export function watchUiAnchor(callback: (anchor: UiAnchor) => void) {
-  return storage.watch(UI_ANCHOR_STORAGE_KEY, (newValue) => {
-    callback(isUiAnchor(newValue) ? newValue : DEFAULT_UI_ANCHOR);
-  });
-}
+const hideXpFrameSetting = createSetting(
+  HIDE_XP_FRAME_STORAGE_KEY,
+  DEFAULT_HIDE_XP_FRAME,
+  (value: unknown): value is boolean => typeof value === "boolean"
+);
 
-export function watchHideXpFrame(callback: (hide: boolean) => void) {
-  return storage.watch(HIDE_XP_FRAME_STORAGE_KEY, (newValue) => {
-    callback(typeof newValue === "boolean" ? newValue : DEFAULT_HIDE_XP_FRAME);
-  });
-}
+export const getUiAnchor = uiAnchorSetting.get;
+export const watchUiAnchor = uiAnchorSetting.watch;
+export const getHideXpFrame = hideXpFrameSetting.get;
+export const watchHideXpFrame = hideXpFrameSetting.watch;

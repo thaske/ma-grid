@@ -1,4 +1,4 @@
-import type { DailyXP } from "@/types";
+import type { DailyXP } from "@/utils/types";
 import { DayCell } from "./CalendarDayCell";
 
 export interface LayoutMetrics {

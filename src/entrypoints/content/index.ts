@@ -1,16 +1,4 @@
-import { defineContentScript } from "wxt/utils/define-content-script";
-import calendarStyles from "./styles.css?raw";
-import type { AppElement } from "@/components/App";
-import { createExtensionDataSource } from "@/utils/extensionDataSource";
-import { logger } from "@/utils/logger";
-import { mountCalendarUI, updateXpFrameHidden } from "@/utils/mount";
-import { MATHACADEMY_MATCHES } from "@/utils/constants";
-import {
-  getHideXpFrame,
-  getUiAnchor,
-  watchHideXpFrame,
-  watchUiAnchor,
-} from "@/utils/settings";
+import calendarStyles from "./style.css?raw";
 
 export default defineContentScript({
   matches: MATHACADEMY_MATCHES,
