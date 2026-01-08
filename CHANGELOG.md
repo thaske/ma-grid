@@ -1,10 +1,12 @@
-# 1.2.2 (2026-01-08)
+# 1.3.0 (2026-01-08)
 
 ### Added
 
 - Longest streak stat and settings toggles for stat visibility
+- Longest streak tooltip clarification in settings
 - Strip logger plugin for production builds
 - E2E coverage for stats visibility
+- Aggregation test for longest streak exclusion
 
 ### Changed
 
