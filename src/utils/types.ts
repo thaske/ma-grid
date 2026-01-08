@@ -28,6 +28,7 @@ export interface CalendarStats {
   activeDays: number;
   totalDays: number;
   streak: number;
+  longestStreak: number;
   maxXP: number;
   avgXP: number;
 }

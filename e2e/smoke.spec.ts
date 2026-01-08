@@ -31,6 +31,10 @@ test.describe("MA Grid Extension", () => {
     await expect(popup.settingsHeading).toBeVisible();
     await expect(popup.anchorOptions).toHaveCount(2);
     await expect(popup.hideXpToggle).toBeVisible();
+    await expect(popup.currentStreakToggle).toBeVisible();
+    await expect(popup.longestStreakToggle).toBeVisible();
+    await expect(popup.avgXpToggle).toBeVisible();
+    await expect(popup.maxXpToggle).toBeVisible();
     await expect(popup.clearCacheButton).toBeVisible();
   });
 
@@ -83,6 +87,56 @@ test.describe("MA Grid Extension", () => {
     await page.bringToFront();
     const afterToggleVisible = await page.locator("#xpFrame").isVisible();
     expect(afterToggleVisible).toBe(initiallyVisible);
+  });
+
+  test("should toggle stats visibility", async ({
+    page,
+    context,
+    extensionId,
+  }) => {
+    await page.goto(MOCK_URL, {
+      waitUntil: "domcontentloaded",
+    });
+    await page.waitForLoadState("networkidle");
+
+    await page.locator("#ma-grid").locator(".ma-grid__cell").first().waitFor();
+
+    const popupPage = await context.newPage();
+    const popup = new PopupPage(popupPage, extensionId);
+    await popup.open();
+    await popup.setStatVisibility("currentStreak", true);
+    await popup.setStatVisibility("longestStreak", true);
+    await popup.setStatVisibility("avgXP", true);
+    await popup.setStatVisibility("maxXP", true);
+
+    const currentStreakLabel = page.locator("#ma-grid .ma-grid__stat-label", {
+      hasText: "Current Streak",
+    });
+    const longestStreakLabel = page.locator("#ma-grid .ma-grid__stat-label", {
+      hasText: "Longest Streak",
+    });
+    const avgXpLabel = page.locator("#ma-grid .ma-grid__stat-label", {
+      hasText: "Avg Daily XP",
+    });
+    const maxXpLabel = page.locator("#ma-grid .ma-grid__stat-label", {
+      hasText: "Max Daily XP",
+    });
+
+    await page.bringToFront();
+    await expect(currentStreakLabel).toBeVisible();
+    await expect(longestStreakLabel).toBeVisible();
+    await expect(avgXpLabel).toBeVisible();
+    await expect(maxXpLabel).toBeVisible();
+
+    await popupPage.bringToFront();
+    await popup.setStatVisibility("currentStreak", false);
+    await popup.setStatVisibility("maxXP", false);
+
+    await page.bringToFront();
+    await expect(currentStreakLabel).toHaveCount(0);
+    await expect(maxXpLabel).toHaveCount(0);
+    await expect(longestStreakLabel).toBeVisible();
+    await expect(avgXpLabel).toBeVisible();
   });
 
   test("should clear cache successfully", async ({

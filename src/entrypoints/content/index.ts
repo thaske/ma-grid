@@ -4,6 +4,7 @@ import { logger } from "@/utils/logger";
 import { mountCalendarUI, updateXpFrameHidden } from "@/utils/mount";
 import {
   getHideXpFrame,
+  watchStatsVisibility,
   getUiAnchor,
   watchHideXpFrame,
   watchUiAnchor,
@@ -98,6 +99,10 @@ export default defineContentScript({
 
     watchUiAnchor((newValue) => {
       anchor = newValue;
+      mountUI();
+    });
+
+    watchStatsVisibility(() => {
       mountUI();
     });
 

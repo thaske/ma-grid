@@ -11,7 +11,12 @@ import {
   mountCalendarUI,
   updateXpFrameHidden,
 } from "@/utils/mount";
-import { getHideXpFrame, getUiAnchor } from "@/utils/settings";
+import {
+  getHideXpFrame,
+  getStatsVisibility,
+  getUiAnchor,
+  type StatsVisibility,
+} from "@/utils/settings";
 import type {
   CalendarResponse,
   DataSource,
@@ -51,7 +56,7 @@ import settingsStyles from "./style.css?raw";
           const staleData = buildCalendarData(cached);
 
           // Start background refresh
-          if (!isRefreshing && updateCallback) {
+          if (!isRefreshing) {
             isRefreshing = true;
             (async () => {
               try {
@@ -105,6 +110,7 @@ import settingsStyles from "./style.css?raw";
 
   let hideXpFrame = await getHideXpFrame();
   let anchor = await getUiAnchor();
+  let statsVisibility = await getStatsVisibility();
 
   let currentHost: HTMLElement | null = null;
   let currentShadow: ShadowRoot | null = null;
@@ -115,12 +121,22 @@ import settingsStyles from "./style.css?raw";
 
     const handleSettingsChange = async (): Promise<void> => {
       const previousAnchor = anchor;
+      const previousStatsVisibility = statsVisibility;
       hideXpFrame = await getHideXpFrame();
       anchor = await getUiAnchor();
+      statsVisibility = await getStatsVisibility();
 
       updateXpFrameHidden(hideXpFrame);
 
-      if (previousAnchor !== anchor && currentShadow) {
+      const statsVisibilityChanged = !areStatsVisibilityEqual(
+        previousStatsVisibility,
+        statsVisibility
+      );
+
+      if (
+        (previousAnchor !== anchor || statsVisibilityChanged) &&
+        currentShadow
+      ) {
         const existingModal = currentShadow.querySelector(
           ".ma-grid-settings-modal"
         );
@@ -176,4 +192,16 @@ import settingsStyles from "./style.css?raw";
 
   updateXpFrameHidden(hideXpFrame);
   mountUI();
+
+  function areStatsVisibilityEqual(
+    a: StatsVisibility,
+    b: StatsVisibility
+  ): boolean {
+    return (
+      a.currentStreak === b.currentStreak &&
+      a.longestStreak === b.longestStreak &&
+      a.avgXP === b.avgXP &&
+      a.maxXP === b.maxXP
+    );
+  }
 })();

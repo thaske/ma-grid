@@ -9,6 +9,11 @@ export class PopupPage {
   readonly anchorOptions: Locator;
   readonly hideXpToggle: Locator;
   readonly clearCacheButton: Locator;
+  readonly currentStreakToggle: Locator;
+  readonly longestStreakToggle: Locator;
+  readonly avgXpToggle: Locator;
+  readonly maxXpToggle: Locator;
+  private readonly statMap: Record<StatKey, Locator>;
 
   constructor(page: Page, extensionId: string) {
     this.page = page;
@@ -19,6 +24,16 @@ export class PopupPage {
     this.anchorOptions = page.locator('input[name="anchor"]');
     this.hideXpToggle = page.locator("#hide-xp-frame");
     this.clearCacheButton = page.locator("#clear-cache");
+    this.currentStreakToggle = page.locator("#stat-current-streak");
+    this.longestStreakToggle = page.locator("#stat-longest-streak");
+    this.avgXpToggle = page.locator("#stat-avg-xp");
+    this.maxXpToggle = page.locator("#stat-max-xp");
+    this.statMap = {
+      currentStreak: this.currentStreakToggle,
+      longestStreak: this.longestStreakToggle,
+      avgXP: this.avgXpToggle,
+      maxXP: this.maxXpToggle,
+    };
   }
 
   async open() {
@@ -66,4 +81,14 @@ export class PopupPage {
   async getClearCacheButtonText() {
     return (await this.clearCacheButton.textContent()) || "";
   }
+
+  async setStatVisibility(stat: StatKey, visible: boolean) {
+    const checkbox = this.statMap[stat];
+    const checked = await checkbox.isChecked();
+    if (checked !== visible) {
+      await checkbox.setChecked(visible);
+    }
+  }
 }
+
+type StatKey = "currentStreak" | "longestStreak" | "avgXP" | "maxXP";

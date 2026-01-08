@@ -14,6 +14,7 @@ export function buildCalendarData(activities: Activity[]) {
         activeDays: 0,
         totalDays: 0,
         streak: 0,
+        longestStreak: 0,
         maxXP: 0,
         avgXP: 0,
       },
@@ -50,6 +51,7 @@ export function buildCalendarData(activities: Activity[]) {
         activeDays: 0,
         totalDays: 0,
         streak: 0,
+        longestStreak: 0,
         maxXP: 0,
         avgXP: 0,
       },
@@ -130,12 +132,74 @@ export function buildCalendarData(activities: Activity[]) {
     }
   }
 
+  let currentStreakStart: Date | null = null;
+  let currentStreakEnd: Date | null = null;
+  if (streak > 0) {
+    currentStreakEnd = new Date(checkDate);
+    currentStreakEnd.setDate(currentStreakEnd.getDate() + 1);
+    currentStreakStart = new Date(currentStreakEnd);
+    currentStreakStart.setDate(currentStreakStart.getDate() - (streak - 1));
+  }
+
+  let longestStreak = 0;
+  let longestExcludingCurrent = 0;
+  let runningStreak = 0;
+  let runningIncludesCurrent = false;
+  const currentStartTime = currentStreakStart?.getTime() ?? null;
+  const currentEndTime = currentStreakEnd?.getTime() ?? null;
+
+  const scanDate = new Date(alignedStartDate);
+  while (scanDate <= alignedEndDate) {
+    const dateKey = formatDateKey(scanDate);
+    const dayData = dailyMap.get(dateKey);
+    const hasXp = !!dayData && dayData.xp > 0;
+    const time = scanDate.getTime();
+    const isCurrentDate =
+      currentStartTime !== null &&
+      currentEndTime !== null &&
+      time >= currentStartTime &&
+      time <= currentEndTime;
+
+    if (hasXp) {
+      runningStreak++;
+      runningIncludesCurrent = runningIncludesCurrent || isCurrentDate;
+    } else if (runningStreak > 0) {
+      longestStreak = Math.max(longestStreak, runningStreak);
+      if (!runningIncludesCurrent) {
+        longestExcludingCurrent = Math.max(
+          longestExcludingCurrent,
+          runningStreak
+        );
+      }
+      runningStreak = 0;
+      runningIncludesCurrent = false;
+    }
+
+    scanDate.setDate(scanDate.getDate() + 1);
+  }
+
+  if (runningStreak > 0) {
+    longestStreak = Math.max(longestStreak, runningStreak);
+    if (!runningIncludesCurrent) {
+      longestExcludingCurrent = Math.max(
+        longestExcludingCurrent,
+        runningStreak
+      );
+    }
+  }
+
+  const longestStreakToShow =
+    streak > 0 && longestStreak === streak
+      ? longestExcludingCurrent
+      : longestStreak;
+
   return {
     grid,
     stats: {
       activeDays: totalActiveDays,
       totalDays,
       streak,
+      longestStreak: longestStreakToShow,
       maxXP,
       avgXP,
     },
