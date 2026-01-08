@@ -68,7 +68,17 @@ export function SettingsForm(
       </label>
       <label class="popup__option">
         <input type="checkbox" id="${statsLongestStreakId}" />
-        <span>Longest streak</span>
+        <span class="popup__option-label">
+          Longest streak
+          <span
+            class="popup__info"
+            role="img"
+            aria-label="Longest streak excludes current streak."
+            data-tooltip="Longest streak excludes current streak."
+          >
+            ?
+          </span>
+        </span>
       </label>
       <label class="popup__option">
         <input type="checkbox" id="${statsAvgXpId}" />
