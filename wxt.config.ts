@@ -1,5 +1,4 @@
 import { defineConfig } from "wxt";
-import { stripLogger } from "./scripts/strip-logger-plugin";
 
 const HOST_PERMISSIONS = {
   production: [
@@ -36,10 +35,14 @@ export default defineConfig({
     },
   },
   vite: (env) => ({
-    plugins: [stripLogger({ enabled: env.mode === "production" }) as any],
     build: {
       minify: process.env.MINIFY !== "false",
       sourcemap: true,
+    },
+    esbuild: {
+      drop: [env.mode === "production" ? "console" : undefined].filter(
+        Boolean
+      ) as ("console" | "debugger")[] | undefined,
     },
   }),
   webExt: {

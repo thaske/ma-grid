@@ -2,7 +2,6 @@ import { buildCalendarData } from "@/utils/aggregation";
 import { fetchAllActivities } from "@/utils/api";
 import { isCacheFresh, readCache } from "@/utils/cache";
 import { MATHACADEMY_MATCHES } from "@/utils/constants";
-import { logger } from "@/utils/logger";
 import type { CalendarResponse } from "@/utils/types";
 import { defineBackground } from "wxt/utils/define-background";
 
@@ -12,29 +11,29 @@ async function getCalendarData(origin: string): Promise<CalendarResponse> {
     const cached = await readCache();
 
     if (isFresh && cached.length > 0) {
-      logger.log("Returning fresh cached data:", cached.length, "activities");
+      console.log("Returning fresh cached data:", cached.length, "activities");
       const calendarData = buildCalendarData(cached);
       return { data: calendarData, status: "fresh" };
     }
 
     if (!isFresh && cached.length > 0) {
-      logger.log("Returning stale cached data, refreshing in background...");
+      console.log("Returning stale cached data, refreshing in background...");
       const staleData = buildCalendarData(cached);
 
       // Start background refresh
       (async () => {
         try {
-          logger.log("Starting background refresh...");
+          console.log("Starting background refresh...");
           const activities = await fetchAllActivities(origin);
           const freshData = buildCalendarData(activities);
-          logger.log("Background refresh complete");
+          console.log("Background refresh complete");
 
           // Notify all tabs with fresh data
           const tabs = await browser.tabs.query({
             url: MATHACADEMY_MATCHES,
           });
 
-          logger.log(
+          console.log(
             "Background refresh complete, updating",
             tabs.length,
             "tab(s)"
@@ -50,21 +49,21 @@ async function getCalendarData(origin: string): Promise<CalendarResponse> {
             }
           }
         } catch (error) {
-          logger.error("Background refresh failed:", error);
+          console.error("Background refresh failed:", error);
         }
       })();
 
       return { data: staleData, status: "stale" };
     }
 
-    logger.log("Cache empty, fetching fresh data...");
+    console.log("Cache empty, fetching fresh data...");
     const activities = await fetchAllActivities(origin);
     const calendarData = buildCalendarData(activities);
 
-    logger.log("Calendar data built:", calendarData.stats);
+    console.log("Calendar data built:", calendarData.stats);
     return { data: calendarData, status: "fresh" };
   } catch (error) {
-    logger.error("Error:", error);
+    console.error("Error:", error);
     return {
       error: error instanceof Error ? error.message : String(error),
       status: "error",
@@ -84,7 +83,7 @@ async function handleCalendarRequest(
     const response = await getCalendarData(url.origin);
     sendResponse(response);
   } catch (error) {
-    logger.error("Error:", error);
+    console.error("Error:", error);
     sendResponse({
       error: error instanceof Error ? error.message : String(error),
     });
@@ -99,6 +98,6 @@ export default defineBackground({
       return true;
     });
 
-    logger.log("Service worker initialized");
+    console.log("Service worker initialized");
   },
 });

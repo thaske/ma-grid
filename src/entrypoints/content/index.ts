@@ -1,12 +1,11 @@
 import type { AppElement } from "@/components/App";
 import { MATHACADEMY_MATCHES } from "@/utils/constants";
-import { logger } from "@/utils/logger";
 import { mountCalendarUI, updateXpFrameHidden } from "@/utils/mount";
 import {
   getHideXpFrame,
-  watchStatsVisibility,
   getUiAnchor,
   watchHideXpFrame,
+  watchStatsVisibility,
   watchUiAnchor,
 } from "@/utils/settings";
 import type { CalendarResponse, DataSource } from "@/utils/types";
@@ -21,7 +20,7 @@ export default defineContentScript({
   matches: MATHACADEMY_MATCHES,
   cssInjectionMode: "manual",
   async main(_ctx) {
-    logger.log("Content script loaded");
+    console.log("Content script loaded");
 
     let hideXpFrame = await getHideXpFrame();
     let anchor = await getUiAnchor();
@@ -85,7 +84,7 @@ export default defineContentScript({
           shadow.appendChild(styleElem);
         },
         onMissingAnchor: () => {
-          logger.log("Anchor element not found, will retry");
+          console.log("Anchor element not found, will retry");
         },
       });
 

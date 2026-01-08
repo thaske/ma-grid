@@ -1,5 +1,4 @@
 import { CACHE_KEY } from "@/utils/constants";
-import { logger } from "@/utils/logger";
 import {
   DEFAULT_STATS_VISIBILITY,
   getHideXpFrame,
@@ -155,7 +154,7 @@ export function SettingsForm(
       try {
         await storage.removeItem(CACHE_KEY);
       } catch (error) {
-        logger.error("Failed to clear cache:", error);
+        console.error("Failed to clear cache:", error);
       }
       clearCacheButton.textContent = "Cleared";
       window.setTimeout(() => {
@@ -195,7 +194,7 @@ export function SettingsForm(
         statsInputs.maxXP.checked = statsVisibility.maxXP;
       }
     } catch (error) {
-      logger.error("Failed to initialize settings form:", error);
+      console.error("Failed to initialize settings form:", error);
     }
   }
 

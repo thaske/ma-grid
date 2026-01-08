@@ -1,4 +1,3 @@
-import { logger } from "@/utils/logger";
 import { getStatsVisibility } from "@/utils/settings";
 import type { DataSource } from "@/utils/types";
 import { Calendar } from "./Calendar";
@@ -55,7 +54,7 @@ export function App(
           void (async () => {
             try {
               if (freshResponse.data && mounted && currentCalendar) {
-                logger.log("Received fresh data, updating calendar");
+                console.log("Received fresh data, updating calendar");
                 const freshVisibility = await getStatsVisibility();
                 const newCalendar = Calendar(
                   freshResponse.data,
@@ -70,14 +69,14 @@ export function App(
                 currentCalendar = newCalendar;
               }
             } catch (error) {
-              logger.error("Failed to refresh calendar settings:", error);
+              console.error("Failed to refresh calendar settings:", error);
             }
           })();
         });
       }
     } catch (err) {
       if (!mounted) return;
-      logger.error("Failed to load calendar:", err);
+      console.error("Failed to load calendar:", err);
       setContainerState(
         "error",
         err instanceof Error ? err.message : "Failed to load activity data"

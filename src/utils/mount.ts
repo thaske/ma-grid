@@ -1,6 +1,5 @@
 import { App, type AppElement } from "@/components/App";
 import { SELECTOR } from "./constants";
-import { logger } from "./logger";
 import type { UiAnchor } from "./settings";
 import type { DataSource } from "./types";
 
@@ -27,7 +26,7 @@ export function mountCalendarUI({
 }: MountCalendarOptions): MountedCalendar | null {
   const existing = document.querySelector("#ma-grid");
   if (existing) {
-    logger.log("Removing existing element from previous session");
+    console.log("Removing existing element from previous session");
     existing.remove();
   }
 
@@ -38,7 +37,7 @@ export function mountCalendarUI({
     return null;
   }
 
-  logger.log("Dashboard detected, injecting calendar");
+  console.log("Dashboard detected, injecting calendar");
 
   const host = document.createElement("div");
   host.id = "ma-grid";
