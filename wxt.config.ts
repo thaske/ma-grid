@@ -1,4 +1,5 @@
 import { defineConfig } from "wxt";
+import { stripConsolePlugin } from "./scripts/vite-strip-console";
 
 const HOST_PERMISSIONS = {
   production: [
@@ -34,16 +35,12 @@ export default defineConfig({
       128: "icons/icon128.png",
     },
   },
-  vite: (env) => ({
+  vite: () => ({
     build: {
       minify: process.env.MINIFY !== "false",
       sourcemap: true,
     },
-    esbuild: {
-      drop: [env.mode === "production" ? "console" : undefined].filter(
-        Boolean
-      ) as ("console" | "debugger")[] | undefined,
-    },
+    plugins: [stripConsolePlugin()],
   }),
   webExt: {
     chromiumArgs: ["--user-data-dir=./.wxt/chrome-data"],

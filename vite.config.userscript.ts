@@ -3,6 +3,7 @@ import { homedir } from "node:os";
 import { resolve } from "node:path";
 import { defineConfig, loadEnv, type Plugin } from "vite";
 import { generateMetadata } from "./scripts/metadata";
+import { stripConsolePlugin } from "./scripts/vite-strip-console";
 
 function expandTilde(filepath: string): string {
   if (filepath.startsWith("~/") || filepath === "~") {
@@ -66,11 +67,6 @@ export default defineConfig(({ mode }) => {
       minify: false,
       sourcemap: false,
     },
-    esbuild: {
-      drop: [env.mode === "production" ? "console" : undefined].filter(
-        Boolean
-      ) as ("console" | "debugger")[] | undefined,
-    },
     resolve: {
       alias: {
         "@": resolve(__dirname, "src"),
@@ -79,7 +75,10 @@ export default defineConfig(({ mode }) => {
     define: {
       "import.meta.env.MODE": JSON.stringify("production"),
     },
-    plugins: [userscriptHeaderPlugin(env.USERSCRIPT_OUTPUT_PATH)],
+    plugins: [
+      stripConsolePlugin(),
+      userscriptHeaderPlugin(env.USERSCRIPT_OUTPUT_PATH),
+    ],
     publicDir: false,
   };
 });
