@@ -34,10 +34,15 @@ export default defineConfig({
       128: "icons/icon128.png",
     },
   },
-  vite: () => ({
+  vite: (env) => ({
     build: {
       minify: process.env.MINIFY !== "false",
       sourcemap: true,
+    },
+    esbuild: {
+      drop: [env.mode === "production" ? "console" : undefined].filter(
+        Boolean
+      ) as ("console" | "debugger")[] | undefined,
     },
   }),
   webExt: {

@@ -1,6 +1,6 @@
 import { buildCalendarData } from "@/utils/aggregation";
 import { formatDateKey } from "@/utils/timezone";
-import type { Activity } from "@/types";
+import type { Activity } from "@/utils/types";
 import { describe, expect, it } from "bun:test";
 
 const buildActivity = (overrides: Partial<Activity>): Activity => ({
@@ -14,6 +14,35 @@ const buildActivity = (overrides: Partial<Activity>): Activity => ({
 });
 
 describe("buildCalendarData", () => {
+  it("excludes the current streak from longest streak", () => {
+    const noonToday = new Date();
+    noonToday.setHours(12, 0, 0, 0);
+
+    const activityForOffset = (offsetDays: number, id: number): Activity => {
+      const date = new Date(noonToday);
+      date.setDate(date.getDate() + offsetDays);
+      return buildActivity({
+        id,
+        completed: date.toISOString(),
+        started: date.toISOString(),
+        pointsAwarded: 10,
+      });
+    };
+
+    const activities = [
+      activityForOffset(0, 1),
+      activityForOffset(-1, 2),
+      activityForOffset(-2, 3),
+      activityForOffset(-5, 4),
+      activityForOffset(-6, 5),
+    ];
+
+    const data = buildCalendarData(activities);
+
+    expect(data.stats.streak).toBe(3);
+    expect(data.stats.longestStreak).toBe(2);
+  });
+
   it("skips activities with invalid completed dates", () => {
     const validCompleted = new Date();
     const validActivity = buildActivity({

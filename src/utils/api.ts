@@ -1,12 +1,15 @@
-import type { Activity } from "@/types";
+import type { Activity } from "@/utils/types";
 import { readCache } from "./cache";
-import { CACHE_KEY, MAX_PAGES, OVERLAP_DAYS, SLEEP_MS } from "./constants";
-import { logger } from "./logger";
+import {
+  CACHE_KEY,
+  DAY_MS,
+  MAX_PAGES,
+  OVERLAP_DAYS,
+  SLEEP_MS,
+  THREE_YEARS_MS,
+} from "./constants";
 import { storage } from "./storage";
 import { formatCursorParam } from "./timezone";
-
-const DAY_MS = 24 * 60 * 60 * 1000;
-const THREE_YEARS_MS = 3 * 365 * DAY_MS;
 
 type StopReason =
   | "cached_id"
@@ -22,11 +25,11 @@ type PaginationState = {
 };
 
 export async function fetchAllActivities(origin: string) {
-  logger.log("Activity base URL:", `${origin}/api/previous-tasks/`);
+  console.log("Activity base URL:", `${origin}/api/previous-tasks/`);
 
   const cached = await readCache();
   if (cached.length > 0) {
-    logger.log("Loaded", cached.length, "cached activities.");
+    console.log("Loaded", cached.length, "cached activities.");
   }
 
   const windowEndMs = Date.now();
@@ -41,7 +44,7 @@ export async function fetchAllActivities(origin: string) {
     }
   }
 
-  logger.log("Fetching activities since", windowStartDate.toISOString());
+  console.log("Fetching activities since", windowStartDate.toISOString());
 
   let state: PaginationState = {
     cursor: new Date(windowEndMs),
@@ -63,7 +66,7 @@ export async function fetchAllActivities(origin: string) {
       throw new Error("Unexpected response: expected an array");
     }
 
-    logger.log(`Page ${pageIndex + 1} size:`, page.length);
+    console.log(`Page ${pageIndex + 1} size:`, page.length);
 
     if (page.length === 0) {
       state = {
@@ -126,13 +129,13 @@ export async function fetchAllActivities(origin: string) {
 
     if (state.stopReason) {
       if (state.stopReason === "cached_id") {
-        logger.log("Reached cached activity, stopping pagination.");
+        console.log("Reached cached activity, stopping pagination.");
       } else if (state.stopReason === "cursor_stuck") {
-        logger.warn("Cursor did not move; ending pagination.");
+        console.warn("Cursor did not move; ending pagination.");
       } else if (state.stopReason === "window_exceeded") {
-        logger.log("Cursor moved past window start; finishing.");
+        console.log("Cursor moved past window start; finishing.");
       } else if (state.stopReason === "empty_page") {
-        logger.log("Received empty page from API; stopping pagination.");
+        console.log("Received empty page from API; stopping pagination.");
       }
       break;
     }
@@ -174,6 +177,6 @@ export async function fetchAllActivities(origin: string) {
     updatedAt: new Date().toISOString(),
   });
 
-  logger.log("Total activities after deduplication:", activities.length);
+  console.log("Total activities after deduplication:", activities.length);
   return activities;
 }

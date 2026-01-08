@@ -14,8 +14,12 @@ export const test = base.extend<{
   page: Page;
   extensionId: string;
 }>({
-  context: async ({}, use) => {
-    const context = await chromium.launchPersistentContext(userDataDir, {
+  context: async ({}, use, testInfo) => {
+    const workerDataDir = path.join(
+      userDataDir,
+      `worker-${testInfo.workerIndex}`
+    );
+    const context = await chromium.launchPersistentContext(workerDataDir, {
       channel: "chromium",
       args: [
         `--disable-extensions-except=${pathToExtension}`,

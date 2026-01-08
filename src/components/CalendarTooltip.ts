@@ -1,4 +1,5 @@
-import type { DailyXP } from "@/types";
+import { parseDateKey } from "@/utils/timezone";
+import type { DailyXP } from "@/utils/types";
 
 export interface TooltipController {
   element: HTMLElement;
@@ -14,8 +15,7 @@ export function Tooltip() {
   const show = (day: DailyXP, x: number, y: number) => {
     const xpText = day.xp === 0 ? "No activity" : `${day.xp} XP`;
 
-    const [year, month, dayOfMonth] = day.date.split("-").map(Number);
-    const date = new Date(year, month - 1, dayOfMonth);
+    const date = parseDateKey(day.date);
     const dateText = date.toLocaleDateString("en-US", {
       weekday: "long",
       year: "numeric",

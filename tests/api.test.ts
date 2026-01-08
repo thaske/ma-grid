@@ -1,4 +1,4 @@
-import type { Activity, CachePayload } from "@/types";
+import type { Activity, CachePayload } from "@/utils/types";
 import {
   afterEach,
   beforeEach,
@@ -18,6 +18,9 @@ mock.module(constantsModule, () => ({
   MAX_PAGES: 2,
   SLEEP_MS: 0,
   OVERLAP_DAYS: 1000,
+  SECOND_MS: 1000,
+  DAY_MS: 24 * 60 * 60 * 1000,
+  THREE_YEARS_MS: 3 * 365 * 24 * 60 * 60 * 1000,
 }));
 
 const storageGetItemMock = mock<(key: string) => Promise<CachePayload | null>>(

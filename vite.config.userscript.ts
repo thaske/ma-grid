@@ -66,6 +66,11 @@ export default defineConfig(({ mode }) => {
       minify: false,
       sourcemap: false,
     },
+    esbuild: {
+      drop: [env.mode === "production" ? "console" : undefined].filter(
+        Boolean
+      ) as ("console" | "debugger")[] | undefined,
+    },
     resolve: {
       alias: {
         "@": resolve(__dirname, "src"),

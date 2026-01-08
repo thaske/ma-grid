@@ -1,39 +1,8 @@
 import { expect, test } from "./fixtures";
 import { PopupPage } from "./pages/popup";
+import { MOCK_URL } from "./constants";
 
-const MOCK_URL = "http://localhost:3456/learn";
-
-test.describe("MA Grid Extension", () => {
-  test("should load extension and display calendar on dashboard", async ({
-    page,
-  }) => {
-    await page.goto(MOCK_URL, {
-      waitUntil: "domcontentloaded",
-    });
-    await page.waitForLoadState("networkidle");
-
-    page.locator("#ma-grid").locator(".ma-grid__cell").first();
-
-    await expect(
-      page.locator("#ma-grid").locator(".ma-grid__cell").first()
-    ).toBeVisible();
-  });
-
-  test("should open popup and display settings", async ({
-    context,
-    extensionId,
-  }) => {
-    const popupPage = await context.newPage();
-    const popup = new PopupPage(popupPage, extensionId);
-    await popup.open();
-
-    await expect(popup.title).toHaveText("MA Grid");
-    await expect(popup.settingsHeading).toBeVisible();
-    await expect(popup.anchorOptions).toHaveCount(2);
-    await expect(popup.hideXpToggle).toBeVisible();
-    await expect(popup.clearCacheButton).toBeVisible();
-  });
-
+test.describe("MA Grid Calendar", () => {
   test("should move calendar when anchor position changes", async ({
     page,
     context,
@@ -85,7 +54,7 @@ test.describe("MA Grid Extension", () => {
     expect(afterToggleVisible).toBe(initiallyVisible);
   });
 
-  test("should clear cache successfully", async ({
+  test("should toggle stats visibility", async ({
     page,
     context,
     extensionId,
@@ -95,22 +64,46 @@ test.describe("MA Grid Extension", () => {
     });
     await page.waitForLoadState("networkidle");
 
-    page.locator("#ma-grid").locator(".ma-grid__cell").first();
+    await page.locator("#ma-grid").locator(".ma-grid__cell").first().waitFor();
 
     const popupPage = await context.newPage();
     const popup = new PopupPage(popupPage, extensionId);
     await popup.open();
+    await popup.setStatVisibility("currentStreak", true);
+    await popup.setStatVisibility("longestStreak", true);
+    await popup.setStatVisibility("avgXP", true);
+    await popup.setStatVisibility("maxXP", true);
 
-    await popup.clickClearCache();
-    await popup.waitForCacheCleared();
-
-    const buttonText = await popup.getClearCacheButtonText();
-    expect(buttonText).toBe("Cleared");
+    const currentStreakLabel = page.locator(
+      "#ma-grid .ma-grid__stat-label",
+      { hasText: "Current Streak" }
+    );
+    const longestStreakLabel = page.locator(
+      "#ma-grid .ma-grid__stat-label",
+      { hasText: "Longest Streak" }
+    );
+    const avgXpLabel = page.locator("#ma-grid .ma-grid__stat-label", {
+      hasText: "Avg Daily XP",
+    });
+    const maxXpLabel = page.locator("#ma-grid .ma-grid__stat-label", {
+      hasText: "Max Daily XP",
+    });
 
     await page.bringToFront();
-    await page.reload();
-    const loading = page.locator("#ma-grid").locator(".ma-grid__loading");
-    await expect(loading).toBeVisible();
+    await expect(currentStreakLabel).toBeVisible();
+    await expect(longestStreakLabel).toBeVisible();
+    await expect(avgXpLabel).toBeVisible();
+    await expect(maxXpLabel).toBeVisible();
+
+    await popupPage.bringToFront();
+    await popup.setStatVisibility("currentStreak", false);
+    await popup.setStatVisibility("maxXP", false);
+
+    await page.bringToFront();
+    await expect(currentStreakLabel).toHaveCount(0);
+    await expect(maxXpLabel).toHaveCount(0);
+    await expect(longestStreakLabel).toBeVisible();
+    await expect(avgXpLabel).toBeVisible();
   });
 
   test("should not have colliding month labels", async ({ page }) => {

@@ -5,6 +5,15 @@ export const XP_COLORS = {
   HIGH: "#30a14e",
 } as const;
 
+export const XP_THRESHOLDS = {
+  LOW: 15,
+  MEDIUM: 30,
+} as const;
+
+export const SECOND_MS = 1000;
+export const DAY_MS = 24 * 60 * 60 * 1000;
+export const THREE_YEARS_MS = 3 * 365 * DAY_MS;
+
 export const CACHE_KEY = "maGridActivitiesCache";
 
 export const MAX_PAGES = 200;

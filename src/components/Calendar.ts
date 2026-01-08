@@ -1,10 +1,11 @@
 import { CALENDAR_CONTAINER_ID } from "@/utils/constants";
-import type { CalendarData } from "@/types";
+import type { CalendarData } from "@/utils/types";
 import { Grid, type LayoutMetrics } from "./CalendarGrid";
 import { Header } from "./CalendarHeader";
 import { Legend } from "./CalendarLegend";
 import { Stats } from "./CalendarStats";
 import { Tooltip } from "./CalendarTooltip";
+import type { StatsVisibility } from "@/utils/settings";
 
 export type CalendarLayout = "default" | "sidebar";
 
@@ -13,12 +14,15 @@ const LAYOUT_METRICS: Record<CalendarLayout, LayoutMetrics> = {
   sidebar: { cellSize: 12, cellGap: 2, labelWidth: 12 },
 };
 
+// Number of weeks to show in sidebar layout (approximately 5 months)
+// This keeps the calendar compact and fits well in the sidebar
 const SIDEBAR_WEEKS = 22;
 
 export function Calendar(
   data: CalendarData,
   layout: CalendarLayout,
-  settingsButton?: HTMLElement
+  settingsButton?: HTMLElement,
+  statsVisibility?: StatsVisibility
 ) {
   const grid = getGridForLayout(data.grid, layout);
   const metrics = LAYOUT_METRICS[layout];
@@ -35,7 +39,7 @@ export function Calendar(
   container.style.setProperty("--label-width", `${labelWidth}px`);
 
   container.appendChild(Header(settingsButton));
-  container.appendChild(Stats(data.stats));
+  container.appendChild(Stats(data.stats, statsVisibility));
   container.appendChild(Grid(grid, metrics, tooltip.show, tooltip.hide));
   container.appendChild(Legend());
   container.appendChild(tooltip.element);
@@ -49,9 +53,7 @@ function getGridForLayout(grid: CalendarData["grid"], layout: CalendarLayout) {
   }
 
   const columns = grid[0].length;
-  if (columns <= SIDEBAR_WEEKS) {
-    return grid;
-  }
+  if (columns <= SIDEBAR_WEEKS) return grid;
 
   return grid.map((row) => row.slice(-SIDEBAR_WEEKS));
 }
