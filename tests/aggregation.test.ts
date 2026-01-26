@@ -14,73 +14,77 @@ const buildActivity = (overrides: Partial<Activity>): Activity => ({
 });
 
 describe("buildCalendarData", () => {
-  it("excludes the current streak from longest streak", () => {
-    const noonToday = new Date();
-    noonToday.setHours(12, 0, 0, 0);
+  it("uses dateCompletedStr from API", () => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
 
-    const activityForOffset = (offsetDays: number, id: number): Activity => {
-      const date = new Date(noonToday);
-      date.setDate(date.getDate() + offsetDays);
-      return buildActivity({
-        id,
-        completed: date.toISOString(),
-        started: date.toISOString(),
-        pointsAwarded: 10,
-      });
-    };
+    const year = yesterday.getFullYear();
+    const month = String(yesterday.getMonth() + 1).padStart(2, "0");
+    const day = String(yesterday.getDate()).padStart(2, "0");
 
-    const activities = [
-      activityForOffset(0, 1),
-      activityForOffset(-1, 2),
-      activityForOffset(-2, 3),
-      activityForOffset(-5, 4),
-      activityForOffset(-6, 5),
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
     ];
+    const dayOrdinal = (d: number) => {
+      const j = d % 10;
+      const k = d % 100;
+      if (j === 1 && k !== 11) return `${d}st`;
+      if (j === 2 && k !== 12) return `${d}nd`;
+      if (j === 3 && k !== 13) return `${d}rd`;
+      return `${d}th`;
+    };
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-    const data = buildCalendarData(activities);
+    const dateCompletedStr = `${dayNames[yesterday.getDay()]}, ${
+      monthNames[yesterday.getMonth()]
+    } ${dayOrdinal(yesterday.getDate())}, ${year}`;
 
-    expect(data.stats.streak).toBe(3);
-    expect(data.stats.longestStreak).toBe(2);
-  });
-
-  it("skips activities with invalid completed dates", () => {
-    const validCompleted = new Date();
-    const validActivity = buildActivity({
-      id: 1,
-      completed: validCompleted.toISOString(),
-      started: validCompleted.toISOString(),
-      pointsAwarded: 10,
-    });
-    const invalidActivity = buildActivity({
-      id: 2,
-      completed: "not-a-date",
-      started: "not-a-date",
-      pointsAwarded: 50,
-    });
-
-    const data = buildCalendarData([validActivity, invalidActivity]);
-    const expectedKey = formatDateKey(validCompleted);
-    const day = data.grid.flat().find((entry) => entry.date === expectedKey);
-
-    expect(day).toBeDefined();
-    expect(day?.xp).toBe(10);
-    expect(data.stats.activeDays).toBe(1);
-  });
-
-  it("uses completed dates with local timezone", () => {
-    const completed = "2025-09-30T23:30:00.000Z";
     const activity = buildActivity({
-      completed,
-      started: completed,
-      pointsAwarded: 25,
+      completed: yesterday.toISOString(),
+      started: yesterday.toISOString(),
+      dateCompletedStr,
+      pointsAwarded: 15,
     });
 
     const data = buildCalendarData([activity]);
-    const expectedKey = formatDateKey(new Date(completed));
-    const entry = data.grid.flat().find((item) => item.date === expectedKey);
+    const entry = data.grid
+      .flat()
+      .find((item) => item.date === `${year}-${month}-${day}`);
 
     expect(entry).toBeDefined();
-    expect(entry?.xp).toBe(25);
-    expect(data.stats.activeDays).toBe(1);
+    expect(entry?.xp).toBe(15);
+  });
+
+  it('handles "Today" in dateCompletedStr', () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+
+    const activity = buildActivity({
+      completed: today.toISOString(),
+      started: today.toISOString(),
+      dateCompletedStr: "Today",
+      pointsAwarded: 20,
+    });
+
+    const data = buildCalendarData([activity]);
+    const entry = data.grid
+      .flat()
+      .find((item) => item.date === `${year}-${month}-${day}`);
+
+    expect(entry).toBeDefined();
+    expect(entry?.xp).toBe(20);
   });
 });

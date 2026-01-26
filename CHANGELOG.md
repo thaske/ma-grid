@@ -1,3 +1,9 @@
+# 1.3.2 (2026-01-25)
+
+### Changed
+
+- Remove fallback timestamp parsing, now exclusively using dateCompletedStr from API
+
 # 1.3.1 (2026-01-08)
 
 ### Fixed
