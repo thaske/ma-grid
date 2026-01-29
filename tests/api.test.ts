@@ -50,6 +50,19 @@ mock.module(storageModule, () => ({
 
 const { fetchAllActivities } = await import("@/utils/api");
 
+const pad2 = (value: number) => String(value).padStart(2, "0");
+const pad3 = (value: number) => String(value).padStart(3, "0");
+const formatLocalAsZulu = (date: Date) => {
+  const year = date.getFullYear();
+  const month = pad2(date.getMonth() + 1);
+  const day = pad2(date.getDate());
+  const hours = pad2(date.getHours());
+  const minutes = pad2(date.getMinutes());
+  const seconds = pad2(date.getSeconds());
+  const ms = pad3(date.getMilliseconds());
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${ms}Z`;
+};
+
 const buildActivity = (id: number, completed: string): Activity => ({
   id,
   type: "task",
@@ -75,10 +88,10 @@ describe("fetchAllActivities", () => {
 
   it("keeps new items from a page that also contains cached items", async () => {
     const now = new Date();
-    const cachedActivity = buildActivity(1, now.toISOString());
+    const cachedActivity = buildActivity(1, formatLocalAsZulu(now));
     const newActivity = buildActivity(
       2,
-      new Date(now.getTime() - 60 * 60 * 1000).toISOString()
+      formatLocalAsZulu(new Date(now.getTime() - 60 * 60 * 1000))
     );
 
     storageGetItemMock.mockResolvedValue({
@@ -103,7 +116,7 @@ describe("fetchAllActivities", () => {
     const fallbackCompleted = new Date(now - 1000 * 24 * 60 * 60 * 1000);
 
     const page = [
-      buildActivity(1, validCompleted.toISOString()),
+      buildActivity(1, formatLocalAsZulu(validCompleted)),
       buildActivity(2, "not-a-date"),
     ];
 
@@ -148,10 +161,10 @@ describe("fetchAllActivities", () => {
 
   it("stops immediately when receiving an empty page", async () => {
     const now = new Date();
-    const activity1 = buildActivity(1, now.toISOString());
+    const activity1 = buildActivity(1, formatLocalAsZulu(now));
     const activity2 = buildActivity(
       2,
-      new Date(now.getTime() - 60 * 60 * 1000).toISOString()
+      formatLocalAsZulu(new Date(now.getTime() - 60 * 60 * 1000))
     );
 
     fetchSpy = spyOn(globalThis, "fetch")
@@ -177,7 +190,7 @@ describe("fetchAllActivities", () => {
   it("does not move cursor backward by OVERLAP_DAYS on empty page", async () => {
     const now = new Date();
     const activityTime = new Date(now.getTime() - 60 * 60 * 1000);
-    const activity = buildActivity(1, activityTime.toISOString());
+    const activity = buildActivity(1, formatLocalAsZulu(activityTime));
 
     fetchSpy = spyOn(globalThis, "fetch")
       .mockResolvedValueOnce(Response.json([activity]))

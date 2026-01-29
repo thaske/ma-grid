@@ -24,12 +24,42 @@ type PaginationState = {
   stopReason?: StopReason;
 };
 
+// mathacademy.com previous-tasks timestamps end with Z but are local time;
+// stripping Z prevents an incorrect UTC shift and we persist normalized values.
+const normalizePreviousTaskTimestamp = (value: unknown) => {
+  if (typeof value !== "string") return value;
+  return value.endsWith("Z") ? value.slice(0, -1) : value;
+};
+
+const normalizePreviousTaskActivity = (item: Activity) => {
+  const completed = normalizePreviousTaskTimestamp(item?.completed);
+  const started = normalizePreviousTaskTimestamp(item?.started);
+  const normalizedCompleted =
+    typeof completed === "string" ? completed : item?.completed;
+  const normalizedStarted =
+    typeof started === "string" ? started : item?.started;
+
+  if (
+    normalizedCompleted === item?.completed &&
+    normalizedStarted === item?.started
+  ) {
+    return item;
+  }
+
+  return {
+    ...item,
+    completed: normalizedCompleted,
+    started: normalizedStarted,
+  };
+};
+
 export async function fetchAllActivities(origin: string) {
   console.log("Activity base URL:", `${origin}/api/previous-tasks/`);
 
   const cached = await readCache();
-  if (cached.length > 0) {
-    console.log("Loaded", cached.length, "cached activities.");
+  const normalizedCached = cached.map(normalizePreviousTaskActivity);
+  if (normalizedCached.length > 0) {
+    console.log("Loaded", normalizedCached.length, "cached activities.");
   }
 
   const windowEndMs = Date.now();
@@ -37,7 +67,7 @@ export async function fetchAllActivities(origin: string) {
   const windowStartDate = new Date(windowStartMs);
 
   const cacheIds = new Set<number>();
-  for (const item of cached) {
+  for (const item of normalizedCached) {
     const id = item?.id;
     if (typeof id === "number") {
       cacheIds.add(id);
@@ -68,6 +98,8 @@ export async function fetchAllActivities(origin: string) {
 
     console.log(`Page ${pageIndex + 1} size:`, page.length);
 
+    const normalizedPage = page.map(normalizePreviousTaskActivity);
+
     if (page.length === 0) {
       state = {
         ...state,
@@ -78,7 +110,7 @@ export async function fetchAllActivities(origin: string) {
       let cachedHit = false;
       let oldest = Infinity;
 
-      for (const item of page) {
+      for (const item of normalizedPage) {
         const id = item?.id;
         if (typeof id === "number" && cacheIds.has(id)) {
           cachedHit = true;
@@ -143,7 +175,7 @@ export async function fetchAllActivities(origin: string) {
     await new Promise((resolve) => setTimeout(resolve, SLEEP_MS));
   }
 
-  const combined = [...state.fresh, ...cached];
+  const combined = [...state.fresh, ...normalizedCached];
   const byId = new Map<number, Activity>();
   const withoutId: Activity[] = [];
 

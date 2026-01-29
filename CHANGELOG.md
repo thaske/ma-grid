@@ -1,3 +1,9 @@
+# 1.3.2 (2026-01-28)
+
+### Fixed
+
+- Normalize previous-tasks timestamps that are labeled UTC but represent local time
+
 # 1.3.1 (2026-01-08)
 
 ### Fixed
