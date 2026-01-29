@@ -58,6 +58,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -79,6 +80,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -88,6 +90,7 @@
   from {
     opacity: 1;
   }
+
   to {
     opacity: 0;
   }
@@ -245,8 +248,8 @@
   opacity: 0;
   pointer-events: none;
   position: absolute;
-  left: 50%;
-  transform: translate(-50%, -6px);
+  left: 0;
+  transform: translateY(-6px);
   transition:
     opacity 120ms ease,
     transform 120ms ease;
@@ -260,6 +263,7 @@
   border-style: solid;
   border-color: var(--surface) transparent transparent transparent;
   filter: drop-shadow(0 1px 0 var(--soft-line));
+  left: 4px;
 }
 
 .ma-grid-settings-panel .popup__info::after {
@@ -271,14 +275,14 @@
   padding: 4px 6px;
   border-radius: 6px;
   font-size: 11px;
-  white-space: nowrap;
+  width: 130px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .ma-grid-settings-panel .popup__info:hover::before,
 .ma-grid-settings-panel .popup__info:hover::after {
   opacity: 1;
-  transform: translate(-50%, -10px);
+  transform: translateY(-10px);
 }
 
 .ma-grid-settings-panel .popup__option input {
@@ -286,6 +290,37 @@
 }
 
 .ma-grid-settings-panel .popup__option input:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.ma-grid-settings-panel .popup__option--number {
+  justify-content: space-between;
+}
+
+.ma-grid-settings-panel .popup__color-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid var(--soft-line);
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.ma-grid-settings-panel .popup__number-input {
+  width: 60px;
+  padding: 4px 6px;
+  font-family: inherit;
+  font-size: 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  text-align: right;
+}
+
+.ma-grid-settings-panel .popup__number-input:focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }

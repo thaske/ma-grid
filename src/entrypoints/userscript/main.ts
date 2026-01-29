@@ -14,7 +14,9 @@ import {
   getHideXpFrame,
   getStatsVisibility,
   getUiAnchor,
+  getXpThresholds,
   type StatsVisibility,
+  type XpThresholds,
 } from "@/utils/settings";
 import type {
   CalendarResponse,
@@ -110,6 +112,7 @@ import settingsStyles from "./style.css?raw";
   let hideXpFrame = await getHideXpFrame();
   let anchor = await getUiAnchor();
   let statsVisibility = await getStatsVisibility();
+  let xpThresholds = await getXpThresholds();
 
   let currentHost: HTMLElement | null = null;
   let currentShadow: ShadowRoot | null = null;
@@ -121,9 +124,11 @@ import settingsStyles from "./style.css?raw";
     const handleSettingsChange = async (): Promise<void> => {
       const previousAnchor = anchor;
       const previousStatsVisibility = statsVisibility;
+      const previousXpThresholds = xpThresholds;
       hideXpFrame = await getHideXpFrame();
       anchor = await getUiAnchor();
       statsVisibility = await getStatsVisibility();
+      xpThresholds = await getXpThresholds();
 
       updateXpFrameHidden(hideXpFrame);
 
@@ -131,9 +136,14 @@ import settingsStyles from "./style.css?raw";
         previousStatsVisibility,
         statsVisibility
       );
+      const xpThresholdsChanged =
+        previousXpThresholds.medium !== xpThresholds.medium ||
+        previousXpThresholds.high !== xpThresholds.high;
 
       if (
-        (previousAnchor !== anchor || statsVisibilityChanged) &&
+        (previousAnchor !== anchor ||
+          statsVisibilityChanged ||
+          xpThresholdsChanged) &&
         currentShadow
       ) {
         const existingModal = currentShadow.querySelector(

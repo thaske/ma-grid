@@ -3,6 +3,7 @@ import { storage } from "./storage";
 export type UiAnchor = "incompleteTasks" | "sidebar";
 export type StatKey = "currentStreak" | "longestStreak" | "avgXP" | "maxXP";
 export type StatsVisibility = Record<StatKey, boolean>;
+export type XpThresholds = { medium: number; high: number };
 
 export const UI_ANCHOR_STORAGE_KEY = "maGridAnchor";
 export const DEFAULT_UI_ANCHOR: UiAnchor = "incompleteTasks";
@@ -15,9 +16,22 @@ export const DEFAULT_STATS_VISIBILITY: StatsVisibility = {
   avgXP: true,
   maxXP: true,
 };
+export const XP_THRESHOLDS_STORAGE_KEY = "maGridXpThresholds";
+export const DEFAULT_XP_THRESHOLDS: XpThresholds = { medium: 15, high: 30 };
 
 export function isUiAnchor(value: unknown): value is UiAnchor {
   return value === "incompleteTasks" || value === "sidebar";
+}
+
+function isXpThresholds(value: unknown): value is XpThresholds {
+  if (!value || typeof value !== "object") return false;
+  const obj = value as Record<string, unknown>;
+  return (
+    typeof obj.medium === "number" &&
+    typeof obj.high === "number" &&
+    obj.medium > 0 &&
+    obj.high > obj.medium
+  );
 }
 
 function isStatsVisibility(value: unknown): value is StatsVisibility {
@@ -67,9 +81,17 @@ const statsVisibilitySetting = createSetting(
   isStatsVisibility
 );
 
+const xpThresholdsSetting = createSetting(
+  XP_THRESHOLDS_STORAGE_KEY,
+  DEFAULT_XP_THRESHOLDS,
+  isXpThresholds
+);
+
 export const getUiAnchor = uiAnchorSetting.get;
 export const watchUiAnchor = uiAnchorSetting.watch;
 export const getHideXpFrame = hideXpFrameSetting.get;
 export const watchHideXpFrame = hideXpFrameSetting.watch;
 export const getStatsVisibility = statsVisibilitySetting.get;
 export const watchStatsVisibility = statsVisibilitySetting.watch;
+export const getXpThresholds = xpThresholdsSetting.get;
+export const watchXpThresholds = xpThresholdsSetting.watch;

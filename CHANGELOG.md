@@ -1,3 +1,10 @@
+# 1.3.3 (2026-01-29)
+
+### Added
+
+- Configurable XP color thresholds in settings
+- Visual color swatches next to threshold labels
+
 # 1.3.2 (2026-01-28)
 
 ### Fixed

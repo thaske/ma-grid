@@ -1,4 +1,4 @@
-import { XP_THRESHOLDS } from "@/utils/constants";
+import type { XpThresholds } from "@/utils/settings";
 import type { DailyXP } from "@/utils/types";
 
 export function DayCell(
@@ -6,9 +6,10 @@ export function DayCell(
   rowIndex: number,
   colIndex: number,
   onHover: (day: DailyXP, x: number, y: number) => void,
-  onLeave: () => void
+  onLeave: () => void,
+  thresholds: XpThresholds
 ) {
-  const level = getLevelFromXP(day.xp);
+  const level = getLevelFromXP(day.xp, thresholds);
 
   const cell = document.createElement("div");
   cell.className = `ma-grid__cell ma-grid__cell--${level}`;
@@ -24,9 +25,9 @@ export function DayCell(
   return cell;
 }
 
-function getLevelFromXP(xp: number) {
+function getLevelFromXP(xp: number, thresholds: XpThresholds) {
   if (xp === 0) return "none";
-  else if (xp < XP_THRESHOLDS.LOW) return "low";
-  else if (xp < XP_THRESHOLDS.MEDIUM) return "medium";
+  else if (xp < thresholds.medium) return "low";
+  else if (xp < thresholds.high) return "medium";
   else return "high";
 }

@@ -1,4 +1,4 @@
-import { getStatsVisibility } from "@/utils/settings";
+import { getStatsVisibility, getXpThresholds } from "@/utils/settings";
 import type { DataSource } from "@/utils/types";
 import { Calendar } from "./Calendar";
 
@@ -39,12 +39,16 @@ export function App(
         return;
       }
 
-      const statsVisibility = await getStatsVisibility();
+      const [statsVisibility, xpThresholds] = await Promise.all([
+        getStatsVisibility(),
+        getXpThresholds(),
+      ]);
       const calendar = Calendar(
         response.data,
         layout,
         settingsButton,
-        statsVisibility
+        statsVisibility,
+        xpThresholds
       );
       container.parentNode?.replaceChild(calendar, container);
       currentCalendar = calendar;
@@ -55,12 +59,16 @@ export function App(
             try {
               if (freshResponse.data && mounted && currentCalendar) {
                 console.log("Received fresh data, updating calendar");
-                const freshVisibility = await getStatsVisibility();
+                const [freshVisibility, freshThresholds] = await Promise.all([
+                  getStatsVisibility(),
+                  getXpThresholds(),
+                ]);
                 const newCalendar = Calendar(
                   freshResponse.data,
                   layout,
                   settingsButton,
-                  freshVisibility
+                  freshVisibility,
+                  freshThresholds
                 );
                 currentCalendar.parentNode?.replaceChild(
                   newCalendar,
