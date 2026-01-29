@@ -5,7 +5,11 @@ import { Header } from "./CalendarHeader";
 import { Legend } from "./CalendarLegend";
 import { Stats } from "./CalendarStats";
 import { Tooltip } from "./CalendarTooltip";
-import type { StatsVisibility } from "@/utils/settings";
+import {
+  DEFAULT_XP_THRESHOLDS,
+  type StatsVisibility,
+  type XpThresholds,
+} from "@/utils/settings";
 
 export type CalendarLayout = "default" | "sidebar";
 
@@ -22,7 +26,8 @@ export function Calendar(
   data: CalendarData,
   layout: CalendarLayout,
   settingsButton?: HTMLElement,
-  statsVisibility?: StatsVisibility
+  statsVisibility?: StatsVisibility,
+  xpThresholds?: XpThresholds
 ) {
   const grid = getGridForLayout(data.grid, layout);
   const metrics = LAYOUT_METRICS[layout];
@@ -40,7 +45,15 @@ export function Calendar(
 
   container.appendChild(Header(settingsButton));
   container.appendChild(Stats(data.stats, statsVisibility));
-  container.appendChild(Grid(grid, metrics, tooltip.show, tooltip.hide));
+  container.appendChild(
+    Grid(
+      grid,
+      metrics,
+      tooltip.show,
+      tooltip.hide,
+      xpThresholds ?? DEFAULT_XP_THRESHOLDS
+    )
+  );
   container.appendChild(Legend());
   container.appendChild(tooltip.element);
 

@@ -1,3 +1,4 @@
+import type { XpThresholds } from "@/utils/settings";
 import type { DailyXP } from "@/utils/types";
 import { DayCell } from "./CalendarDayCell";
 
@@ -11,7 +12,8 @@ export function Grid(
   grid: DailyXP[][],
   metrics: LayoutMetrics,
   onCellHover: (day: DailyXP, x: number, y: number) => void,
-  onCellLeave: () => void
+  onCellLeave: () => void,
+  thresholds: XpThresholds
 ) {
   let currentMonth: string | null = null;
   const monthPositions: { label: string; colStart: number }[] = [];
@@ -93,7 +95,14 @@ export function Grid(
 
   grid.forEach((weekRow, rowIdx) => {
     weekRow.forEach((dayData, colIdx) => {
-      const cell = DayCell(dayData, rowIdx, colIdx, onCellHover, onCellLeave);
+      const cell = DayCell(
+        dayData,
+        rowIdx,
+        colIdx,
+        onCellHover,
+        onCellLeave,
+        thresholds
+      );
       daysContainer.appendChild(cell);
     });
   });

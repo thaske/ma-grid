@@ -7,6 +7,7 @@ import {
   watchHideXpFrame,
   watchStatsVisibility,
   watchUiAnchor,
+  watchXpThresholds,
 } from "@/utils/settings";
 import type { CalendarResponse, DataSource } from "@/utils/types";
 import { defineContentScript } from "wxt/utils/define-content-script";
@@ -102,6 +103,10 @@ export default defineContentScript({
     });
 
     watchStatsVisibility(() => {
+      mountUI();
+    });
+
+    watchXpThresholds(() => {
       mountUI();
     });
 

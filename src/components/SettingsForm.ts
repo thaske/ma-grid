@@ -1,13 +1,16 @@
 import { CACHE_KEY } from "@/utils/constants";
 import {
   DEFAULT_STATS_VISIBILITY,
+  DEFAULT_XP_THRESHOLDS,
   getHideXpFrame,
   getStatsVisibility,
   getUiAnchor,
+  getXpThresholds,
   HIDE_XP_FRAME_STORAGE_KEY,
   isUiAnchor,
   STATS_VISIBILITY_STORAGE_KEY,
   UI_ANCHOR_STORAGE_KEY,
+  XP_THRESHOLDS_STORAGE_KEY,
   type StatsVisibility,
 } from "@/utils/settings";
 import { storage } from "@/utils/storage";
@@ -36,6 +39,12 @@ export function SettingsForm(
     : "stat-longest-streak";
   const statsAvgXpId = idPrefix ? `${idPrefix}-stat-avg-xp` : "stat-avg-xp";
   const statsMaxXpId = idPrefix ? `${idPrefix}-stat-max-xp` : "stat-max-xp";
+  const thresholdMediumId = idPrefix
+    ? `${idPrefix}-threshold-medium`
+    : "threshold-medium";
+  const thresholdHighId = idPrefix
+    ? `${idPrefix}-threshold-high`
+    : "threshold-high";
 
   const form = document.createElement("form");
   form.className = "popup__form";
@@ -90,6 +99,39 @@ export function SettingsForm(
       </label>
     </fieldset>
     <fieldset class="popup__fieldset">
+      <legend class="popup__legend">Color thresholds</legend>
+      <label class="popup__option popup__option--number">
+        <span class="popup__option-label">
+          <span class="popup__color-swatch" style="background: #40c463;"></span>
+          Medium
+          <span
+            class="popup__info"
+            role="img"
+            aria-label="XP at or above this value shows the medium color."
+            data-tooltip="XP at or above this value shows the medium color."
+          >
+            ?
+          </span>
+        </span>
+        <input type="number" id="${thresholdMediumId}" class="popup__number-input" min="1" />
+      </label>
+      <label class="popup__option popup__option--number">
+        <span class="popup__option-label">
+          <span class="popup__color-swatch" style="background: #30a14e;"></span>
+          High
+          <span
+            class="popup__info"
+            role="img"
+            aria-label="XP at or above this value shows the high color."
+            data-tooltip="XP at or above this value shows the high color."
+          >
+            ?
+          </span>
+        </span>
+        <input type="number" id="${thresholdHighId}" class="popup__number-input" min="1" />
+      </label>
+    </fieldset>
+    <fieldset class="popup__fieldset">
       <legend class="popup__legend">Debug</legend>
       <button class="popup__button" type="button" id="${clearCacheId}">
         Clear cache
@@ -104,6 +146,13 @@ export function SettingsForm(
   const clearCacheButton = form.querySelector<HTMLButtonElement>(
     `#${clearCacheId}`
   );
+  const thresholdMediumInput = form.querySelector<HTMLInputElement>(
+    `#${thresholdMediumId}`
+  );
+  const thresholdHighInput = form.querySelector<HTMLInputElement>(
+    `#${thresholdHighId}`
+  );
+
   const statsInputs = {
     currentStreak: form.querySelector<HTMLInputElement>(
       `#${statsCurrentStreakId}`
@@ -156,6 +205,20 @@ export function SettingsForm(
     input.addEventListener("change", updateStatsVisibility);
   });
 
+  const updateXpThresholds = async () => {
+    const medium = Number(thresholdMediumInput?.value);
+    const high = Number(thresholdHighInput?.value);
+
+    if (!Number.isFinite(medium) || !Number.isFinite(high)) return;
+    if (medium <= 0 || high <= medium) return;
+
+    await storage.setItem(XP_THRESHOLDS_STORAGE_KEY, { medium, high });
+    options.onChange?.();
+  };
+
+  thresholdMediumInput?.addEventListener("change", updateXpThresholds);
+  thresholdHighInput?.addEventListener("change", updateXpThresholds);
+
   if (clearCacheButton) {
     clearCacheButton.addEventListener("click", async () => {
       const originalText = clearCacheButton.textContent ?? "";
@@ -177,11 +240,13 @@ export function SettingsForm(
 
   async function initialize() {
     try {
-      const [anchor, hideXpFrame, statsVisibility] = await Promise.all([
-        getUiAnchor(),
-        getHideXpFrame(),
-        getStatsVisibility(),
-      ]);
+      const [anchor, hideXpFrame, statsVisibility, xpThresholds] =
+        await Promise.all([
+          getUiAnchor(),
+          getHideXpFrame(),
+          getStatsVisibility(),
+          getXpThresholds(),
+        ]);
 
       anchorInputs.forEach((input) => {
         input.checked = input.value === anchor;
@@ -202,6 +267,13 @@ export function SettingsForm(
       }
       if (statsInputs.maxXP) {
         statsInputs.maxXP.checked = statsVisibility.maxXP;
+      }
+
+      if (thresholdMediumInput) {
+        thresholdMediumInput.value = String(xpThresholds.medium);
+      }
+      if (thresholdHighInput) {
+        thresholdHighInput.value = String(xpThresholds.high);
       }
     } catch (error) {
       console.error("Failed to initialize settings form:", error);
