@@ -1,5 +1,5 @@
 import { getStatsVisibility, getXpThresholds } from "@/utils/settings";
-import type { DataSource } from "@/utils/types";
+import type { CalendarResponse, DataSource } from "@/utils/types";
 import { Calendar } from "./Calendar";
 
 export type AppElement = HTMLElement & {
@@ -12,7 +12,10 @@ export function App(
   settingsButton?: HTMLElement
 ): AppElement {
   let mounted = true;
-  let currentCalendar: HTMLElement | null = null;
+  const settingsPromise = Promise.all([
+    getStatsVisibility(),
+    getXpThresholds(),
+  ]);
 
   const container: AppElement = document.createElement("div");
   const setContainerState = (state: "loading" | "error", text: string) => {
@@ -25,63 +28,35 @@ export function App(
 
   setContainerState("loading", "Loading activity...");
 
+  async function renderCalendar(response: CalendarResponse) {
+    if (!mounted) return;
+
+    if (response.error || !response.data) {
+      setContainerState(
+        "error",
+        response.error || "No activity data available"
+      );
+      return;
+    }
+
+    const [statsVisibility, xpThresholds] = await settingsPromise;
+    if (!mounted) return;
+
+    const calendar = Calendar(
+      response.data,
+      layout,
+      settingsButton,
+      statsVisibility,
+      xpThresholds
+    );
+
+    container.parentNode?.replaceChild(calendar, container);
+  }
+
   async function fetchData() {
     try {
       const response = await dataSource.fetchData();
-
-      if (!mounted) return;
-
-      if (response.error || !response.data) {
-        setContainerState(
-          "error",
-          response.error || "No activity data available"
-        );
-        return;
-      }
-
-      const [statsVisibility, xpThresholds] = await Promise.all([
-        getStatsVisibility(),
-        getXpThresholds(),
-      ]);
-      const calendar = Calendar(
-        response.data,
-        layout,
-        settingsButton,
-        statsVisibility,
-        xpThresholds
-      );
-      container.parentNode?.replaceChild(calendar, container);
-      currentCalendar = calendar;
-
-      if (response.status === "stale") {
-        dataSource.onUpdate((freshResponse) => {
-          void (async () => {
-            try {
-              if (freshResponse.data && mounted && currentCalendar) {
-                console.log("Received fresh data, updating calendar");
-                const [freshVisibility, freshThresholds] = await Promise.all([
-                  getStatsVisibility(),
-                  getXpThresholds(),
-                ]);
-                const newCalendar = Calendar(
-                  freshResponse.data,
-                  layout,
-                  settingsButton,
-                  freshVisibility,
-                  freshThresholds
-                );
-                currentCalendar.parentNode?.replaceChild(
-                  newCalendar,
-                  currentCalendar
-                );
-                currentCalendar = newCalendar;
-              }
-            } catch (error) {
-              console.error("Failed to refresh calendar settings:", error);
-            }
-          })();
-        });
-      }
+      await renderCalendar(response);
     } catch (err) {
       if (!mounted) return;
       console.error("Failed to load calendar:", err);
@@ -94,8 +69,7 @@ export function App(
 
   container.cleanup = () => {
     mounted = false;
-    currentCalendar = null;
-    dataSource.cleanup();
+    dataSource.cleanup?.();
   };
 
   fetchData();

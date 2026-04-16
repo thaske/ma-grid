@@ -4,7 +4,7 @@ import { SettingsModal } from "@/components/SettingsModal";
 import mainStyles from "@/entrypoints/content/style.css?raw";
 import { buildCalendarData } from "@/utils/aggregation";
 import { fetchAllActivities } from "@/utils/api";
-import { isCacheFresh, readCache } from "@/utils/cache";
+import { readCache } from "@/utils/cache";
 import {
   cleanupMountedApp,
   mountCalendarUI,
@@ -16,98 +16,46 @@ import {
   getUiAnchor,
   getXpThresholds,
   type StatsVisibility,
-  type XpThresholds,
 } from "@/utils/settings";
-import type {
-  CalendarResponse,
-  DataSource,
-  DataSourceUpdate,
-} from "@/utils/types";
+import type { CalendarResponse, DataSource } from "@/utils/types";
 import settingsStyles from "./style.css?raw";
 
 (async function () {
   "use strict";
 
-  // Data source implementation for userscript
-  function createDataSource(): DataSource {
-    let updateCallback: DataSourceUpdate | null = null;
-    let isRefreshing = false;
-
-    const fetchData = async (): Promise<CalendarResponse> => {
+  const dataSource: DataSource = {
+    fetchData: async (): Promise<CalendarResponse> => {
       const origin = window.location.origin;
+      let errorMessage = "Failed to load activity data";
 
       try {
-        const isFresh = await isCacheFresh();
-        const cached = await readCache();
-
-        if (isFresh && cached.length > 0) {
-          console.log(
-            "Returning fresh cached data:",
-            cached.length,
-            "activities"
-          );
-          const calendarData = buildCalendarData(cached);
-          return { data: calendarData, status: "fresh" };
-        }
-
-        if (!isFresh && cached.length > 0) {
-          console.log(
-            "Returning stale cached data, refreshing in background..."
-          );
-          const staleData = buildCalendarData(cached);
-
-          // Start background refresh
-          if (!isRefreshing) {
-            isRefreshing = true;
-            (async () => {
-              try {
-                console.log("Starting background refresh...");
-                const activities = await fetchAllActivities(origin);
-                const freshData = buildCalendarData(activities);
-                console.log("Background refresh complete");
-
-                if (updateCallback) {
-                  updateCallback({ data: freshData, status: "fresh" });
-                }
-              } catch (error) {
-                console.error("Background refresh failed:", error);
-              } finally {
-                isRefreshing = false;
-              }
-            })();
-          }
-
-          return { data: staleData, status: "stale" };
-        }
-
-        console.log("Cache empty, fetching fresh data...");
         const activities = await fetchAllActivities(origin);
-        const calendarData = buildCalendarData(activities);
-
-        console.log("Calendar data built:", calendarData.stats);
-        return { data: calendarData, status: "fresh" };
-      } catch (error) {
-        console.error("Error:", error);
         return {
-          error: error instanceof Error ? error.message : String(error),
-          status: "error",
+          data: buildCalendarData(activities),
+          status: "fresh",
         };
+      } catch (error) {
+        errorMessage = error instanceof Error ? error.message : String(error);
+        console.error("Fresh data fetch failed, trying cache fallback:", error);
       }
-    };
 
-    return {
-      fetchData,
-      onUpdate(callback) {
-        updateCallback = callback;
-      },
-      cleanup() {
-        updateCallback = null;
-        isRefreshing = false;
-      },
-    };
-  }
+      try {
+        const cached = await readCache();
+        if (cached.length > 0) {
+          return {
+            data: buildCalendarData(cached),
+          };
+        }
+      } catch (error) {
+        console.error("Cache fallback failed:", error);
+      }
 
-  const dataSource = createDataSource();
+      return {
+        error: errorMessage,
+        status: "error",
+      };
+    },
+  };
 
   let hideXpFrame = await getHideXpFrame();
   let anchor = await getUiAnchor();
