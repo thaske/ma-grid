@@ -1,3 +1,9 @@
+# 1.3.4 (2026-04-16)
+
+### Fixed
+
+- Fix stale calendar data showing when navigating to /learn, only updating after page reload
+
 # 1.3.3 (2026-01-29)
 
 ### Added
