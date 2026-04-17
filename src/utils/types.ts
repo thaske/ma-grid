@@ -41,29 +41,22 @@ export interface CalendarData {
 export interface CalendarResponse {
   data?: CalendarData;
   error?: string;
-  status?: "fresh" | "stale" | "error";
+  status?: "fresh" | "error";
 }
 
-export type DataSourceUpdate = (data: CalendarResponse) => void;
-
 /**
- * Abstraction for fetching calendar data and receiving updates.
+ * Abstraction for fetching calendar data.
  * This allows the same App component to work with both the browser extension
  * (using browser.runtime messaging) and userscript (using direct API calls).
  */
 export interface DataSource {
   /**
-   * May return stale cached data.
+   * Fetches calendar data, preferring fresh network data and falling back to cache.
    */
   fetchData(): Promise<CalendarResponse>;
 
   /**
-   * Called with fresh data when it's ready.
-   */
-  onUpdate(callback: DataSourceUpdate): void;
-
-  /**
    * Cleanup any listeners/subscriptions.
    */
-  cleanup(): void;
+  cleanup?(): void;
 }

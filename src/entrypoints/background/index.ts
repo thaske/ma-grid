@@ -1,91 +1,62 @@
 import { buildCalendarData } from "@/utils/aggregation";
 import { fetchAllActivities } from "@/utils/api";
-import { isCacheFresh, readCache } from "@/utils/cache";
-import { MATHACADEMY_MATCHES } from "@/utils/constants";
+import { readCache } from "@/utils/cache";
 import type { CalendarResponse } from "@/utils/types";
 import { defineBackground } from "wxt/utils/define-background";
 
-async function getCalendarData(origin: string): Promise<CalendarResponse> {
+async function fetchCalendarResponse(
+  origin: string
+): Promise<CalendarResponse> {
+  let errorMessage = "Failed to load activity data";
+
   try {
-    const isFresh = await isCacheFresh();
-    const cached = await readCache();
-
-    if (isFresh && cached.length > 0) {
-      console.log("Returning fresh cached data:", cached.length, "activities");
-      const calendarData = buildCalendarData(cached);
-      return { data: calendarData, status: "fresh" };
-    }
-
-    if (!isFresh && cached.length > 0) {
-      console.log("Returning stale cached data, refreshing in background...");
-      const staleData = buildCalendarData(cached);
-
-      // Start background refresh
-      (async () => {
-        try {
-          console.log("Starting background refresh...");
-          const activities = await fetchAllActivities(origin);
-          const freshData = buildCalendarData(activities);
-          console.log("Background refresh complete");
-
-          // Notify all tabs with fresh data
-          const tabs = await browser.tabs.query({
-            url: MATHACADEMY_MATCHES,
-          });
-
-          console.log(
-            "Background refresh complete, updating",
-            tabs.length,
-            "tab(s)"
-          );
-
-          for (const tab of tabs) {
-            if (tab.id) {
-              browser.tabs.sendMessage(tab.id, {
-                type: "calendar_update",
-                data: freshData,
-                status: "fresh",
-              });
-            }
-          }
-        } catch (error) {
-          console.error("Background refresh failed:", error);
-        }
-      })();
-
-      return { data: staleData, status: "stale" };
-    }
-
-    console.log("Cache empty, fetching fresh data...");
     const activities = await fetchAllActivities(origin);
-    const calendarData = buildCalendarData(activities);
-
-    console.log("Calendar data built:", calendarData.stats);
-    return { data: calendarData, status: "fresh" };
-  } catch (error) {
-    console.error("Error:", error);
     return {
-      error: error instanceof Error ? error.message : String(error),
-      status: "error",
+      data: buildCalendarData(activities),
+      status: "fresh",
     };
+  } catch (error) {
+    errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Fresh data fetch failed, trying cache fallback:", error);
   }
+
+  try {
+    const cached = await readCache();
+    if (cached.length > 0) {
+      return {
+        data: buildCalendarData(cached),
+      };
+    }
+  } catch (error) {
+    console.error("Cache fallback failed:", error);
+  }
+
+  return {
+    error: errorMessage,
+    status: "error",
+  };
 }
 
 async function handleCalendarRequest(
-  sender: chrome.runtime.MessageSender,
+  sender: Browser.runtime.MessageSender,
   sendResponse: (response: CalendarResponse) => void
 ) {
   try {
     const tabUrl = sender?.tab?.url;
-    if (!tabUrl) return;
-    const url = new URL(tabUrl);
+    if (!tabUrl) {
+      sendResponse({
+        error: "Unable to determine tab URL",
+        status: "error",
+      });
+      return;
+    }
 
-    const response = await getCalendarData(url.origin);
+    const response = await fetchCalendarResponse(new URL(tabUrl).origin);
     sendResponse(response);
   } catch (error) {
-    console.error("Error:", error);
     sendResponse({
       error: error instanceof Error ? error.message : String(error),
+      status: "error",
     });
   }
 }
@@ -93,7 +64,7 @@ async function handleCalendarRequest(
 export default defineBackground({
   type: { chrome: "module" },
   main() {
-    browser.runtime.onMessage.addListener((_message, sender, sendResponse) => {
+    browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       handleCalendarRequest(sender, sendResponse);
       return true;
     });
