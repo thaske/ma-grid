@@ -13,6 +13,13 @@ import {
 
 export type CalendarLayout = "default" | "sidebar";
 
+export type CalendarNavigation = {
+  canGoPrevious: boolean;
+  canGoNext: boolean;
+  onPrevious: () => void;
+  onNext: () => void;
+};
+
 const LAYOUT_METRICS: Record<CalendarLayout, LayoutMetrics> = {
   default: { cellSize: 10, cellGap: 2, labelWidth: 12 },
   sidebar: { cellSize: 12, cellGap: 2, labelWidth: 12 },
@@ -27,7 +34,8 @@ export function Calendar(
   layout: CalendarLayout,
   settingsButton?: HTMLElement,
   statsVisibility?: StatsVisibility,
-  xpThresholds?: XpThresholds
+  xpThresholds?: XpThresholds,
+  navigation?: CalendarNavigation
 ) {
   const grid = getGridForLayout(data.grid, layout);
   const metrics = LAYOUT_METRICS[layout];
@@ -45,19 +53,71 @@ export function Calendar(
 
   container.appendChild(Header(settingsButton));
   container.appendChild(Stats(data.stats, statsVisibility));
-  container.appendChild(
-    Grid(
-      grid,
-      metrics,
-      tooltip.show,
-      tooltip.hide,
-      xpThresholds ?? DEFAULT_XP_THRESHOLDS
-    )
+
+  const gridElement = Grid(
+    grid,
+    metrics,
+    tooltip.show,
+    tooltip.hide,
+    xpThresholds ?? DEFAULT_XP_THRESHOLDS
   );
+
+  if (navigation) {
+    container.appendChild(createCalendarNavigation(gridElement, navigation));
+  } else {
+    container.appendChild(gridElement);
+  }
   container.appendChild(Legend());
   container.appendChild(tooltip.element);
 
   return container;
+}
+
+function createCalendarNavigation(
+  gridElement: HTMLElement,
+  navigation: CalendarNavigation
+) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "ma-grid__calendar-nav";
+
+  wrapper.appendChild(
+    createNavButton(
+      "‹",
+      "Show older activity",
+      navigation.canGoPrevious,
+      navigation.onPrevious,
+      "ma-grid__nav-button--previous"
+    )
+  );
+  wrapper.appendChild(gridElement);
+  wrapper.appendChild(
+    createNavButton(
+      "›",
+      "Show newer activity",
+      navigation.canGoNext,
+      navigation.onNext,
+      "ma-grid__nav-button--next"
+    )
+  );
+
+  return wrapper;
+}
+
+function createNavButton(
+  text: string,
+  label: string,
+  enabled: boolean,
+  onClick: () => void,
+  extraClassName: string
+) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = `ma-grid__nav-button ${extraClassName}`;
+  button.textContent = text;
+  button.setAttribute("aria-label", label);
+  button.disabled = !enabled;
+  button.addEventListener("click", onClick);
+  return button;
 }
 
 function getGridForLayout(grid: CalendarData["grid"], layout: CalendarLayout) {

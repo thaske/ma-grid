@@ -1,3 +1,15 @@
+# 1.4.0 (2026-06-11)
+
+### Added
+
+- Add calendar grid pagination with hover-revealed side arrows for browsing older activity
+
+### Changed
+
+- Keep activity stats fixed to the latest grid window while paging through older activity
+- Use sidebar-sized page jumps in sidebar layout
+- Cache fetched activities in memory so grid pagination reuses loaded activity data
+
 # 1.3.4 (2026-04-16)
 
 ### Fixed

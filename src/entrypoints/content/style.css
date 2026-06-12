@@ -49,6 +49,81 @@ body {
   margin: 0;
 }
 
+.ma-grid__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ma-grid__calendar-nav {
+  position: relative;
+  margin-inline: -18px;
+  padding-inline: 18px;
+}
+
+.ma-grid--sidebar .ma-grid__calendar-nav {
+  margin-inline: -12px;
+  padding-inline: 12px;
+}
+
+.ma-grid__nav-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #656d76;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 22px;
+  line-height: 1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+}
+
+.ma-grid__calendar-nav:hover .ma-grid__nav-button:not(:disabled),
+.ma-grid__calendar-nav:focus-within .ma-grid__nav-button:not(:disabled) {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ma-grid__calendar-nav:hover .ma-grid__nav-button:disabled,
+.ma-grid__calendar-nav:focus-within .ma-grid__nav-button:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ma-grid__nav-button--previous {
+  left: 5px;
+}
+
+.ma-grid__nav-button--next {
+  right: 5px;
+}
+
+.ma-grid--sidebar .ma-grid__nav-button--previous {
+  left: 3px;
+}
+
+.ma-grid--sidebar .ma-grid__nav-button--next {
+  right: 3px;
+}
+
+.ma-grid__nav-button:hover:not(:disabled) {
+  color: #24292f;
+}
+
+.ma-grid__nav-button:disabled {
+  opacity: 0;
+  cursor: not-allowed;
+}
+
 .ma-grid--sidebar .ma-grid__title {
   font-size: 14px;
 }

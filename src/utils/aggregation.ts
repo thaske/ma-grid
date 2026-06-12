@@ -6,7 +6,24 @@ import {
   parseDateKey,
 } from "./timezone";
 
-export function buildCalendarData(activities: Activity[]) {
+type BuildCalendarDataOptions = {
+  pageIndex?: number;
+  weeksPerPage?: number;
+};
+
+const WEEKS_PER_GRID = 53;
+const DAYS_PER_GRID = WEEKS_PER_GRID * 7;
+
+export function buildCalendarData(
+  activities: Activity[],
+  options: BuildCalendarDataOptions = {}
+) {
+  const pageIndex = Math.max(0, Math.floor(options.pageIndex ?? 0));
+  const weeksPerPage = Math.max(
+    1,
+    Math.min(WEEKS_PER_GRID, Math.floor(options.weeksPerPage ?? WEEKS_PER_GRID))
+  );
+  const daysPerPage = weeksPerPage * 7;
   if (activities.length === 0) {
     return {
       grid: [],
@@ -67,41 +84,58 @@ export function buildCalendarData(activities: Activity[]) {
   const todayKey = formatDateKey(today);
   const todayDate = parseDateKey(todayKey);
   const endDate = new Date(Math.max(maxDate.getTime(), todayDate.getTime()));
-  const startDate = new Date(endDate);
-  startDate.setDate(startDate.getDate() - 364); // 365 days inclusive
-
-  const daysSinceSunday = (startDate.getDay() + 7) % 7;
-  const alignedStartDate = new Date(startDate);
-  alignedStartDate.setDate(alignedStartDate.getDate() - daysSinceSunday);
-
   const daysUntilSaturday = (6 - endDate.getDay() + 7) % 7;
-  const alignedEndDate = new Date(endDate);
-  alignedEndDate.setDate(alignedEndDate.getDate() + daysUntilSaturday);
+  const latestAlignedEndDate = new Date(endDate);
+  latestAlignedEndDate.setDate(
+    latestAlignedEndDate.getDate() + daysUntilSaturday
+  );
 
-  const grid: DailyXP[][] = Array.from({ length: 7 }, () => []);
+  const alignedEndDate = new Date(latestAlignedEndDate);
+  alignedEndDate.setDate(alignedEndDate.getDate() - pageIndex * daysPerPage);
 
-  const currentDate = new Date(alignedStartDate);
-  let weekIndex = 0;
+  const alignedStartDate = new Date(alignedEndDate);
+  alignedStartDate.setDate(alignedStartDate.getDate() - (DAYS_PER_GRID - 1));
 
-  while (currentDate <= alignedEndDate && weekIndex < 53) {
-    for (let day = 0; day < 7; day++) {
-      const dateKey = formatDateKey(currentDate);
-      const dayData = dailyMap.get(dateKey);
+  const visibleStartDate = new Date(alignedEndDate);
+  visibleStartDate.setDate(visibleStartDate.getDate() - (daysPerPage - 1));
 
-      grid[day].push(
-        dayData || {
-          date: dateKey,
-          xp: 0,
-          weekday: getLocalWeekdayIndex(currentDate),
-        }
-      );
+  const statsAlignedStartDate = new Date(latestAlignedEndDate);
+  statsAlignedStartDate.setDate(
+    statsAlignedStartDate.getDate() - (DAYS_PER_GRID - 1)
+  );
 
-      currentDate.setDate(currentDate.getDate() + 1);
+  const buildGrid = (startDate: Date, endDate: Date) => {
+    const result: DailyXP[][] = Array.from({ length: 7 }, () => []);
+    const currentDate = new Date(startDate);
+    let weekIndex = 0;
+
+    while (currentDate <= endDate && weekIndex < WEEKS_PER_GRID) {
+      for (let day = 0; day < 7; day++) {
+        const dateKey = formatDateKey(currentDate);
+        const dayData = dailyMap.get(dateKey);
+
+        result[day].push(
+          dayData || {
+            date: dateKey,
+            xp: 0,
+            weekday: getLocalWeekdayIndex(currentDate),
+          }
+        );
+
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+      weekIndex++;
     }
-    weekIndex++;
-  }
 
-  const allDays = grid.flat();
+    return result;
+  };
+
+  const grid = buildGrid(alignedStartDate, alignedEndDate);
+  const statsGrid =
+    pageIndex === 0
+      ? grid
+      : buildGrid(statsAlignedStartDate, latestAlignedEndDate);
+  const allDays = statsGrid.flat();
   const activeDays = allDays.filter((d) => d.xp > 0);
   const totalActiveDays = activeDays.length;
   const totalDays = allDays.length;
@@ -148,8 +182,8 @@ export function buildCalendarData(activities: Activity[]) {
   const currentStartTime = currentStreakStart?.getTime() ?? null;
   const currentEndTime = currentStreakEnd?.getTime() ?? null;
 
-  const scanDate = new Date(alignedStartDate);
-  while (scanDate <= alignedEndDate) {
+  const scanDate = new Date(statsAlignedStartDate);
+  while (scanDate <= latestAlignedEndDate) {
     const dateKey = formatDateKey(scanDate);
     const dayData = dailyMap.get(dateKey);
     const hasXp = !!dayData && dayData.xp > 0;
@@ -193,6 +227,8 @@ export function buildCalendarData(activities: Activity[]) {
       ? longestExcludingCurrent
       : longestStreak;
 
+  const pageStartTime = visibleStartDate.getTime();
+
   return {
     grid,
     stats: {
@@ -202,6 +238,15 @@ export function buildCalendarData(activities: Activity[]) {
       longestStreak: longestStreakToShow,
       maxXP,
       avgXP,
+    },
+    page: {
+      index: pageIndex,
+      hasPrevious: Array.from(dailyMap.keys()).some(
+        (dateKey) => parseDateKey(dateKey).getTime() < pageStartTime
+      ),
+      hasNext: pageIndex > 0,
+      startDate: formatDateKey(alignedStartDate),
+      endDate: formatDateKey(alignedEndDate),
     },
   };
 }
