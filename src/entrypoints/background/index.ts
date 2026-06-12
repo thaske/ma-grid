@@ -29,12 +29,21 @@ async function fetchCalendarResponse(
   let errorMessage = "Failed to load activity data";
 
   try {
-    const activities = await getActivities(origin);
+    const activitiesPromise =
+      pageIndex <= 0 ? fetchAllActivities(origin) : getActivities(origin);
+    if (pageIndex <= 0) {
+      activitiesByOrigin.set(origin, activitiesPromise);
+    }
+
+    const activities = await activitiesPromise;
     return {
       data: buildCalendarData(activities, { pageIndex, weeksPerPage }),
       status: "fresh",
     };
   } catch (error) {
+    if (pageIndex <= 0) {
+      activitiesByOrigin.delete(origin);
+    }
     errorMessage = error instanceof Error ? error.message : String(error);
     console.error("Fresh data fetch failed, trying cache fallback:", error);
   }
