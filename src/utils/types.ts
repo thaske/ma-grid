@@ -33,9 +33,18 @@ export interface CalendarStats {
   avgXP: number;
 }
 
+export interface CalendarPageInfo {
+  index: number;
+  hasPrevious: boolean;
+  hasNext: boolean;
+  startDate: string;
+  endDate: string;
+}
+
 export interface CalendarData {
   grid: DailyXP[][]; // 7 rows (days of week) x ~53 cols (weeks)
   stats: CalendarStats;
+  page?: CalendarPageInfo;
 }
 
 export interface CalendarResponse {
@@ -53,7 +62,10 @@ export interface DataSource {
   /**
    * Fetches calendar data, preferring fresh network data and falling back to cache.
    */
-  fetchData(): Promise<CalendarResponse>;
+  fetchData(
+    pageIndex?: number,
+    weeksPerPage?: number
+  ): Promise<CalendarResponse>;
 
   /**
    * Cleanup any listeners/subscriptions.

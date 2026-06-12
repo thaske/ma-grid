@@ -83,4 +83,79 @@ describe("buildCalendarData", () => {
     expect(entry?.xp).toBe(25);
     expect(data.stats.activeDays).toBe(1);
   });
+
+  it("can build older grid pages", () => {
+    const today = new Date();
+    today.setHours(12, 0, 0, 0);
+    const older = new Date(today);
+    older.setDate(older.getDate() - 400);
+
+    const activity = buildActivity({
+      completed: older.toISOString(),
+      started: older.toISOString(),
+      pointsAwarded: 40,
+    });
+
+    const currentPage = buildCalendarData([activity]);
+    const olderPage = buildCalendarData([activity], { pageIndex: 1 });
+    const olderKey = formatDateKey(older);
+
+    expect(currentPage.page?.hasPrevious).toBe(true);
+    expect(olderPage.page?.hasNext).toBe(true);
+    expect(
+      olderPage.grid.flat().find((item) => item.date === olderKey)?.xp
+    ).toBe(40);
+  });
+
+  it("keeps stats stable across grid pages", () => {
+    const today = new Date();
+    today.setHours(12, 0, 0, 0);
+    const current = new Date(today);
+    current.setDate(current.getDate() - 5);
+    const older = new Date(today);
+    older.setDate(older.getDate() - 400);
+
+    const activities = [
+      buildActivity({
+        id: 1,
+        completed: current.toISOString(),
+        started: current.toISOString(),
+        pointsAwarded: 10,
+      }),
+      buildActivity({
+        id: 2,
+        completed: older.toISOString(),
+        started: older.toISOString(),
+        pointsAwarded: 100,
+      }),
+    ];
+
+    const currentPage = buildCalendarData(activities);
+    const olderPage = buildCalendarData(activities, { pageIndex: 1 });
+
+    expect(olderPage.stats).toEqual(currentPage.stats);
+  });
+
+  it("uses smaller page jumps for sidebar-sized pages", () => {
+    const today = new Date();
+    today.setHours(12, 0, 0, 0);
+    const older = new Date(today);
+    older.setDate(older.getDate() - 25 * 7);
+
+    const activity = buildActivity({
+      completed: older.toISOString(),
+      started: older.toISOString(),
+      pointsAwarded: 30,
+    });
+
+    const olderPage = buildCalendarData([activity], {
+      pageIndex: 1,
+      weeksPerPage: 22,
+    });
+    const visibleCells = olderPage.grid.flatMap((row) => row.slice(-22));
+
+    expect(
+      visibleCells.find((item) => item.date === formatDateKey(older))?.xp
+    ).toBe(30);
+  });
 });

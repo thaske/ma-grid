@@ -25,9 +25,11 @@ export default defineContentScript({
     let currentApp: AppElement | null = null;
 
     const dataSource: DataSource = {
-      fetchData: async () =>
+      fetchData: async (pageIndex = 0, weeksPerPage) =>
         (await browser.runtime.sendMessage({
           type: "calendar_request",
+          pageIndex,
+          weeksPerPage,
         })) as CalendarResponse,
     };
 

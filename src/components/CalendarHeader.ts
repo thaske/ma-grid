@@ -6,11 +6,15 @@ export function Header(settingsButton?: HTMLElement) {
   title.className = "ma-grid__title";
   title.textContent = "Activity";
 
-  header.appendChild(title);
+  const actions = document.createElement("div");
+  actions.className = "ma-grid__header-actions";
 
   if (settingsButton) {
-    header.appendChild(settingsButton);
+    actions.appendChild(settingsButton);
   }
+
+  header.appendChild(title);
+  header.appendChild(actions);
 
   return header;
 }

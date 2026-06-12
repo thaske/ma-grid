@@ -2,6 +2,11 @@ import { getStatsVisibility, getXpThresholds } from "@/utils/settings";
 import type { CalendarResponse, DataSource } from "@/utils/types";
 import { Calendar } from "./Calendar";
 
+const VISIBLE_WEEKS_BY_LAYOUT = {
+  default: 53,
+  sidebar: 22,
+} as const;
+
 export type AppElement = HTMLElement & {
   cleanup?: () => void;
 };
@@ -12,6 +17,10 @@ export function App(
   settingsButton?: HTMLElement
 ): AppElement {
   let mounted = true;
+  let currentPageIndex = 0;
+  const visibleWeeks = VISIBLE_WEEKS_BY_LAYOUT[layout];
+  let hasRenderedCalendar = false;
+  let requestId = 0;
   const settingsPromise = Promise.all([
     getStatsVisibility(),
     getXpThresholds(),
@@ -28,8 +37,11 @@ export function App(
 
   setContainerState("loading", "Loading activity...");
 
-  async function renderCalendar(response: CalendarResponse) {
-    if (!mounted) return;
+  async function renderCalendar(
+    response: CalendarResponse,
+    activeRequestId: number
+  ) {
+    if (!mounted || activeRequestId !== requestId) return;
 
     if (response.error || !response.data) {
       setContainerState(
@@ -40,25 +52,40 @@ export function App(
     }
 
     const [statsVisibility, xpThresholds] = await settingsPromise;
-    if (!mounted) return;
+    if (!mounted || activeRequestId !== requestId) return;
+
+    currentPageIndex = response.data.page?.index ?? currentPageIndex;
 
     const calendar = Calendar(
       response.data,
       layout,
       settingsButton,
       statsVisibility,
-      xpThresholds
+      xpThresholds,
+      {
+        canGoPrevious: response.data.page?.hasPrevious ?? false,
+        canGoNext: response.data.page?.hasNext ?? false,
+        onPrevious: () => fetchData(currentPageIndex + 1),
+        onNext: () => fetchData(Math.max(0, currentPageIndex - 1)),
+      }
     );
 
-    container.parentNode?.replaceChild(calendar, container);
+    hasRenderedCalendar = true;
+    container.className = "";
+    container.replaceChildren(calendar);
   }
 
-  async function fetchData() {
+  async function fetchData(pageIndex = currentPageIndex) {
+    const activeRequestId = ++requestId;
+
     try {
-      const response = await dataSource.fetchData();
-      await renderCalendar(response);
+      if (!hasRenderedCalendar) {
+        setContainerState("loading", "Loading activity...");
+      }
+      const response = await dataSource.fetchData(pageIndex, visibleWeeks);
+      await renderCalendar(response, activeRequestId);
     } catch (err) {
-      if (!mounted) return;
+      if (!mounted || activeRequestId !== requestId) return;
       console.error("Failed to load calendar:", err);
       setContainerState(
         "error",

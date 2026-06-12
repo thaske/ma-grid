@@ -17,24 +17,53 @@ import {
   getXpThresholds,
   type StatsVisibility,
 } from "@/utils/settings";
-import type { CalendarResponse, DataSource } from "@/utils/types";
+import type { Activity, CalendarResponse, DataSource } from "@/utils/types";
 import settingsStyles from "./style.css?raw";
 
 (async function () {
   "use strict";
 
+  const activitiesByOrigin = new Map<string, Promise<Activity[]>>();
+
+  async function getActivities(origin: string) {
+    let activitiesPromise = activitiesByOrigin.get(origin);
+    if (!activitiesPromise) {
+      activitiesPromise = fetchAllActivities(origin);
+      activitiesByOrigin.set(origin, activitiesPromise);
+    }
+
+    try {
+      return await activitiesPromise;
+    } catch (error) {
+      activitiesByOrigin.delete(origin);
+      throw error;
+    }
+  }
+
   const dataSource: DataSource = {
-    fetchData: async (): Promise<CalendarResponse> => {
+    fetchData: async (
+      pageIndex = 0,
+      weeksPerPage?: number
+    ): Promise<CalendarResponse> => {
       const origin = window.location.origin;
       let errorMessage = "Failed to load activity data";
 
       try {
-        const activities = await fetchAllActivities(origin);
+        const activitiesPromise =
+          pageIndex <= 0 ? fetchAllActivities(origin) : getActivities(origin);
+        if (pageIndex <= 0) {
+          activitiesByOrigin.set(origin, activitiesPromise);
+        }
+
+        const activities = await activitiesPromise;
         return {
-          data: buildCalendarData(activities),
+          data: buildCalendarData(activities, { pageIndex, weeksPerPage }),
           status: "fresh",
         };
       } catch (error) {
+        if (pageIndex <= 0) {
+          activitiesByOrigin.delete(origin);
+        }
         errorMessage = error instanceof Error ? error.message : String(error);
         console.error("Fresh data fetch failed, trying cache fallback:", error);
       }
@@ -43,7 +72,7 @@ import settingsStyles from "./style.css?raw";
         const cached = await readCache();
         if (cached.length > 0) {
           return {
-            data: buildCalendarData(cached),
+            data: buildCalendarData(cached, { pageIndex, weeksPerPage }),
           };
         }
       } catch (error) {
