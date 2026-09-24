@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
-import { Window } from "happy-dom";
+import { Window as HappyWindow } from "happy-dom";
 import { Tooltip } from "../src/components/CalendarTooltip";
 
 describe("calendar tooltip", () => {
   it("shows elapsed time next to XP when tasks were completed", async () => {
-    const window = new Window();
+    const window = new HappyWindow();
     const originalDocument = globalThis.document;
     const originalWindow = globalThis.window;
     globalThis.document = window.document as unknown as Document;

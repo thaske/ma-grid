@@ -13,6 +13,10 @@ export interface Activity {
   };
 }
 
+export type TaskTimesResponse =
+  | Pick<Activity, "id" | "started" | "completed">[]
+  | { error: string };
+
 export interface CachePayload {
   items: Activity[];
   updatedAt: string;

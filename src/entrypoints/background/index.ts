@@ -1,26 +1,12 @@
 import { buildCalendarData } from "@/utils/aggregation";
 import { fetchAllActivities } from "@/utils/api";
+import { createActivityStore } from "@/utils/activityStore";
 import { readCache } from "@/utils/cache";
-import type { Activity, CalendarResponse } from "@/utils/types";
+import type { CalendarResponse } from "@/utils/types";
 import { defineBackground } from "wxt/utils/define-background";
 
-const activitiesByOrigin = new Map<string, Promise<Activity[]>>();
-const refreshesByOrigin = new Map<string, Promise<Activity[]>>();
-
-async function getActivities(origin: string) {
-  let activitiesPromise = activitiesByOrigin.get(origin);
-  if (!activitiesPromise) {
-    activitiesPromise = fetchAllActivities(origin);
-    activitiesByOrigin.set(origin, activitiesPromise);
-  }
-
-  try {
-    return await activitiesPromise;
-  } catch (error) {
-    activitiesByOrigin.delete(origin);
-    throw error;
-  }
-}
+const { getActivities, loadTaskTimes } =
+  createActivityStore(fetchAllActivities);
 
 async function fetchCalendarResponse(
   origin: string,
@@ -30,7 +16,7 @@ async function fetchCalendarResponse(
   let errorMessage = "Failed to load activity data";
 
   try {
-    const activities = await getActivities(origin);
+    const activities = await getActivities(origin, pageIndex <= 0);
     return {
       data: buildCalendarData(activities, { pageIndex, weeksPerPage }),
       status: "fresh",
@@ -103,29 +89,13 @@ export default defineBackground({
           sendResponse([]);
         } else {
           const origin = new URL(tabUrl).origin;
-          getActivities(origin)
-            .then(async (activities) => {
-              const wanted = new Set<number>(ids);
-              const newest = activities.reduce(
-                (max, task) => Math.max(max, task.id),
-                0
-              );
-              if (ids.some((id: number) => id > newest)) {
-                // Only a genuinely new task requires refreshing the shared cache.
-                let refresh = refreshesByOrigin.get(origin);
-                if (!refresh) {
-                  refresh = fetchAllActivities(origin);
-                  refreshesByOrigin.set(origin, refresh);
-                  activitiesByOrigin.set(origin, refresh);
-                  void refresh
-                    .finally(() => refreshesByOrigin.delete(origin))
-                    .catch(() => {});
-                }
-                activities = await refresh;
-              }
-              sendResponse(activities.filter((task) => wanted.has(task.id)));
-            })
-            .catch(() => sendResponse([]));
+          loadTaskTimes(origin, ids)
+            .then(sendResponse)
+            .catch((error) =>
+              sendResponse({
+                error: error instanceof Error ? error.message : String(error),
+              })
+            );
         }
       } else {
         handleCalendarRequest(message, sender, sendResponse);

@@ -108,6 +108,10 @@ export function mountTaskTimes(
       const found = await loadTasks(missing);
       if (disposed) return;
       for (const task of found) tasks.set(task.id, task);
+      // A task may not be available yet. Retry unresolved IDs on a later feed update.
+      for (const id of missing) {
+        if (!tasks.has(id)) requested.delete(id);
+      }
       decorate();
     } catch (error) {
       for (const id of missing) requested.delete(id); // allow retry on next feed update

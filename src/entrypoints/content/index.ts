@@ -11,7 +11,11 @@ import {
   watchUiAnchor,
   watchXpThresholds,
 } from "@/utils/settings";
-import type { CalendarResponse, DataSource } from "@/utils/types";
+import type {
+  CalendarResponse,
+  DataSource,
+  TaskTimesResponse,
+} from "@/utils/types";
 import { mountTaskTimes } from "@/utils/taskTimes";
 import { defineContentScript } from "wxt/utils/define-content-script";
 import calendarStyles from "./style.css?raw";
@@ -25,9 +29,15 @@ export default defineContentScript({
     const setShowTaskTimes = (show: boolean) => {
       cleanupTaskTimes();
       cleanupTaskTimes = show
-        ? mountTaskTimes((ids) =>
-            browser.runtime.sendMessage({ type: "task_times_request", ids })
-          )
+        ? mountTaskTimes(async (ids) => {
+            const response: TaskTimesResponse =
+              await browser.runtime.sendMessage({
+                type: "task_times_request",
+                ids,
+              });
+            if (!Array.isArray(response)) throw new Error(response.error);
+            return response;
+          })
         : () => {};
     };
     setShowTaskTimes(await getShowTaskTimes());

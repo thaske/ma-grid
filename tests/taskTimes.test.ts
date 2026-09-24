@@ -22,6 +22,62 @@ describe("task times", () => {
     expect(taskElapsedMs({ started: "bad", completed: "bad" })).toBeNull();
   });
 
+  it.each(["rejection", "empty response"])(
+    "retries unresolved tasks after a transient %s",
+    async (failure) => {
+      const window = new Window();
+      const oldDocument = globalThis.document;
+      const oldObserver = globalThis.MutationObserver;
+      globalThis.document = window.document as unknown as Document;
+      globalThis.MutationObserver =
+        window.MutationObserver as unknown as typeof MutationObserver;
+      window.document.body.innerHTML = `<div id="completedTasks">
+        <div class="completedTasksDate">Today</div>
+        <div id="task-1" class="taskCompleted"><div class="taskTimeCompleted"></div></div>
+      </div>`;
+      let first = true;
+      const loadTasks = mock(async (ids: number[]) => {
+        if (first) {
+          first = false;
+          if (failure === "rejection") throw new Error("offline");
+          return [];
+        }
+        return ids.map((id) => ({
+          id,
+          started: "2026-09-23T09:00:00",
+          completed: "2026-09-23T09:10:00",
+        }));
+      });
+      const cleanup = mountTaskTimes(loadTasks);
+      try {
+        await tick();
+        expect(window.document.querySelector(".ma-grid-task-time")).toBeNull();
+        window.document
+          .querySelector("#completedTasks")!
+          .insertAdjacentHTML(
+            "beforeend",
+            `<div id="task-2" class="taskCompleted"><div class="taskTimeCompleted"></div></div>`
+          );
+        await tick();
+        expect(loadTasks.mock.calls.map(([ids]) => ids)).toEqual([[1], [1, 2]]);
+        expect(
+          window.document.querySelectorAll(".ma-grid-task-time")
+        ).toHaveLength(2);
+        expect(
+          window.document.querySelector(".ma-grid-day-time")?.textContent
+        ).toBe("· 20m 00s elapsed");
+        // Badge mutations must not cause a fetch/retry loop.
+        await tick();
+        expect(loadTasks).toHaveBeenCalledTimes(2);
+      } finally {
+        cleanup();
+        globalThis.document = oldDocument;
+        globalThis.MutationObserver = oldObserver;
+        await window.happyDOM.close();
+      }
+    }
+  );
+
   it("adds a duration only to rendered completed tasks, including newly appended reviews", async () => {
     const window = new Window({ url: "https://www.mathacademy.com/learn" });
     const oldDocument = globalThis.document;

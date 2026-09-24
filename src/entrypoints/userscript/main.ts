@@ -4,6 +4,7 @@ import { SettingsModal } from "@/components/SettingsModal";
 import mainStyles from "@/entrypoints/content/style.css?raw";
 import { buildCalendarData } from "@/utils/aggregation";
 import { fetchAllActivities } from "@/utils/api";
+import { createActivityStore } from "@/utils/activityStore";
 import { readCache } from "@/utils/cache";
 import {
   cleanupMountedApp,
@@ -18,42 +19,17 @@ import {
   getXpThresholds,
   type StatsVisibility,
 } from "@/utils/settings";
-import type { Activity, CalendarResponse, DataSource } from "@/utils/types";
+import type { CalendarResponse, DataSource } from "@/utils/types";
 import { mountTaskTimes } from "@/utils/taskTimes";
 import settingsStyles from "./style.css?raw";
 
 (async function () {
   "use strict";
 
-  const activitiesByOrigin = new Map<string, Promise<Activity[]>>();
-
-  async function getActivities(origin: string) {
-    let activitiesPromise = activitiesByOrigin.get(origin);
-    if (!activitiesPromise) {
-      activitiesPromise = fetchAllActivities(origin);
-      activitiesByOrigin.set(origin, activitiesPromise);
-    }
-
-    try {
-      return await activitiesPromise;
-    } catch (error) {
-      activitiesByOrigin.delete(origin);
-      throw error;
-    }
-  }
-
-  const loadTaskTimes = async (ids: number[]) => {
-    const origin = window.location.origin;
-    let activities = await getActivities(origin);
-    const newest = activities.reduce((max, task) => Math.max(max, task.id), 0);
-    if (ids.some((id) => id > newest)) {
-      const refresh = fetchAllActivities(origin);
-      activitiesByOrigin.set(origin, refresh);
-      activities = await refresh;
-    }
-    const wanted = new Set(ids);
-    return activities.filter((task) => wanted.has(task.id));
-  };
+  const activityStore = createActivityStore(fetchAllActivities);
+  const { getActivities } = activityStore;
+  const loadTaskTimes = (ids: number[]) =>
+    activityStore.loadTaskTimes(window.location.origin, ids);
   let showTaskTimes = await getShowTaskTimes();
   let cleanupTaskTimes = showTaskTimes
     ? mountTaskTimes(loadTaskTimes)
@@ -68,7 +44,7 @@ import settingsStyles from "./style.css?raw";
       let errorMessage = "Failed to load activity data";
 
       try {
-        const activities = await getActivities(origin);
+        const activities = await getActivities(origin, pageIndex <= 0);
         return {
           data: buildCalendarData(activities, { pageIndex, weeksPerPage }),
           status: "fresh",
