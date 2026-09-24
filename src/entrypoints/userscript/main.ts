@@ -12,12 +12,14 @@ import {
 } from "@/utils/mount";
 import {
   getHideXpFrame,
+  getShowTaskTimes,
   getStatsVisibility,
   getUiAnchor,
   getXpThresholds,
   type StatsVisibility,
 } from "@/utils/settings";
 import type { Activity, CalendarResponse, DataSource } from "@/utils/types";
+import { mountTaskTimes } from "@/utils/taskTimes";
 import settingsStyles from "./style.css?raw";
 
 (async function () {
@@ -40,6 +42,23 @@ import settingsStyles from "./style.css?raw";
     }
   }
 
+  const loadTaskTimes = async (ids: number[]) => {
+    const origin = window.location.origin;
+    let activities = await getActivities(origin);
+    const newest = activities.reduce((max, task) => Math.max(max, task.id), 0);
+    if (ids.some((id) => id > newest)) {
+      const refresh = fetchAllActivities(origin);
+      activitiesByOrigin.set(origin, refresh);
+      activities = await refresh;
+    }
+    const wanted = new Set(ids);
+    return activities.filter((task) => wanted.has(task.id));
+  };
+  let showTaskTimes = await getShowTaskTimes();
+  let cleanupTaskTimes = showTaskTimes
+    ? mountTaskTimes(loadTaskTimes)
+    : () => {};
+
   const dataSource: DataSource = {
     fetchData: async (
       pageIndex = 0,
@@ -49,21 +68,12 @@ import settingsStyles from "./style.css?raw";
       let errorMessage = "Failed to load activity data";
 
       try {
-        const activitiesPromise =
-          pageIndex <= 0 ? fetchAllActivities(origin) : getActivities(origin);
-        if (pageIndex <= 0) {
-          activitiesByOrigin.set(origin, activitiesPromise);
-        }
-
-        const activities = await activitiesPromise;
+        const activities = await getActivities(origin);
         return {
           data: buildCalendarData(activities, { pageIndex, weeksPerPage }),
           status: "fresh",
         };
       } catch (error) {
-        if (pageIndex <= 0) {
-          activitiesByOrigin.delete(origin);
-        }
         errorMessage = error instanceof Error ? error.message : String(error);
         console.error("Fresh data fetch failed, trying cache fallback:", error);
       }
@@ -100,14 +110,22 @@ import settingsStyles from "./style.css?raw";
 
     const handleSettingsChange = async (): Promise<void> => {
       const previousAnchor = anchor;
+      const previousShowTaskTimes = showTaskTimes;
       const previousStatsVisibility = statsVisibility;
       const previousXpThresholds = xpThresholds;
       hideXpFrame = await getHideXpFrame();
+      showTaskTimes = await getShowTaskTimes();
       anchor = await getUiAnchor();
       statsVisibility = await getStatsVisibility();
       xpThresholds = await getXpThresholds();
 
       updateXpFrameHidden(hideXpFrame);
+      if (previousShowTaskTimes !== showTaskTimes) {
+        cleanupTaskTimes();
+        cleanupTaskTimes = showTaskTimes
+          ? mountTaskTimes(loadTaskTimes)
+          : () => {};
+      }
 
       const statsVisibilityChanged = !areStatsVisibilityEqual(
         previousStatsVisibility,
@@ -120,7 +138,8 @@ import settingsStyles from "./style.css?raw";
       if (
         (previousAnchor !== anchor ||
           statsVisibilityChanged ||
-          xpThresholdsChanged) &&
+          xpThresholdsChanged ||
+          previousShowTaskTimes !== showTaskTimes) &&
         currentShadow
       ) {
         const existingModal = currentShadow.querySelector(

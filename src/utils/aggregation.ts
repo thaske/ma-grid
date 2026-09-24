@@ -1,4 +1,5 @@
 import type { Activity, DailyXP } from "@/utils/types";
+import { taskElapsedMs } from "./taskTimes";
 import {
   formatDateKey,
   getLocalWeekdayIndex,
@@ -59,6 +60,9 @@ export function buildCalendarData(
 
     const dayData = dailyMap.get(dateKey)!;
     dayData.xp += activity.pointsAwarded;
+    const elapsed = taskElapsedMs(activity);
+    if (elapsed !== null)
+      dayData.elapsedMs = (dayData.elapsedMs ?? 0) + elapsed;
   });
 
   if (dailyMap.size === 0) {

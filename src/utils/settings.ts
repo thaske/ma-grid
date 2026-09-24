@@ -9,6 +9,8 @@ export const UI_ANCHOR_STORAGE_KEY = "maGridAnchor";
 export const DEFAULT_UI_ANCHOR: UiAnchor = "incompleteTasks";
 export const HIDE_XP_FRAME_STORAGE_KEY = "maGridHideXpFrame";
 export const DEFAULT_HIDE_XP_FRAME = false;
+export const SHOW_TASK_TIMES_STORAGE_KEY = "maGridShowTaskTimes";
+export const DEFAULT_SHOW_TASK_TIMES = true;
 export const STATS_VISIBILITY_STORAGE_KEY = "maGridStatsVisibility";
 export const DEFAULT_STATS_VISIBILITY: StatsVisibility = {
   currentStreak: true,
@@ -75,6 +77,12 @@ const hideXpFrameSetting = createSetting(
   (value: unknown): value is boolean => typeof value === "boolean"
 );
 
+const showTaskTimesSetting = createSetting(
+  SHOW_TASK_TIMES_STORAGE_KEY,
+  DEFAULT_SHOW_TASK_TIMES,
+  (value: unknown): value is boolean => typeof value === "boolean"
+);
+
 const statsVisibilitySetting = createSetting(
   STATS_VISIBILITY_STORAGE_KEY,
   DEFAULT_STATS_VISIBILITY,
@@ -91,6 +99,8 @@ export const getUiAnchor = uiAnchorSetting.get;
 export const watchUiAnchor = uiAnchorSetting.watch;
 export const getHideXpFrame = hideXpFrameSetting.get;
 export const watchHideXpFrame = hideXpFrameSetting.watch;
+export const getShowTaskTimes = showTaskTimesSetting.get;
+export const watchShowTaskTimes = showTaskTimesSetting.watch;
 export const getStatsVisibility = statsVisibilitySetting.get;
 export const watchStatsVisibility = statsVisibilitySetting.watch;
 export const getXpThresholds = xpThresholdsSetting.get;

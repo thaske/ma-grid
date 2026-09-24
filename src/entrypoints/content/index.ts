@@ -3,13 +3,16 @@ import { MATHACADEMY_MATCHES } from "@/utils/constants";
 import { mountCalendarUI, updateXpFrameHidden } from "@/utils/mount";
 import {
   getHideXpFrame,
+  getShowTaskTimes,
   getUiAnchor,
   watchHideXpFrame,
+  watchShowTaskTimes,
   watchStatsVisibility,
   watchUiAnchor,
   watchXpThresholds,
 } from "@/utils/settings";
 import type { CalendarResponse, DataSource } from "@/utils/types";
+import { mountTaskTimes } from "@/utils/taskTimes";
 import { defineContentScript } from "wxt/utils/define-content-script";
 import calendarStyles from "./style.css?raw";
 
@@ -18,6 +21,16 @@ export default defineContentScript({
   cssInjectionMode: "manual",
   async main(_ctx) {
     console.log("Content script loaded");
+    let cleanupTaskTimes = () => {};
+    const setShowTaskTimes = (show: boolean) => {
+      cleanupTaskTimes();
+      cleanupTaskTimes = show
+        ? mountTaskTimes((ids) =>
+            browser.runtime.sendMessage({ type: "task_times_request", ids })
+          )
+        : () => {};
+    };
+    setShowTaskTimes(await getShowTaskTimes());
 
     let hideXpFrame = await getHideXpFrame();
     let anchor = await getUiAnchor();
@@ -54,6 +67,11 @@ export default defineContentScript({
 
       currentApp = mounted?.app ?? null;
     }
+
+    watchShowTaskTimes((show) => {
+      setShowTaskTimes(show);
+      mountUI();
+    });
 
     watchHideXpFrame((newValue) => {
       hideXpFrame = newValue;

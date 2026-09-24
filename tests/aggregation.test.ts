@@ -14,6 +14,29 @@ const buildActivity = (overrides: Partial<Activity>): Activity => ({
 });
 
 describe("buildCalendarData", () => {
+  it("sums elapsed task time by completion date for the grid tooltip", () => {
+    const completed = new Date();
+    completed.setHours(12, 30, 0, 0);
+    const earlier = new Date(completed);
+    earlier.setMinutes(earlier.getMinutes() - 10);
+    const data = buildCalendarData([
+      buildActivity({
+        id: 1,
+        started: earlier.toISOString(),
+        completed: completed.toISOString(),
+      }),
+      buildActivity({
+        id: 2,
+        started: earlier.toISOString(),
+        completed: completed.toISOString(),
+      }),
+    ]);
+    const day = data.grid
+      .flat()
+      .find((entry) => entry.date === formatDateKey(completed));
+    expect(day?.elapsedMs).toBe(20 * 60 * 1000);
+  });
+
   it("excludes the current streak from longest streak", () => {
     const noonToday = new Date();
     noonToday.setHours(12, 0, 0, 0);

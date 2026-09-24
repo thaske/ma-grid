@@ -21,7 +21,8 @@ const getXpThresholdsMock = mock(() =>
     high: 30,
   })
 );
-const calendarMock = mock((data: CalendarData) => {
+const getShowTaskTimesMock = mock(() => Promise.resolve(true));
+const calendarMock = mock((data: CalendarData, ..._settings: unknown[]) => {
   const el = document.createElement("div");
   el.className = "calendar";
   el.textContent = `calendar-${data.stats.activeDays}`;
@@ -34,6 +35,7 @@ mock.module(calendarModule, () => ({
 mock.module(settingsModule, () => ({
   getStatsVisibility: getStatsVisibilityMock,
   getXpThresholds: getXpThresholdsMock,
+  getShowTaskTimes: getShowTaskTimesMock,
 }));
 
 const { App } = await import("@/components/App");
@@ -85,5 +87,6 @@ describe("App", () => {
     await Promise.resolve();
 
     expect(document.body.textContent).toContain("calendar-1");
+    expect(calendarMock.mock.calls[0]?.[6]).toBe(true);
   });
 });
