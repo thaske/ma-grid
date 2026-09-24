@@ -1,23 +1,28 @@
 import { transform } from "esbuild";
-import type { Plugin, ResolvedConfig } from "vite";
+import type { Plugin } from "vite";
 
 const CONSOLE_DROP_TARGETS: Array<"console" | "debugger"> = [
   "console",
   "debugger",
 ];
 
-export function stripConsolePlugin(): Plugin {
+// Preserve the narrow hook types so both the userscript's and WXT's Vite
+// versions can use this plugin without sharing their entire config types.
+export function stripConsolePlugin() {
   let enabled = false;
   let sourcemap = false;
 
   return {
     name: "strip-console",
     apply: "build",
-    configResolved(config: ResolvedConfig) {
+    configResolved(config: {
+      mode: string;
+      build: { sourcemap?: boolean | "inline" | "hidden" };
+    }) {
       enabled = config.mode === "production";
       sourcemap = Boolean(config.build.sourcemap);
     },
-    async transform(code, id) {
+    async transform(code: string, id: string) {
       if (!enabled || id.includes("node_modules")) {
         return null;
       }
@@ -43,5 +48,5 @@ export function stripConsolePlugin(): Plugin {
         map,
       };
     },
-  };
+  } satisfies Plugin;
 }

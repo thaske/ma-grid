@@ -13,6 +13,10 @@ export interface Activity {
   };
 }
 
+export type TaskTimesResponse =
+  | Pick<Activity, "id" | "started" | "completed">[]
+  | { error: string };
+
 export interface CachePayload {
   items: Activity[];
   updatedAt: string;
@@ -21,6 +25,7 @@ export interface CachePayload {
 export interface DailyXP {
   date: string; // YYYY-MM-DD
   xp: number;
+  elapsedMs?: number; // sum of wall-clock task durations for tasks completed that day
   weekday: number; // 0 = Sunday, 6 = Saturday
 }
 

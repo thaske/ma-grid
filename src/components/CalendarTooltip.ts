@@ -1,4 +1,5 @@
 import { parseDateKey } from "@/utils/timezone";
+import { formatTaskElapsed } from "@/utils/taskTimes";
 import type { DailyXP } from "@/utils/types";
 
 export interface TooltipController {
@@ -7,7 +8,7 @@ export interface TooltipController {
   hide: () => void;
 }
 
-export function Tooltip() {
+export function Tooltip(showTaskTimes = true) {
   const tooltip = document.createElement("div");
   tooltip.className = "ma-grid__tooltip";
   tooltip.style.display = "none";
@@ -27,6 +28,14 @@ export function Tooltip() {
       <div class="ma-grid__tooltip-date">${dateText}</div>
       <div class="ma-grid__tooltip-xp">${xpText}</div>
     `;
+    if (showTaskTimes && day.elapsedMs !== undefined) {
+      const xpLine = tooltip.querySelector<HTMLElement>(
+        ".ma-grid__tooltip-xp"
+      )!;
+      xpLine.textContent += ` · ${formatTaskElapsed(day.elapsedMs)}`;
+      xpLine.title =
+        "Wall-clock time for tasks completed that day (includes breaks)";
+    }
 
     tooltip.style.display = "block";
 

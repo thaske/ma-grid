@@ -3,11 +3,13 @@ import {
   DEFAULT_STATS_VISIBILITY,
   DEFAULT_XP_THRESHOLDS,
   getHideXpFrame,
+  getShowTaskTimes,
   getStatsVisibility,
   getUiAnchor,
   getXpThresholds,
   HIDE_XP_FRAME_STORAGE_KEY,
   isUiAnchor,
+  SHOW_TASK_TIMES_STORAGE_KEY,
   STATS_VISIBILITY_STORAGE_KEY,
   UI_ANCHOR_STORAGE_KEY,
   XP_THRESHOLDS_STORAGE_KEY,
@@ -30,6 +32,9 @@ export function SettingsForm(
 ): SettingsFormAPI {
   const idPrefix = options.idPrefix || "";
   const hideXpId = idPrefix ? `${idPrefix}-hide-xp` : "hide-xp-frame";
+  const showTaskTimesId = idPrefix
+    ? `${idPrefix}-show-task-times`
+    : "show-task-times";
   const clearCacheId = idPrefix ? `${idPrefix}-clear-cache` : "clear-cache";
   const statsCurrentStreakId = idPrefix
     ? `${idPrefix}-stat-current-streak`
@@ -67,6 +72,20 @@ export function SettingsForm(
       <label class="popup__option">
         <input type="checkbox" id="${hideXpId}" />
         <span>Hide XP panel</span>
+      </label>
+      <label class="popup__option">
+        <input type="checkbox" id="${showTaskTimesId}" />
+        <span class="popup__option-label">
+          Elapsed task times
+          <span
+            class="popup__info"
+            role="img"
+            aria-label="Time from starting to finishing a task, including breaks."
+            data-tooltip="Time from starting to finishing a task, including breaks."
+          >
+            ?
+          </span>
+        </span>
       </label>
     </fieldset>
     <fieldset class="popup__fieldset">
@@ -143,6 +162,9 @@ export function SettingsForm(
     form.querySelectorAll<HTMLInputElement>('input[name="anchor"]')
   );
   const hideXpInput = form.querySelector<HTMLInputElement>(`#${hideXpId}`);
+  const showTaskTimesInput = form.querySelector<HTMLInputElement>(
+    `#${showTaskTimesId}`
+  );
   const clearCacheButton = form.querySelector<HTMLButtonElement>(
     `#${clearCacheId}`
   );
@@ -183,6 +205,14 @@ export function SettingsForm(
       options.onChange?.();
     });
   }
+
+  showTaskTimesInput?.addEventListener("change", async () => {
+    await storage.setItem(
+      SHOW_TASK_TIMES_STORAGE_KEY,
+      showTaskTimesInput.checked
+    );
+    options.onChange?.();
+  });
 
   const updateStatsVisibility = async () => {
     const visibility: StatsVisibility = {
@@ -240,13 +270,19 @@ export function SettingsForm(
 
   async function initialize() {
     try {
-      const [anchor, hideXpFrame, statsVisibility, xpThresholds] =
-        await Promise.all([
-          getUiAnchor(),
-          getHideXpFrame(),
-          getStatsVisibility(),
-          getXpThresholds(),
-        ]);
+      const [
+        anchor,
+        hideXpFrame,
+        showTaskTimes,
+        statsVisibility,
+        xpThresholds,
+      ] = await Promise.all([
+        getUiAnchor(),
+        getHideXpFrame(),
+        getShowTaskTimes(),
+        getStatsVisibility(),
+        getXpThresholds(),
+      ]);
 
       anchorInputs.forEach((input) => {
         input.checked = input.value === anchor;
@@ -254,6 +290,10 @@ export function SettingsForm(
 
       if (hideXpInput) {
         hideXpInput.checked = hideXpFrame;
+      }
+
+      if (showTaskTimesInput) {
+        showTaskTimesInput.checked = showTaskTimes;
       }
 
       if (statsInputs.currentStreak) {

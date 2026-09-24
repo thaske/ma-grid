@@ -15,6 +15,13 @@ test.describe("MA Grid Popup", () => {
     await expect(popup.settingsHeading).toBeVisible();
     await expect(popup.anchorOptions).toHaveCount(2);
     await expect(popup.hideXpToggle).toBeVisible();
+    await expect(popupPage.locator("#show-task-times")).toBeVisible();
+    await expect(
+      popupPage.locator("label:has(#show-task-times) .popup__info")
+    ).toHaveAttribute(
+      "data-tooltip",
+      "Time from starting to finishing a task, including breaks."
+    );
     await expect(popup.currentStreakToggle).toBeVisible();
     await expect(popup.longestStreakToggle).toBeVisible();
     await expect(popup.avgXpToggle).toBeVisible();

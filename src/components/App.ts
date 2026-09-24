@@ -1,4 +1,8 @@
-import { getStatsVisibility, getXpThresholds } from "@/utils/settings";
+import {
+  getShowTaskTimes,
+  getStatsVisibility,
+  getXpThresholds,
+} from "@/utils/settings";
 import type { CalendarResponse, DataSource } from "@/utils/types";
 import { Calendar } from "./Calendar";
 
@@ -24,6 +28,7 @@ export function App(
   const settingsPromise = Promise.all([
     getStatsVisibility(),
     getXpThresholds(),
+    getShowTaskTimes(),
   ]);
 
   const container: AppElement = document.createElement("div");
@@ -51,7 +56,8 @@ export function App(
       return;
     }
 
-    const [statsVisibility, xpThresholds] = await settingsPromise;
+    const [statsVisibility, xpThresholds, showTaskTimes] =
+      await settingsPromise;
     if (!mounted || activeRequestId !== requestId) return;
 
     currentPageIndex = response.data.page?.index ?? currentPageIndex;
@@ -67,7 +73,8 @@ export function App(
         canGoNext: response.data.page?.hasNext ?? false,
         onPrevious: () => fetchData(currentPageIndex + 1),
         onNext: () => fetchData(Math.max(0, currentPageIndex - 1)),
-      }
+      },
+      showTaskTimes
     );
 
     hasRenderedCalendar = true;

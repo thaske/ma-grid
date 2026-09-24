@@ -1,25 +1,12 @@
 import { buildCalendarData } from "@/utils/aggregation";
 import { fetchAllActivities } from "@/utils/api";
+import { createActivityStore } from "@/utils/activityStore";
 import { readCache } from "@/utils/cache";
-import type { Activity, CalendarResponse } from "@/utils/types";
+import type { CalendarResponse } from "@/utils/types";
 import { defineBackground } from "wxt/utils/define-background";
 
-const activitiesByOrigin = new Map<string, Promise<Activity[]>>();
-
-async function getActivities(origin: string) {
-  let activitiesPromise = activitiesByOrigin.get(origin);
-  if (!activitiesPromise) {
-    activitiesPromise = fetchAllActivities(origin);
-    activitiesByOrigin.set(origin, activitiesPromise);
-  }
-
-  try {
-    return await activitiesPromise;
-  } catch (error) {
-    activitiesByOrigin.delete(origin);
-    throw error;
-  }
-}
+const { getActivities, loadTaskTimes } =
+  createActivityStore(fetchAllActivities);
 
 async function fetchCalendarResponse(
   origin: string,
@@ -29,21 +16,12 @@ async function fetchCalendarResponse(
   let errorMessage = "Failed to load activity data";
 
   try {
-    const activitiesPromise =
-      pageIndex <= 0 ? fetchAllActivities(origin) : getActivities(origin);
-    if (pageIndex <= 0) {
-      activitiesByOrigin.set(origin, activitiesPromise);
-    }
-
-    const activities = await activitiesPromise;
+    const activities = await getActivities(origin, pageIndex <= 0);
     return {
       data: buildCalendarData(activities, { pageIndex, weeksPerPage }),
       status: "fresh",
     };
   } catch (error) {
-    if (pageIndex <= 0) {
-      activitiesByOrigin.delete(origin);
-    }
     errorMessage = error instanceof Error ? error.message : String(error);
     console.error("Fresh data fetch failed, trying cache fallback:", error);
   }
@@ -100,7 +78,28 @@ export default defineBackground({
   type: { chrome: "module" },
   main() {
     browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-      handleCalendarRequest(message, sender, sendResponse);
+      if (message?.type === "task_times_request") {
+        const tabUrl = sender?.tab?.url;
+        const ids: unknown = message.ids;
+        if (
+          !tabUrl ||
+          !Array.isArray(ids) ||
+          !ids.every((id) => Number.isSafeInteger(id))
+        ) {
+          sendResponse([]);
+        } else {
+          const origin = new URL(tabUrl).origin;
+          loadTaskTimes(origin, ids)
+            .then(sendResponse)
+            .catch((error) =>
+              sendResponse({
+                error: error instanceof Error ? error.message : String(error),
+              })
+            );
+        }
+      } else {
+        handleCalendarRequest(message, sender, sendResponse);
+      }
       return true;
     });
 

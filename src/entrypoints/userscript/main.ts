@@ -4,6 +4,7 @@ import { SettingsModal } from "@/components/SettingsModal";
 import mainStyles from "@/entrypoints/content/style.css?raw";
 import { buildCalendarData } from "@/utils/aggregation";
 import { fetchAllActivities } from "@/utils/api";
+import { createActivityStore } from "@/utils/activityStore";
 import { readCache } from "@/utils/cache";
 import {
   cleanupMountedApp,
@@ -12,33 +13,27 @@ import {
 } from "@/utils/mount";
 import {
   getHideXpFrame,
+  getShowTaskTimes,
   getStatsVisibility,
   getUiAnchor,
   getXpThresholds,
   type StatsVisibility,
 } from "@/utils/settings";
-import type { Activity, CalendarResponse, DataSource } from "@/utils/types";
+import type { CalendarResponse, DataSource } from "@/utils/types";
+import { mountTaskTimes } from "@/utils/taskTimes";
 import settingsStyles from "./style.css?raw";
 
 (async function () {
   "use strict";
 
-  const activitiesByOrigin = new Map<string, Promise<Activity[]>>();
-
-  async function getActivities(origin: string) {
-    let activitiesPromise = activitiesByOrigin.get(origin);
-    if (!activitiesPromise) {
-      activitiesPromise = fetchAllActivities(origin);
-      activitiesByOrigin.set(origin, activitiesPromise);
-    }
-
-    try {
-      return await activitiesPromise;
-    } catch (error) {
-      activitiesByOrigin.delete(origin);
-      throw error;
-    }
-  }
+  const activityStore = createActivityStore(fetchAllActivities);
+  const { getActivities } = activityStore;
+  const loadTaskTimes = (ids: number[]) =>
+    activityStore.loadTaskTimes(window.location.origin, ids);
+  let showTaskTimes = await getShowTaskTimes();
+  let cleanupTaskTimes = showTaskTimes
+    ? mountTaskTimes(loadTaskTimes)
+    : () => {};
 
   const dataSource: DataSource = {
     fetchData: async (
@@ -49,21 +44,12 @@ import settingsStyles from "./style.css?raw";
       let errorMessage = "Failed to load activity data";
 
       try {
-        const activitiesPromise =
-          pageIndex <= 0 ? fetchAllActivities(origin) : getActivities(origin);
-        if (pageIndex <= 0) {
-          activitiesByOrigin.set(origin, activitiesPromise);
-        }
-
-        const activities = await activitiesPromise;
+        const activities = await getActivities(origin, pageIndex <= 0);
         return {
           data: buildCalendarData(activities, { pageIndex, weeksPerPage }),
           status: "fresh",
         };
       } catch (error) {
-        if (pageIndex <= 0) {
-          activitiesByOrigin.delete(origin);
-        }
         errorMessage = error instanceof Error ? error.message : String(error);
         console.error("Fresh data fetch failed, trying cache fallback:", error);
       }
@@ -100,14 +86,22 @@ import settingsStyles from "./style.css?raw";
 
     const handleSettingsChange = async (): Promise<void> => {
       const previousAnchor = anchor;
+      const previousShowTaskTimes = showTaskTimes;
       const previousStatsVisibility = statsVisibility;
       const previousXpThresholds = xpThresholds;
       hideXpFrame = await getHideXpFrame();
+      showTaskTimes = await getShowTaskTimes();
       anchor = await getUiAnchor();
       statsVisibility = await getStatsVisibility();
       xpThresholds = await getXpThresholds();
 
       updateXpFrameHidden(hideXpFrame);
+      if (previousShowTaskTimes !== showTaskTimes) {
+        cleanupTaskTimes();
+        cleanupTaskTimes = showTaskTimes
+          ? mountTaskTimes(loadTaskTimes)
+          : () => {};
+      }
 
       const statsVisibilityChanged = !areStatsVisibilityEqual(
         previousStatsVisibility,
@@ -120,7 +114,8 @@ import settingsStyles from "./style.css?raw";
       if (
         (previousAnchor !== anchor ||
           statsVisibilityChanged ||
-          xpThresholdsChanged) &&
+          xpThresholdsChanged ||
+          previousShowTaskTimes !== showTaskTimes) &&
         currentShadow
       ) {
         const existingModal = currentShadow.querySelector(

@@ -35,13 +35,14 @@ export function Calendar(
   settingsButton?: HTMLElement,
   statsVisibility?: StatsVisibility,
   xpThresholds?: XpThresholds,
-  navigation?: CalendarNavigation
+  navigation?: CalendarNavigation,
+  showTaskTimes = true
 ) {
   const grid = getGridForLayout(data.grid, layout);
   const metrics = LAYOUT_METRICS[layout];
   const { cellSize, cellGap, labelWidth } = metrics;
 
-  const tooltip = Tooltip();
+  const tooltip = Tooltip(showTaskTimes);
 
   const container = document.createElement("div");
   container.id = CALENDAR_CONTAINER_ID;
