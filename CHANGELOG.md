@@ -1,3 +1,16 @@
+# 1.5.0 (2026-09-23)
+
+### Added
+
+- Show elapsed wall-clock time on completed tasks and daily totals in the task feed
+- Show summed elapsed time in calendar tooltips
+- Add a setting to toggle elapsed task times
+
+### Fixed
+
+- Refresh the calendar when returning to the current page without leaving newly completed tasks out of the activity grid
+- Retry task-time loading after transient failures or incomplete responses
+
 # 1.4.0 (2026-06-11)
 
 ### Added

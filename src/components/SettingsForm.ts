@@ -75,7 +75,17 @@ export function SettingsForm(
       </label>
       <label class="popup__option">
         <input type="checkbox" id="${showTaskTimesId}" />
-        <span>Elapsed task times</span>
+        <span class="popup__option-label">
+          Elapsed task times
+          <span
+            class="popup__info"
+            role="img"
+            aria-label="Time from starting to finishing a task, including breaks."
+            data-tooltip="Time from starting to finishing a task, including breaks."
+          >
+            ?
+          </span>
+        </span>
       </label>
     </fieldset>
     <fieldset class="popup__fieldset">
