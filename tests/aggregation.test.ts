@@ -13,6 +13,21 @@ const buildActivity = (overrides: Partial<Activity>): Activity => ({
   ...overrides,
 });
 
+const buildStreak = (length: number, endOffsetDays: number): Activity[] => {
+  const endDate = new Date();
+  endDate.setHours(12, 0, 0, 0);
+  endDate.setDate(endDate.getDate() + endOffsetDays);
+  return Array.from({ length }, (_, index) => {
+    const date = new Date(endDate);
+    date.setDate(date.getDate() - index);
+    return buildActivity({
+      id: index + 1,
+      completed: date.toISOString(),
+      started: date.toISOString(),
+    });
+  });
+};
+
 describe("buildCalendarData", () => {
   it("sums elapsed task time by completion date for the grid tooltip", () => {
     const completed = new Date();
@@ -66,6 +81,50 @@ describe("buildCalendarData", () => {
     expect(data.stats.longestStreak).toBe(2);
   });
 
+  it("counts a completed longest streak beyond the visible year", () => {
+    const activities = buildStreak(500, -5);
+    const currentPage = buildCalendarData(activities);
+    const olderPage = buildCalendarData(activities, { pageIndex: 1 });
+
+    expect(currentPage.stats.longestStreak).toBe(500);
+    expect(currentPage.stats.streak).toBe(0);
+    expect(olderPage.stats).toEqual(currentPage.stats);
+  });
+
+  it("finds the longest streak entirely before the visible year", () => {
+    const data = buildCalendarData(buildStreak(400, -400));
+
+    expect(data.stats.longestStreak).toBe(400);
+    expect(data.stats.activeDays).toBe(0);
+  });
+
+  it("excludes a current streak longer than a year from longest streak", () => {
+    const data = buildCalendarData([
+      ...buildStreak(500, 0),
+      ...buildStreak(30, -502),
+    ]);
+
+    expect(data.stats.streak).toBe(500);
+    expect(data.stats.longestStreak).toBe(30);
+  });
+
+  it("excludes a long current streak when today has no XP yet", () => {
+    const data = buildCalendarData(buildStreak(400, -1));
+
+    expect(data.stats.streak).toBe(400);
+    expect(data.stats.longestStreak).toBe(0);
+  });
+
+  it("keeps a longer completed streak when the current streak exceeds a year", () => {
+    const data = buildCalendarData([
+      ...buildStreak(400, 0),
+      ...buildStreak(500, -402),
+    ]);
+
+    expect(data.stats.streak).toBe(400);
+    expect(data.stats.longestStreak).toBe(500);
+  });
+
   it("skips activities with invalid completed dates", () => {
     const validCompleted = new Date();
     const validActivity = buildActivity({
@@ -91,7 +150,9 @@ describe("buildCalendarData", () => {
   });
 
   it("uses completed dates with local timezone", () => {
-    const completed = "2025-09-30T23:30:00.000Z";
+    const utcDate = new Date();
+    utcDate.setUTCHours(23, 30, 0, 0);
+    const completed = utcDate.toISOString();
     const activity = buildActivity({
       completed,
       started: completed,

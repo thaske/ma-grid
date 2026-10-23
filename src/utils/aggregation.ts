@@ -174,7 +174,7 @@ export function buildCalendarData(
   let currentStreakEnd: Date | null = null;
   if (streak > 0) {
     currentStreakEnd = new Date(checkDate);
-    currentStreakEnd.setDate(currentStreakEnd.getDate() + 1);
+    currentStreakEnd.setDate(currentStreakEnd.getDate() + streak);
     currentStreakStart = new Date(currentStreakEnd);
     currentStreakStart.setDate(currentStreakStart.getDate() - (streak - 1));
   }
@@ -186,7 +186,14 @@ export function buildCalendarData(
   const currentStartTime = currentStreakStart?.getTime() ?? null;
   const currentEndTime = currentStreakEnd?.getTime() ?? null;
 
-  const scanDate = new Date(statsAlignedStartDate);
+  // Streak records span all loaded history, independently of the visible grid.
+  const scanDate = new Date(
+    Math.min(
+      ...Array.from(dailyMap.keys()).map((dateKey) =>
+        parseDateKey(dateKey).getTime()
+      )
+    )
+  );
   while (scanDate <= latestAlignedEndDate) {
     const dateKey = formatDateKey(scanDate);
     const dayData = dailyMap.get(dateKey);
