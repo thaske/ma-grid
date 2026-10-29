@@ -53,6 +53,8 @@ export function generateMetadata(
 // @author       ${packageJson.author}
 // @match        https://mathacademy.com/learn
 // @match        https://www.mathacademy.com/learn
+// @match        https://mathacademy.com/tasks/*
+// @match        https://www.mathacademy.com/tasks/*
 ${iconData ? `// @icon         ${iconData}` : ""}
 // @grant        GM.getValue
 // @grant        GM.setValue

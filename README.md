@@ -35,6 +35,23 @@ For Safari, you can install MA Grid as a userscript. This should work on iOS, iP
 
 3. Done! You should see the activity graph on your dashboard.
 
+# Copy math to Anki
+
+On Math Academy task pages, click **Copy math** in the bottom-right corner, then click a formula. The source panel shows its original LaTeX—not the SVG markup.
+
+- Pick **Entire formula** or an equation in the visual sidebar. A rendered preview updates as you edit the source.
+- The LaTeX editor includes syntax highlighting, line numbers, matching braces, Tab/Shift+Tab indentation, and undo/redo. Highlighting never changes copied text.
+- Highlight a fragment for **Copy selection**, or use **Copy equation**. Ctrl/⌘ + Enter copies the selection (or the current formula if nothing is selected).
+- Edits are kept when switching equations within the current formula; **Reset edits** restores the selected equation's original source. Picking a different formula starts fresh.
+- Choose the format for your paste destination:
+  - **LaTeX · Anki math editor** (default): raw TeX, without delimiters, for Anki's MathJax editor.
+  - **Anki HTML · field HTML editor**: `<anki-mathjax>…</anki-mathjax><br>` markup, for the field's HTML editor—not its normal rich-text view.
+  - **Display math**: wraps TeX in `\[ … \]` for a regular card field.
+- Standalone rows omit alignment markers and row breaks, preserving domain spacing with `\qquad`.
+- Press Escape to cancel picking or close the panel. If clipboard access is denied, the output is selected for manual copying.
+
+The extension reads retained MathJax source in the page world, with SVG-title and TeX-annotation fallbacks. Previews reuse the page's MathJax renderer without loading external scripts. If original source or preview rendering is unavailable (including userscript sandboxes that cannot access MathJax after a title is typeset), the panel reports that instead of treating flattened math as LaTeX.
+
 # Development
 
 If you want to contribute, here's how you can get started.
