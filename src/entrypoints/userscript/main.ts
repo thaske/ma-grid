@@ -22,9 +22,15 @@ import {
 import type { CalendarResponse, DataSource } from "@/utils/types";
 import { mountTaskTimes } from "@/utils/taskTimes";
 import settingsStyles from "./style.css?raw";
+import { mountMathCopy } from "@/utils/mathCopy";
 
 (async function () {
   "use strict";
+
+  if (window.location.pathname.startsWith("/tasks/")) {
+    mountMathCopy();
+    return;
+  }
 
   const activityStore = createActivityStore(fetchAllActivities);
   const { getActivities } = activityStore;
